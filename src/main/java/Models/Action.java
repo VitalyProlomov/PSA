@@ -1,13 +1,17 @@
 package Models;
 
+/**
+ * Class that describes what opponent has done.
+ * Holds info about position, type of action (check, fold, bet, call) and (where applicable) amount of bet.
+ */
 public class Action {
-    public enum Type {
+    public enum ActionType {
         CHECK,
         BET,
         FOLD,
         CALL
     }
     private PositionType position;
-    private Type action;
+    private ActionType action;
     private int amount;
 }

@@ -1,3 +1,5 @@
+package ModelsTests;
+
 import Models.Card;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +19,7 @@ public class CardTest {
     }
 
     @Test
-    public void testCardComparison() {
+    public void testCardEquals() {
         Card card = new Card(Card.Rank.ACE, Card.Suit.SPADES);
         Card sameCars = new Card(Card.Rank.ACE, Card.Suit.SPADES);
         Card diffCard1 = new Card(Card.Rank.ACE, Card.Suit.HEARTS);
@@ -74,6 +76,17 @@ public class CardTest {
         assertThrows(IllegalArgumentException.class, () -> new Card("8"));
         assertThrows(IllegalArgumentException.class, () -> new Card("Ae"));
         assertThrows(IllegalArgumentException.class, () -> new Card("J2"));
+        assertThrows(IllegalArgumentException.class, () -> new Card("Two of clubs"));
+        assertThrows(IllegalArgumentException.class, () -> new Card("0d"));
+    }
+
+    @Test
+    public void checkGetterIsCorrectTest() {
+        Card c = new Card("Js");
+        Card.Rank r = c.getRank();
+        r = Card.Rank.ACE;
+        assertNotEquals(Card.Rank.ACE, c.getRank());
+
     }
 
 }

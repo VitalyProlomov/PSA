@@ -5,12 +5,12 @@ import java.util.Locale;
 /**
  * The class for Card entity. Card has a rank and a suit.
  */
-public class Card  {
-    Rank rank;
-    Suit suit;
+public class Card {
+    private final Rank rank;
+    private final Suit suit;
 
     public Card(Rank rank, Suit suit) {
-        this.rank= rank;
+        this.rank = rank;
         this.suit = suit;
     }
 
@@ -23,7 +23,6 @@ public class Card  {
         char valueChar = strRepresentation.toUpperCase(Locale.ROOT).charAt(0);
 
         if (valueChar == 'T') {
-
             this.rank = Rank.TEN;
         } else if (valueChar == 'J') {
             this.rank = Rank.JACK;
@@ -34,17 +33,27 @@ public class Card  {
         } else if (valueChar == 'A') {
             this.rank = Rank.ACE;
         } else {
-            boolean wasFound  = false;
-            for (var rankV : Rank.values()) {
-                if (rankV.value == (int)(valueChar - '0')) {
-                    this.rank = rankV;
-                    wasFound = true;
-                }
-            }
-            if (!wasFound) {
+            if (valueChar > '9' || valueChar < '2') {
                 throw new IllegalArgumentException("Representation of the card must be [Rank][suit], 10 being T," +
                         " suit = 1st letter (ex: 4 of spades = 4s)");
+            } else {
+                int number = valueChar - '0';
+                Rank rankToGive = Rank.TWO;
+                for (Rank r : Rank.values()) {
+                    if (number == r.value) {
+                        rankToGive = r;
+                    }
+                }
+                this.rank = rankToGive;
+                // Just a check, to make sure my sloppy solution to
+                // prevent error popping out (rankToGive) is working correctly
+                if (rank == Rank.TWO && (number != 2 || valueChar != '2')) {
+                    throw new RuntimeException("I have wrote the code incorrectly: " +
+                            "Change the Card constructor (for some reason the rank is " +
+                            "assigned incorrectly.");
+                }
             }
+
         }
 
         char suitChar = strRepresentation.toLowerCase(Locale.ROOT).charAt(1);
@@ -63,7 +72,9 @@ public class Card  {
     }
 
 
-
+    /**
+     * Suit of the card - 1 of 4. Has a field w string icon.
+     */
     public enum Suit {
         HEARTS("♥"),
         SPADES("♠"),
@@ -79,6 +90,9 @@ public class Card  {
 
     }
 
+    /**
+     * Rank of the card - value is the int number, increasing by one each next rank.
+     */
     public enum Rank {
         TWO(2),
         THREE(3),
@@ -99,8 +113,6 @@ public class Card  {
         Rank(int value) {
             this.value = value;
         }
-
-
     }
 
     public Rank getRank() {
@@ -115,7 +127,7 @@ public class Card  {
     @Override
     public boolean equals(Object card) {
         if (card.getClass() == Card.class) {
-            return this.rank == ((Card)card).rank && this.suit == ((Card)card).suit;
+            return this.rank == ((Card) card).rank && this.suit == ((Card) card).suit;
         }
         return false;
     }
@@ -131,7 +143,7 @@ public class Card  {
             rankRepr = "Q";
         } else if (rank.value == 13) {
             rankRepr = "K";
-        } else if (rank.value == 14){
+        } else if (rank.value == 14) {
             rankRepr = "A";
         }
 
