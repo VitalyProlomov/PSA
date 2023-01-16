@@ -1,6 +1,6 @@
 package Exceptions;
 
-public class IncorrectBoardException extends RuntimeException {
+public class IncorrectBoardException extends Exception {
 
     public  IncorrectBoardException() {
         message = "The board is incorrect";

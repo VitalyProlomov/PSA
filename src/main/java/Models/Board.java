@@ -1,6 +1,7 @@
 package Models;
 
 import Exceptions.IncorrectBoardException;
+import Exceptions.IncorrectCardException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,17 +10,17 @@ import java.util.HashSet;
 public class Board {
     private ArrayList<Card> cards = new ArrayList<>();
 
-    private final String incorrectLengthMessage = "Board must contain from 3 to 7 cards.";
+    private final String incorrectLengthMessage = "Board must contain from 3 to 5 cards.";
 
-    public Board (Card ... cards) {
-        if (cards.length < 3 || cards.length > 7) {
+    public Board (Card ... cards) throws IncorrectBoardException {
+        if (cards.length < 3 || cards.length > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         Collections.addAll(this.cards, cards);
     }
 
-    public Board(String ... cardReps) {
-        if (cardReps.length < 3 || cardReps.length > 7) {
+    public Board(String ... cardReps) throws IncorrectBoardException, IncorrectCardException {
+        if (cardReps.length < 3 || cardReps.length > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         for (String rep : cardReps) {
@@ -28,8 +29,8 @@ public class Board {
         }
     }
 
-    public Board(ArrayList<Card> cards) {
-        if (cards.size() < 3 || cards.size()> 7) {
+    public Board(ArrayList<Card> cards) throws IncorrectBoardException {
+        if (cards.size() < 3 || cards.size()> 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         this.cards.addAll(cards);
@@ -45,8 +46,8 @@ public class Board {
         return new ArrayList<>(cards);
     }
 
-    public void setCards(ArrayList<Card> cards) {
-        if (cards.size() < 3 || cards.size() > 7) {
+    public void setCards(ArrayList<Card> cards) throws IncorrectBoardException {
+        if (cards.size() < 3 || cards.size() > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         this.cards = new ArrayList<>(cards);

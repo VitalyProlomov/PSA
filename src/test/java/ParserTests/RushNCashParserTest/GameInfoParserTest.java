@@ -1,12 +1,12 @@
 package ParserTests.RushNCashParserTest;
 
+import Models.Card;
 import Models.Game;
 import Models.PlayerInGame;
 import Models.PositionType;
 import Parsers.GG.GGPokerokRushNCashParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameInfoParserTest {
     @Test
-    public void testGameInfoSplitting() throws IOException {
+    public void testFullGameInfoSplitting() throws IOException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         URL gameURL =  GameInfoParserTest.class.getResource("/gameExample");
         FileReader fr = new FileReader(gameURL.getFile().replace("%20", " "));
@@ -35,7 +35,7 @@ public class GameInfoParserTest {
         Game topG = parser.parseGame(gameText.toString());
 
         String correctID = "#RC1221829603";
-        assertEquals(correctID, topG.getHandId());
+        assertEquals(correctID, topG.getGameId());
 
         double correctBbSize = 0.25;
         assertEquals(correctBbSize, topG.getBigBlindSize$());
@@ -54,13 +54,31 @@ public class GameInfoParserTest {
 
         assertEquals(correctPlayers, topG.getPlayers());
 
+        ArrayList<Card> heroHand = new ArrayList<>(List.of(new Card("Ad"), new Card("Ts")));
+        correctPlayers.get(2).setHand();
     }
 
     @Test
-    public void testFindingFile() throws FileNotFoundException {
-        FileReader fr = new FileReader("D:\\HSE\\3rd course\\Course Project\\PSA\\target\\test-classes\\gameExample.txt");
-        Scanner sc = new Scanner(fr);
-        String line = sc.nextLine();
-        System.out.println(line);
+    public void testGameCreation() {
+
     }
+
+    @Test
+    public void testGameDateSetting() {
+
+    }
+
+    @Test
+    public void testPlayerSetting() {
+
+    }
+
+
+//    @Test
+//    public void testFindingFile() throws FileNotFoundException {
+//        FileReader fr = new FileReader("D:\\HSE\\3rd course\\Course Project\\PSA\\src\\test\\resources\\gameExample");
+//        Scanner sc = new Scanner(fr);
+//        String line = sc.nextLine();
+//        System.out.println(line);
+//    }
 }

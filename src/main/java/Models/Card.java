@@ -1,5 +1,7 @@
 package Models;
 
+import Exceptions.IncorrectCardException;
+
 import java.util.Locale;
 
 /**
@@ -14,9 +16,9 @@ public class Card {
         this.suit = suit;
     }
 
-    public Card(String strRepresentation) {
+    public Card(String strRepresentation) throws IncorrectCardException {
         if (strRepresentation.length() != 2) {
-            throw new IllegalArgumentException("Representation of the card must be [Rank][suit], 10 being T," +
+            throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
                     " suit = 1st letter (ex: 4 of spades = 4s)");
         }
 

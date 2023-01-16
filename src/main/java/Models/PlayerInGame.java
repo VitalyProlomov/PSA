@@ -113,6 +113,7 @@ public class PlayerInGame {
         if (hand.size() != 2 || hand.get(0).equals(hand.get(1))) {
             throw new IllegalArgumentException("Hand must consist of 2 different cards.");
         }
+
         this.hand = new ArrayList<>(hand);
     }
 }

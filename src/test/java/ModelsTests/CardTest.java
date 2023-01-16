@@ -86,6 +86,25 @@ public class CardTest {
         Card.Rank r = c.getRank();
         r = Card.Rank.ACE;
         assertNotEquals(Card.Rank.ACE, c.getRank());
+    }
+
+    @Test
+    public void testStringConstuctor() {
+        Card twoH = new Card("2h");
+        Card threeH = new Card("3h");
+        Card fourD = new Card("4d");
+        Card fiveC = new Card("5c");
+        Card sixC = new Card("6C");
+        Card sevenS = new Card("7S");
+        Card eightS = new Card("8s");
+
+        assertEquals(twoH, new Card(Card.Rank.TWO, Card.Suit.HEARTS));
+        assertEquals(threeH, new Card(Card.Rank.THREE, Card.Suit.HEARTS));
+        assertEquals(fourD, new Card(Card.Rank.FOUR, Card.Suit.DIAMONDS));
+        assertEquals(fiveC, new Card(Card.Rank.FIVE, Card.Suit.CLUBS));
+        assertEquals(sixC, new Card(Card.Rank.SIX, Card.Suit.CLUBS));
+        assertEquals(sevenS, new Card(Card.Rank.SEVEN, Card.Suit.SPADES));
+        assertEquals(eightS, new Card(Card.Rank.EIGHT, Card.Suit.SPADES));
 
     }
 
