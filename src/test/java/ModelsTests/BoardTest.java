@@ -1,6 +1,7 @@
 package ModelsTests;
 
 import Exceptions.IncorrectBoardException;
+import Exceptions.IncorrectCardException;
 import Models.Board;
 import Models.Card;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest {
     @Test
-    public void testBoardConstructor() {
+    public void testBoardConstructor() throws IncorrectCardException, IncorrectBoardException {
         Card c1 = new Card("4c");
         Card c2 = new Card("As");
         Card c3 = new Card("Ks");
@@ -27,8 +28,8 @@ public class BoardTest {
         assertThrows(IncorrectBoardException.class, () -> new Board(c1, c2, c3, c4, c5, c6, c7, c8));
 
         assertDoesNotThrow(() -> new Board(c1, c2, c3));
+        assertDoesNotThrow(() -> new Board(c1, c2, c3, c4));
         assertDoesNotThrow(() -> new Board(c1, c2, c3, c4, c5));
-        assertDoesNotThrow(() -> new Board(c1, c2, c3, c4, c5, c6, c7));
 
         Board b = new Board(c1, c2, c3, c4, c5);
         ArrayList<Card> actual = b.getCards();
@@ -44,7 +45,7 @@ public class BoardTest {
     }
 
     @Test
-    public void testBoardEquals() {
+    public void testBoardEquals() throws IncorrectBoardException, IncorrectCardException {
         Board a = new Board("3c", "7d", "As");
         Board b = new Board("3c", "7d", "As");
         boolean s = a.equals(b);
@@ -65,15 +66,24 @@ public class BoardTest {
         Object obj = new Object();
         assertNotEquals(a, obj);
 
-        a = new Board("2c", "3c", "4c", "5c", "6c", "7c");
-        b = new Board("2c", "3c", "4c", "5c", "6c", "7c");
+        a = new Board("2c", "3c", "4c", "5c", "6c");
+        b = new Board("2c", "3c", "4c", "5c", "6c");
         assertEquals(a, b);
 
-        b = new Board("2c", "3c", "4c", "5c", "6c");
+        b = new Board("2c", "3c", "4c", "5c");
         assertNotEquals(a, b);
     }
 
+    @Test
+    public void testCopyConstructor() throws IncorrectBoardException, IncorrectCardException {
+        Board b = new Board("Kc", "Jd", "6s", "As", "2s");
+        Board copy = new Board(b);
+        assertEquals(b, copy);
 
-
+        ArrayList<Card> cards = b.getCards();
+        cards.set(2, new Card("Qh"));
+        b.setCards(cards);
+        assertNotEquals(b, copy);
+    }
 
 }

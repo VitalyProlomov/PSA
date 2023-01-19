@@ -3,6 +3,7 @@ package Models;
 import Exceptions.IncorrectCardException;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The class for Card entity. Card has a rank and a suit.
@@ -36,7 +37,7 @@ public class Card {
             this.rank = Rank.ACE;
         } else {
             if (valueChar > '9' || valueChar < '2') {
-                throw new IllegalArgumentException("Representation of the card must be [Rank][suit], 10 being T," +
+                throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
                         " suit = 1st letter (ex: 4 of spades = 4s)");
             } else {
                 int number = valueChar - '0';
@@ -68,7 +69,7 @@ public class Card {
         } else if (suitChar == 'd') {
             suit = Suit.DIAMONDS;
         } else {
-            throw new IllegalArgumentException("Representation of the card must be [Rank][suit], 10 being T," +
+            throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
                     " suit = 1st letter (ex: 4 of spades = 4s)");
         }
     }
@@ -132,6 +133,11 @@ public class Card {
             return this.rank == ((Card) card).rank && this.suit == ((Card) card).suit;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rank, suit);
     }
 
     @Override

@@ -4,6 +4,7 @@ import Exceptions.IncorrectHandException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Hand {
     private final Card card1;
@@ -25,6 +26,11 @@ public class Hand {
                     (card1.equals(h.card2) && card2.equals(h.card1));
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(card1, card2);
     }
 
     @Override

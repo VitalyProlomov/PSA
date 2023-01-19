@@ -1,8 +1,12 @@
 package AnalizerTests;
 
 import Analizer.CombinationAnalizer;
+import Exceptions.IncorrectBoardException;
+import Exceptions.IncorrectCardException;
+import Exceptions.IncorrectHandException;
 import Models.Board;
 import Models.Card;
+import Models.ComboBoardPair;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,39 +18,29 @@ public class CombinationAnalizerTest {
 
 
     @Test
-    public void testFlushCountingMethod() {
+    public void testFlushCountingMethod() throws IncorrectCardException, IncorrectBoardException {
         Board b = new Board("2c", "4c", "8c", "Kc", "Jc");
-        assertEquals(CombinationAnalizer.countFlushSuit(b), Card.Suit.CLUBS);
+        assertEquals(CombinationAnalizer.countFlushSuit(b.getCards()), Card.Suit.CLUBS);
 
         b = new Board("5d", "Ad", "Kd", "2d", "5s");
-        assertNull(CombinationAnalizer.countFlushSuit(b));
+        assertNull(CombinationAnalizer.countFlushSuit(b.getCards()));
 
-        b = new Board("5d", "Ad", "Kd", "2d", "5s", "6d", "Ks");
-        assertEquals(CombinationAnalizer.countFlushSuit(b), Card.Suit.DIAMONDS);
-
-        ArrayList<Card> cards = new ArrayList<Card>(List.of(
-                new Card("5d"),
-                new Card("Ad"),
-                new Card("Kd"),
-                new Card("2d"),
-                new Card("5s"),
-                new Card("6d"),
-                new Card("Ks"),
-                new Card("6s"),
-                new Card("9s"),
-                new Card("Ts"),
-                new Card("Qs"),
-                new Card("As"),
-                new Card("Js")));
+        b = new Board("5d", "Ad", "Kd", "2d", "6d");
+        assertEquals(CombinationAnalizer.countFlushSuit(b.getCards()), Card.Suit.DIAMONDS);
     }
 
 
     @Test
-    public void testFindFLushRoyal() {
-        Board rf = new Board("Ah", "Kh", "6s", "Ts", "Th", "Qh", "Jh");
-        assertDoesNotThrow(() -> CombinationAnalizer.recognizeCombinationOnBoard(rf, null));
+    public void testFindFLushRoyal() throws IncorrectBoardException, IncorrectCardException, IncorrectHandException {
+        Board rf = new Board("Ah", "Kh", "6s", "Ts", "Th");
+        Board finalRf = rf;
+        assertDoesNotThrow(() -> CombinationAnalizer.recognizeCombinationOnBoard(finalRf, null));
 
-
+        rf = new Board("Ts", "As", "Js", "Ks", "Qs");
+        Board c = new Board("Ts", "As", "Js", "Ks", "Qs");
+        CombinationAnalizer.sortBoard(c);
+        assertEquals(new ComboBoardPair(CombinationAnalizer.Combinations.FLUSH_ROYAL, c),
+                        CombinationAnalizer.recognizeCombinationOnBoard(rf, null));
     }
 
 
@@ -56,7 +50,7 @@ public class CombinationAnalizerTest {
     }
 
     @Test
-    public void testBoardValid1() {
+    public void testBoardValid1() throws IncorrectBoardException, IncorrectCardException {
         // Invalid boards
         Board b = new Board("2c", "3c", "4c", "5c", "2c");
         assertFalse(CombinationAnalizer.isBoardValid(b));
@@ -64,7 +58,7 @@ public class CombinationAnalizerTest {
         b = new Board("2c", "2c", "3d", "Ad");
         assertFalse(CombinationAnalizer.isBoardValid(b));
 
-        b = new Board("5c", "Qd", "2c", "8d", "Qd", "6s");
+        b = new Board("5c", "Qd", "2c", "8d", "Qd");
         assertFalse(CombinationAnalizer.isBoardValid(b));
 
         b = new Board("2h", "2h", "2h");
@@ -77,12 +71,12 @@ public class CombinationAnalizerTest {
         b = new Board("3d", "Ks", "Jd", "3h", "Jh");
         assertTrue(CombinationAnalizer.isBoardValid(b));
 
-        b = new Board("Ad", "6c", "7c", "8d", "Js", "5s", "8s");
+        b = new Board("Ad", "6c", "7c", "8d", "8s");
         assertTrue(CombinationAnalizer.isBoardValid(b));
     }
 
     @Test
-    public void testBoardValid2() {
+    public void testBoardValid2() throws IncorrectBoardException, IncorrectCardException {
         Card As = new Card("As");
         Card Ks = new Card("Ks");
         Card Qs = new Card("Qs");
@@ -104,7 +98,7 @@ public class CombinationAnalizerTest {
         ArrayList<Card> valid = new ArrayList<>(List.of(As, Ks, Qs, Js, Ts));
         assertTrue(CombinationAnalizer.isBoardValid(valid));
 
-        valid = new ArrayList<>(List.of(EightH, EightC, Js, Ks, Qs, Ts, NineH));
+        valid = new ArrayList<>(List.of(EightH, EightC, Js, Ks, Qs));
         assertTrue(CombinationAnalizer.isBoardValid(valid));
     }
 }

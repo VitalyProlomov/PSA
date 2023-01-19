@@ -1,9 +1,9 @@
 package ParserTests.RushNCashParserTest;
 
-import Models.Card;
-import Models.Game;
-import Models.PlayerInGame;
-import Models.PositionType;
+import Exceptions.IncorrectBoardException;
+import Exceptions.IncorrectCardException;
+import Exceptions.IncorrectHandException;
+import Models.*;
 import Parsers.GG.GGPokerokRushNCashParser;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameInfoParserTest {
     @Test
-    public void testFullGameInfoSplitting() throws IOException {
+    public void testFullGameInfoSplitting() throws IOException, IncorrectCardException, IncorrectHandException, IncorrectBoardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         URL gameURL =  GameInfoParserTest.class.getResource("/gameExample");
         FileReader fr = new FileReader(gameURL.getFile().replace("%20", " "));
@@ -55,7 +55,31 @@ public class GameInfoParserTest {
         assertEquals(correctPlayers, topG.getPlayers());
 
         ArrayList<Card> heroHand = new ArrayList<>(List.of(new Card("Ad"), new Card("Ts")));
-        correctPlayers.get(2).setHand();
+        correctPlayers.get(2).setHand(heroHand);
+        assertEquals(topG.getPlayers().get(2).getHand(), new Hand(heroHand.get(0), heroHand.get(1)));
+
+        ArrayList<Action> actions = new ArrayList<>();
+        actions.add(new Action(Action.ActionType.BET, correctPlayers.get(1), 0.1, 0));
+        actions.add(new Action(Action.ActionType.BET, correctPlayers.get(2), 0.25, 0.1));
+        actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(3), 0, 0.35));
+        actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(4), 0, 0.35));
+        actions.add(new Action(Action.ActionType.RAISE, correctPlayers.get(5), 0.63, 0.35));
+        actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(0), 0, 0.98));
+        actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(1), 0, 0.98));
+        actions.add(new Action(Action.ActionType.CALL, correctPlayers.get(2), 0.38, 0.98));
+
+        StreetDescription correctPreFlop = new StreetDescription(1.36, null, topG.getPlayers(),actions);
+        assertEquals(correctPreFlop, topG.getPreFlop());
+
+        actions = new ArrayList<>();
+        actions.add((new Action(Action.ActionType.CHECK, correctPlayers.get(2), 0, 1.36)));
+        actions.add((new Action(Action.ActionType.CHECK, correctPlayers.get(5), 0, 1.36)));
+
+        StreetDescription correctFLop = new StreetDescription(1.36, new Board("8d" , "6d", "Qh"),
+                new ArrayList<PlayerInGame>(List.of(correctPlayers.get(2), correctPlayers.get(5))), actions);
+//        System.out.println(topG.getFlop());
+//        System.out.println(correctFLop);
+        assertEquals(topG.getFlop(), correctFLop);
     }
 
     @Test

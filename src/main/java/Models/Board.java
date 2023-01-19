@@ -3,9 +3,7 @@ package Models;
 import Exceptions.IncorrectBoardException;
 import Exceptions.IncorrectCardException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 public class Board {
     private ArrayList<Card> cards = new ArrayList<>();
@@ -34,6 +32,10 @@ public class Board {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         this.cards.addAll(cards);
+    }
+
+    public Board(Board copyBoard) {
+        this.cards.addAll(copyBoard.getCards());
     }
 
     public Card get(int index) {
@@ -67,22 +69,36 @@ public class Board {
         if (obj == null || obj.getClass() != Board.class) {
             return false;
         }
-        if (this.cards.size() != ((Board)obj).cards.size()) {
+        if (this.size() != ((Board)obj).size()) {
             return false;
         }
-        HashSet<Card> set1 = new HashSet<>(this.cards);
-        HashSet<Card> set2 = new HashSet<>(((Board)obj).cards);
+
+        Board b = ((Board)obj);
+        HashSet<Card> set1 = new HashSet<>(this.cards.subList(0, 3));
+        HashSet<Card> set2 = new HashSet<>(b.cards.subList(0, 3));
 
 
         for (Card card1 : set1) {
-            for (Card card2 : set2) {
-                if (card1.equals(card2)) {
-                    set2.remove(card2);
-                    break;
-                }
+            set2.remove(card1);
+        }
+
+        boolean trSame = true;
+        for (int i = 3; i < this.size(); ++i) {
+            if (b.size() < i || !this.get(i).equals(b.get(i))) {
+                trSame = false;
             }
         }
-        return set2.size() == 0;
+        return set2.size() == 0 && trSame;
+    }
+
+    @Override
+    public int hashCode() {
+        if (size() == 3) {
+            return Objects.hash(new HashSet<>(cards.subList(0, 3)));
+        } else if (size() == 4) {
+            return Objects.hash(new HashSet<>(cards.subList(0, 3)), get(3));
+        }
+        return Objects.hash(new HashSet<>(cards.subList(0, 3)), get(3), get(4));
     }
 
     @Override

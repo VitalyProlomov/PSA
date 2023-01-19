@@ -1,19 +1,21 @@
 package Models;
 
 import Analizer.CombinationAnalizer;
+import Exceptions.IncorrectBoardException;
+
+import java.util.Objects;
 
 public class ComboBoardPair {
-    private CombinationAnalizer.Combinations combination;
-    private Board board;
+    private final CombinationAnalizer.Combinations combination;
+    private final Board board;
 
     public ComboBoardPair(CombinationAnalizer.Combinations combo, Board board) {
         this.combination = combo;
         this.board = board;
     }
 
-    public Board getBoard() {
-        Board nB = new Board(board.getCards());
-        return nB;
+    public Board getBoard() throws IncorrectBoardException {
+        return new Board(board.getCards());
     }
 
     public CombinationAnalizer.Combinations getCombination() {
@@ -26,6 +28,16 @@ public class ComboBoardPair {
             return false;
         }
         return combination == ((ComboBoardPair)object).combination &&
-                this.board == ((ComboBoardPair)object).board;
+                this.board.equals(((ComboBoardPair)object).board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(combination, board);
+    }
+
+    @Override
+    public String toString() {
+        return "(ComboBoard| Combination: " + combination + ", Board: " + board + ")";
     }
 }

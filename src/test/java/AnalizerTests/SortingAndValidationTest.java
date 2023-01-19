@@ -1,6 +1,8 @@
 package AnalizerTests;
 
 import Analizer.CombinationAnalizer;
+import Exceptions.IncorrectBoardException;
+import Exceptions.IncorrectCardException;
 import Models.Board;
 import Models.Card;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SortingAndValidationTest {
     @Test
-    public void testSortBoardW2SameCards() {
+    public void testSortBoardW2SameCards() throws IncorrectBoardException {
         Card H4 = new Card(Card.Rank.FOUR, Card.Suit.HEARTS);
         Card HA = new Card(Card.Rank.ACE, Card.Suit.HEARTS);
         Card SK = new Card(Card.Rank.KING, Card.Suit.SPADES);
@@ -24,7 +26,7 @@ public class SortingAndValidationTest {
     }
 
     @Test
-    public void testSortBoardOnSortedBoard() {
+    public void testSortBoardOnSortedBoard() throws IncorrectCardException, IncorrectBoardException {
         Card h2 = new Card("2h");
         Card s2 = new Card("2s");
         Card d2 = new Card("2d");
@@ -40,7 +42,7 @@ public class SortingAndValidationTest {
     }
 
     @Test
-    public void testSortRandomBoards() {
+    public void testSortRandomBoards() throws IncorrectCardException, IncorrectBoardException {
         Card Jh = new Card(Card.Rank.JACK, Card.Suit.HEARTS);
         Card twoS = new Card(Card.Rank.TWO, Card.Suit.SPADES);
         Card threeS = new Card(Card.Rank.THREE, Card.Suit.SPADES);

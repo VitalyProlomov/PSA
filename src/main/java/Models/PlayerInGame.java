@@ -1,13 +1,16 @@
 package Models;
 
+import Exceptions.IncorrectHandException;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PlayerInGame {
     private final String hash;
     private PositionType positionType;
     private UserProfile ref;
     private double balance$;
-    private ArrayList<Card> hand;
+    private Hand hand;
 
     public PlayerInGame(String hash) {
         this.hash = hash;
@@ -22,6 +25,17 @@ public class PlayerInGame {
         this.positionType = position;
         this.balance$ = balance;
         this.ref = ref;
+    }
+
+    public PlayerInGame(PlayerInGame copyPlayer) {
+        this.hash = copyPlayer.hash;
+        this.positionType = copyPlayer.positionType;
+        this.balance$ = copyPlayer.balance$;
+        this.ref = copyPlayer.ref;
+        this.hand = copyPlayer.hand;
+        this.vpip = copyPlayer.vpip;
+        this.threeBetPercentage = copyPlayer.threeBetPercentage;
+        this.handsPlayed = copyPlayer.handsPlayed;
     }
 
     // Not sure if i need that, but will leave for now
@@ -87,33 +101,41 @@ public class PlayerInGame {
         if (obj.getClass() != PlayerInGame.class) {
             return false;
         }
-        return ((PlayerInGame) obj).positionType == this.positionType &&
-                ((PlayerInGame) obj).hash.equals(this.hash) &&
-                ((PlayerInGame) obj).balance$ == this.balance$ &&
-                ((PlayerInGame) obj).ref == this.ref;
+        // Maybe I should change this to not just comparing the hashes
+        return ((PlayerInGame) obj).hash.equals(this.hash);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hash);
     }
 
     @Override
     public String toString() {
-        String rep = "PlayerInGame: {UserName: ";
+        String rep = "(PlayerInGame| {UserName: ";
         if (ref != null) {
             rep +=  ref.userName;
         } else {
             rep += "_UNDEFINED_";
         }
-        rep += ", Hash" + hash + ", Pos: " + positionType + ", Balance: " + balance$ + "}";
+        rep += ", Hash: " + hash + ", Pos: " + positionType + ", Balance: " + balance$ + "})";
         return rep;
     }
 
-    public ArrayList<Card> getHand() {
-        return new ArrayList<>(hand);
+    public Hand getHand() throws IncorrectHandException {
+        return new Hand(hand.getFirstCard(), hand.getSecondCard());
     }
 
-    public void setHand(ArrayList<Card> hand) {
+    public void setHand(ArrayList<Card> hand) throws IncorrectHandException {
         if (hand.size() != 2 || hand.get(0).equals(hand.get(1))) {
-            throw new IllegalArgumentException("Hand must consist of 2 different cards.");
+            throw new IncorrectHandException();
         }
 
-        this.hand = new ArrayList<>(hand);
+        this.hand = new Hand(hand.get(0), hand.get(1));
+    }
+
+    public void setHand(Hand hand) throws IncorrectHandException {
+        this.hand = new Hand(hand.getFirstCard(), hand.getSecondCard());
     }
 }

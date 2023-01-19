@@ -59,7 +59,7 @@ public class CombinationAnalizer {
     /**
      * Checks if the given set of cards is valid and could exist iin real life.
      *
-     * @param extendedBoard Community cards
+     * @param extendedBoard Community cards and hand cards
      * @return true if the board is valid, false otherwise.
      */
     public static boolean isBoardValid(ArrayList<Card> extendedBoard)
@@ -104,6 +104,7 @@ public class CombinationAnalizer {
                     isSwapNeeded = true;
                 }
             }
+
             if (isSwapNeeded) {
                 Card tmp = cards.get(i);
                 cards.set(i, cards.get(ind_min));
@@ -118,9 +119,10 @@ public class CombinationAnalizer {
      *
      * @param board board that needs to be sorted - the order of its elements is going to change
      */
-    public static void sortBoard(Board board) {
+    public static void sortBoard(Board board) throws IncorrectBoardException {
         ArrayList<Card> cards = board.getCards();
         sortBoard(cards);
+        board.setCards(cards);
     }
 
     /**

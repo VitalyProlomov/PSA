@@ -1,5 +1,6 @@
 package ModelsTests;
 
+import Exceptions.IncorrectCardException;
 import Models.Card;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +45,7 @@ public class CardTest {
     }
 
     @Test
-    public void testCorrectCardInitializationWStrRepresentation() {
+    public void testCorrectCardInitializationWStrRepresentation() throws IncorrectCardException {
         Card Ah = new Card("Ah");
         Card Kc = new Card("Kc");
         Card Jd = new Card("Jd");
@@ -69,19 +70,19 @@ public class CardTest {
 
     @Test
     public void testIncorrectCardsInitializations() {
-        assertThrows(IllegalArgumentException.class, () -> new Card("10h"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("15d"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("11s"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("9i"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("8"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("Ae"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("J2"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("Two of clubs"));
-        assertThrows(IllegalArgumentException.class, () -> new Card("0d"));
+        assertThrows(IncorrectCardException.class, () -> new Card("10h"));
+        assertThrows(IncorrectCardException.class, () -> new Card("15d"));
+        assertThrows(IncorrectCardException.class, () -> new Card("11s"));
+        assertThrows(IncorrectCardException.class, () -> new Card("9i"));
+        assertThrows(IncorrectCardException.class, () -> new Card("8"));
+        assertThrows(IncorrectCardException.class, () -> new Card("Ae"));
+        assertThrows(IncorrectCardException.class, () -> new Card("J2"));
+        assertThrows(IncorrectCardException.class, () -> new Card("Two of clubs"));
+        assertThrows(IncorrectCardException.class, () -> new Card("0d"));
     }
 
     @Test
-    public void checkGetterIsCorrectTest() {
+    public void checkGetterIsCorrectTest() throws IncorrectCardException {
         Card c = new Card("Js");
         Card.Rank r = c.getRank();
         r = Card.Rank.ACE;
@@ -89,7 +90,7 @@ public class CardTest {
     }
 
     @Test
-    public void testStringConstuctor() {
+    public void testStringConstuctor() throws IncorrectCardException {
         Card twoH = new Card("2h");
         Card threeH = new Card("3h");
         Card fourD = new Card("4d");
@@ -105,7 +106,6 @@ public class CardTest {
         assertEquals(sixC, new Card(Card.Rank.SIX, Card.Suit.CLUBS));
         assertEquals(sevenS, new Card(Card.Rank.SEVEN, Card.Suit.SPADES));
         assertEquals(eightS, new Card(Card.Rank.EIGHT, Card.Suit.SPADES));
-
     }
 
 }
