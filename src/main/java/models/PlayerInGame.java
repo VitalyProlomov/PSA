@@ -72,7 +72,7 @@ public class PlayerInGame {
         return hash;
     }
 
-    public PositionType getPositionType() {
+    public PositionType getPosition() {
         return positionType;
     }
 

@@ -38,7 +38,7 @@ public class PlayerInGameTests {
 
         p2 = new PlayerInGame("23");
         assertNotEquals(p1, p2);
-
     }
+
 
 }

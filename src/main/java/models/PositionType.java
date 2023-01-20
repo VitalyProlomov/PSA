@@ -13,5 +13,4 @@ public enum PositionType {
     LJ,
     HJ,
     CO;
-
 }

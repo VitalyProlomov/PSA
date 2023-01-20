@@ -1,10 +1,10 @@
 package models;
 
-import exceptions.IncorrectBoardException;
 import exceptions.IncorrectHandException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Class defining the entity of a game (1 hand played among players).
@@ -19,9 +19,8 @@ public class Game {
         this.bigBlindSize$ = bigBlindSize$;
     }
 
-    // List of all players in the hand, player on index 0 is sitting on dealer position,
-    // then following all players ordered by going clockwise (to the left - SB, BB, LJ, HJ, CO).
-    private ArrayList<PlayerInGame> players;
+    private HashMap<PositionType, PlayerInGame> players = new HashMap<>();
+
     private double extraCashAmount = 0;
     private Date date;
     private final double bigBlindSize$;
@@ -31,6 +30,10 @@ public class Game {
     private StreetDescription flop;
     private StreetDescription turn;
     private StreetDescription river;
+
+    private PlayerInGame winner;
+    private double finalPot;
+    private double rake;
 
     // It is probably better to just make methods, that will
     // return the following info - will save space.
@@ -59,25 +62,51 @@ public class Game {
     }
 
     public ArrayList<PlayerInGame> getPlayers() {
-        return new ArrayList<>(players);
+        return new ArrayList<>(players.values());
+    }
+
+    public HashMap<PositionType, PlayerInGame> getPosPlayersMap() {
+        return new HashMap<PositionType, PlayerInGame>(players);
+    }
+
+    /**
+     * Returns the player in the game with the corresponding hash. If there is
+     * no player in game with such hash, null is returned
+     * @param hash hash field of PlayerInGame
+     * @return player in game with same hash. Or null if no such player is found
+     */
+    public PlayerInGame getPlayer(String hash) {
+        for (PositionType pos : players.keySet()) {
+            PlayerInGame p = players.get(pos);
+
+            if (p.getHash().equals(hash)) {
+                return new PlayerInGame(p);
+            }
+        }
+        return null;
     }
 
     public void setPlayerHand(PositionType pos, ArrayList<Card> hand) throws IncorrectHandException {
         if (hand.size() != 2 || hand.get(0).equals(hand.get(1))) {
             throw new IllegalArgumentException("The hand must consist of 2 different cards");
         }
-        for (PlayerInGame player : players) {
-            if (player.getPositionType() == pos) {
-                player.setHand(hand);
+        players.get(pos).setHand(hand);
+    }
+
+    public void setPlayerHand(String playerHash, Hand hand) throws IncorrectHandException {
+
+        for (PositionType pos : players.keySet()) {
+            if (players.get(pos).getHash().equals(playerHash)) {
+                players.get(pos).setHand(hand);
                 return;
             }
         }
     }
 
     public void setHeroHand(ArrayList<Card> hand) throws IncorrectHandException {
-        for (PlayerInGame p : players) {
-            if (p.getHash().equals("Hero")) {
-                setPlayerHand(p.getPositionType(), hand);
+        for (PositionType pos : players.keySet()) {
+            if (players.get(pos).getHash().equals("Hero")) {
+                setPlayerHand(pos, hand);
                 return;
             }
         }
@@ -86,7 +115,9 @@ public class Game {
     }
 
     public void setPlayers(ArrayList<PlayerInGame> players) {
-        this.players = players;
+        for (PlayerInGame p : players) {
+            this.players.put(p.getPosition(), p);
+        }
     }
 
     public boolean isExtraCash() {
@@ -116,43 +147,109 @@ public class Game {
         return bigBlindSize$ * 0.4;
     }
 
-    public void setPreFlop(StreetDescription preFlop) throws IncorrectBoardException {
-        this.preFlop = new StreetDescription(preFlop.getPotAfterBetting(), preFlop.getBoard(), preFlop.getPlayersAfterBetting(), preFlop.getAllActions());
-    }
-
     public StreetDescription getPreFlop() {
+        if (this.preFlop == null) {
+            return null;
+        }
         return new StreetDescription(preFlop);
     }
 
+    public void setPreFlop(StreetDescription preFlop) {
+        if (this.preFlop == null) {
+            this.preFlop = preFlop;
+            return;
+        }
+        this.preFlop = new StreetDescription(preFlop);
+    }
+
     public StreetDescription getFlop() {
+        if (flop == null) {
+            return null;
+        }
         return new StreetDescription(flop);
     }
 
     public void setFlop(StreetDescription flop) {
+        if (flop == null) {
+            this.flop = null;
+            return;
+        }
         this.flop = new StreetDescription(flop);
     }
 
     public StreetDescription getTurn() {
+        if (turn == null) {
+            return null;
+        }
         return new StreetDescription(turn);
     }
 
     public void setTurn(StreetDescription turn) {
+        if (turn == null) {
+            this.turn = null;
+            return;
+        }
         this.turn = new StreetDescription(turn);
     }
 
     public StreetDescription getRiver() {
+        if (this.river == null) {
+            return null;
+        }
         return new StreetDescription(river);
     }
 
     public void setRiver(StreetDescription river) {
+        if (river == null) {
+            this.river = null;
+            return;
+        }
         this.river = new StreetDescription(river);
     }
 
     public Board getBoard() {
+        if (this.board == null) {
+            return null;
+        }
         return new Board(board);
     }
 
     public void setBoard(Board board) {
+        if (board == null) {
+            this.board = null;
+            return;
+        }
         this.board = new Board(board);
+    }
+
+    public PlayerInGame getWinner() {
+        if (winner == null) {
+            return null;
+        }
+        return new PlayerInGame(winner);
+    }
+
+    public void setWinner(PlayerInGame winner) {
+        if (winner == null) {
+            this.winner = null;
+            return;
+        }
+        this.winner = new PlayerInGame(winner);
+    }
+
+    public double getFinalPot() {
+        return finalPot;
+    }
+
+    public void setFinalPot(double finalPot) {
+        this.finalPot = finalPot;
+    }
+
+    public double getRake() {
+        return rake;
+    }
+
+    public void setRake(double rake) {
+        this.rake = rake;
     }
 }

@@ -4,6 +4,7 @@ import exceptions.IncorrectBoardException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -14,8 +15,9 @@ public class StreetDescription {
     private double potAfterBetting;
     // Will be null for Pre-flop
     private Board board;
-    private ArrayList<PlayerInGame> playersAfterBetting = new ArrayList<>();
+    private HashMap<PositionType, PlayerInGame> playersAfterBetting = new HashMap<>();
     private ArrayList<Action> allActions = new ArrayList<>();
+    private boolean isAllIn = false;
 
     public StreetDescription(double potAfterBetting, Board board, ArrayList<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions)
             throws IncorrectBoardException {
@@ -26,13 +28,21 @@ public class StreetDescription {
             this.board = null;
         }
 
-        this.playersAfterBetting = new ArrayList<>(playersAfterBetting);
+        for (PlayerInGame p : playersAfterBetting) {
+            this.playersAfterBetting.put(p.getPosition(), p);
+        }
+
         this.allActions = new ArrayList<>(allActions);
     }
 
     public StreetDescription(StreetDescription strCopy) {
         this.potAfterBetting = strCopy.potAfterBetting;
-        this.playersAfterBetting = new ArrayList<>(strCopy.playersAfterBetting);
+
+        this.playersAfterBetting = new HashMap<>();
+        for (PlayerInGame p : strCopy.getPlayersAfterBetting()) {
+            this.playersAfterBetting.put(p.getPosition(), p);
+        }
+
         this.allActions = new ArrayList<>(strCopy.allActions);
 
         if (strCopy.board != null) {
@@ -59,22 +69,25 @@ public class StreetDescription {
     }
 
     public ArrayList<PlayerInGame> getPlayersAfterBetting() {
-        return new ArrayList<>(playersAfterBetting);
+        return new ArrayList<>(playersAfterBetting.values());
     }
 
     public void setPlayersAfterBetting(ArrayList<PlayerInGame> playersAfterBetting) {
-        this.playersAfterBetting = new ArrayList<>(playersAfterBetting);
+        this.playersAfterBetting = new HashMap<>();
+        for (PlayerInGame p : playersAfterBetting) {
+            this.playersAfterBetting.put(p.getPosition(), p);
+        }
     }
 
     // I may make it return boolean to show weather the player was added or not
     public void addPlayerAfterBetting(PlayerInGame player) {
-        if (!this.playersAfterBetting.contains(player)) {
-            this.playersAfterBetting.add(player);
+        if (!this.playersAfterBetting.containsKey(player.getPosition())) {
+            this.playersAfterBetting.put(player.getPosition(), player);
         }
     }
 
     public void removePlayerAfterBetting(PlayerInGame player) {
-        this.playersAfterBetting.remove(player);
+        this.playersAfterBetting.remove(player.getPosition());
     }
 
     public double getPotAfterBetting() {
@@ -126,5 +139,13 @@ public class StreetDescription {
         String dRep = dcf.format(potAfterBetting);
         return "(StreetDescription| Board: " + board + ", pot after betting: " + dRep + ", Players left: " + playersAfterBetting +
                  "\n, Actions: " + allActions;
+    }
+
+    public boolean isAllIn() {
+        return isAllIn;
+    }
+
+    public void setAllIn(boolean allIn) {
+        isAllIn = allIn;
     }
 }

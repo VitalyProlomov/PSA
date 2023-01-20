@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
+import static models.PositionType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameInfoParserTest {
+    public ArrayList<PositionType> orderedPositions =
+            new ArrayList<>(List.of(SB, BB, LJ, HJ, CO, BTN));
     @Test
     public void testFullGameInfoSplitting() throws IOException, IncorrectCardException, IncorrectHandException, IncorrectBoardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
@@ -44,19 +44,19 @@ public class GameInfoParserTest {
         assertEquals(date, topG.getDate());
 
         ArrayList<PlayerInGame> correctPlayers = new ArrayList<>(List.of(
-                new PlayerInGame("96112e6e", PositionType.BTN, 42.6),
-                new PlayerInGame("bdfdf5d3", PositionType.SB, 35.23),
+                new PlayerInGame("96112e6e", BTN, 42.6),
+                new PlayerInGame("bdfdf5d3", SB, 35.23),
                 new PlayerInGame("Hero", PositionType.BB, 58.12),
                 new PlayerInGame("906a880b", PositionType.LJ, 148.44),
                 new PlayerInGame("40b398d7", PositionType.HJ, 30.35),
-                new PlayerInGame("805c6855", PositionType.CO, 21.99)
+                new PlayerInGame("805c6855", CO, 21.99)
         ));
 
-        assertEquals(correctPlayers, topG.getPlayers());
+        assertEquals(new HashSet<>(correctPlayers), new HashSet<>(topG.getPlayers()));
 
         ArrayList<Card> heroHand = new ArrayList<>(List.of(new Card("Ad"), new Card("Ts")));
         correctPlayers.get(2).setHand(heroHand);
-        assertEquals(topG.getPlayers().get(2).getHand(), new Hand(heroHand.get(0), heroHand.get(1)));
+        assertEquals(topG.getPosPlayersMap().get(PositionType.BB).getHand(), new Hand(heroHand.get(0), heroHand.get(1)));
 
         ArrayList<Action> actions = new ArrayList<>();
         actions.add(new Action(Action.ActionType.BET, correctPlayers.get(1), 0.1, 0));
@@ -68,8 +68,9 @@ public class GameInfoParserTest {
         actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(1), 0, 0.98));
         actions.add(new Action(Action.ActionType.CALL, correctPlayers.get(2), 0.38, 0.98));
 
-        ArrayList<PlayerInGame> left = new ArrayList<>(List.of(topG.getPlayers().get(2), topG.getPlayers().get(5)));
+        ArrayList<PlayerInGame> left = new ArrayList<>(List.of(correctPlayers.get(2), correctPlayers.get(5)));
         StreetDescription correctPreFlop = new StreetDescription(1.36, null, left ,actions);
+        //for (PositionType pos : orderedPositions) {
         assertEquals(correctPreFlop, topG.getPreFlop());
 
         actions = new ArrayList<>();
@@ -78,9 +79,33 @@ public class GameInfoParserTest {
 
         StreetDescription correctFLop = new StreetDescription(1.36, new Board("8d" , "6d", "Qh"),
                 new ArrayList<PlayerInGame>(List.of(correctPlayers.get(2), correctPlayers.get(5))), actions);
-//        System.out.println(topG.getFlop());
-//        System.out.println(correctFLop);
+        correctFLop.setPlayersAfterBetting(new ArrayList<>(List.of(correctPlayers.get(2), correctPlayers.get(5))));
+
         assertEquals(topG.getFlop(), correctFLop);
+
+        actions = new ArrayList<>(List.of(new Action(Action.ActionType.CHECK, correctPlayers.get(2), 0, 1.36),
+        new Action(Action.ActionType.CHECK, correctPlayers.get(5), 0, 1.36)));
+
+        StreetDescription correctTurn = new StreetDescription(1.36, new Board("8d" , "6d", "Qh", "4s"),
+                new ArrayList<>(List.of(correctPlayers.get(2), correctPlayers.get(5))), actions);
+
+        assertEquals(correctTurn, topG.getTurn());
+
+        actions = new ArrayList<>(List.of(new Action(Action.ActionType.CHECK, correctPlayers.get(2), 0, 1.36),
+                new Action(Action.ActionType.CHECK, correctPlayers.get(5), 0, 1.36)));
+        StreetDescription correctRiver = new StreetDescription(1.36, new Board("8d" , "6d", "Qh", "4s", "9s"),
+                new ArrayList<>(List.of(correctPlayers.get(2), correctPlayers.get(5))), actions);
+
+        assertEquals(correctRiver, topG.getRiver());
+
+        double finalPot = 1.36;
+        double rake = 0.06;
+
+        PlayerInGame winner = new PlayerInGame(correctPlayers.get(5));
+
+        assertEquals(winner, topG.getWinner());
+        assertEquals(finalPot, topG.getFinalPot());
+        assertEquals(rake, topG.getRake());
     }
 
     @Test
