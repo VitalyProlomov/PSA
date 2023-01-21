@@ -17,6 +17,12 @@ public class Card {
         this.suit = suit;
     }
 
+    /**
+     * Constructs the Card by its String representation
+     * @param strRepresentation String, that consists of the rank and the suit - both
+     *                          represented by 1 character (standard notation is used)
+     * @throws IncorrectCardException if the parameter is incorrect (either rank or suit are misspelled)
+     */
     public Card(String strRepresentation) throws IncorrectCardException {
         if (strRepresentation.length() != 2) {
             throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
@@ -127,6 +133,12 @@ public class Card {
     }
 
 
+    /**
+     * Card is equal to another object only if it is another Card.
+     * Cards are considered equal if both Rank and a Suit are equal.
+     * @param obj
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

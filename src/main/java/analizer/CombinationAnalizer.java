@@ -1,20 +1,22 @@
 package analizer;
 
 import exceptions.IncorrectBoardException;
-import exceptions.IncorrectHandException;
 import models.Board;
 import models.Card;
-import models.ComboBoardPair;
+import models.ComboCardsPair;
 import models.Hand;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
- *
+ * Class that contains methods for analyzing the board and identifying the
+ * combination that are present on the board.
  */
 public class CombinationAnalizer {
-    // static public final int BOARD_SIZE = 5;
-
+    /**
+     * Names of all possible combinations
+     */
     static public enum Combinations {
         HIGH_CARD,
         PAIR,
@@ -36,7 +38,11 @@ public class CombinationAnalizer {
      * @return true if the board is valid, false otherwise.
      */
     public static boolean isBoardValid(Board board, Hand hand) throws IncorrectBoardException {
-        return isBoardValid(board, hand.getCardsAsArrayList());
+        ArrayList<Card> ext = board.getCards();
+        if (hand != null) {
+            ext.addAll(hand.getCardsAsArrayList());
+        }
+        return isBoardValid(ext);
     }
 
     /**
@@ -46,48 +52,27 @@ public class CombinationAnalizer {
      * @param deadCards all the cards not on the board that were either dealt to players or exposed or burned.
      * @return true if the board is valid, false otherwise.
      */
-    public static boolean isBoardValid(Board board, ArrayList<Card> deadCards)
-            throws IncorrectBoardException {
-        if (deadCards != null) {
-            ArrayList<Card> ext = board.getCards();
-            ext.addAll(deadCards);
-            board.setCards(ext);
-        }
-        return isBoardValid(board);
+    public static boolean isBoardValid(Board board, ArrayList<Card> deadCards) {
+        ArrayList<Card> ext = board.getCards();
+        ext.addAll(deadCards);
+        return isBoardValid(ext);
     }
 
     /**
-     * Checks if the given set of cards is valid and could exist iin real life.
+     * Checks if the given set of cards is valid and could exist in real life.
      *
-     * @param extendedBoard Community cards and hand cards
+     * @param extendedBoard all the cards that are being checked
      * @return true if the board is valid, false otherwise.
      */
-    public static boolean isBoardValid(ArrayList<Card> extendedBoard)
-            throws IncorrectBoardException {
-        Board board = new Board(extendedBoard);
-        return isBoardValid(board);
-    }
-
-    /**
-     * Checks if the given set of cards is valid and could exist iin real life.
-     *
-     * @param extendedBoard community cards
-     * @return true if the board is valid, false otherwise.
-     */
-    public static boolean isBoardValid(Board extendedBoard) {
-        for (int cur = 0; cur < extendedBoard.size(); ++cur) {
-            for (int j = 0; j < cur; ++j) {
-                if (extendedBoard.get(cur).equals(extendedBoard.get(j))) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    public static boolean isBoardValid(ArrayList<Card> extendedBoard) {
+        HashSet<Card> set = new HashSet<>(extendedBoard);
+        return extendedBoard.size() == set.size();
     }
 
     /**
      * Sort Cards on board by rank. Keeps the order of same cards.
      * Uses min sort
+     *
      * @param cards arrayList of cards that need to be sorted (could be any amount).
      */
     public static void sortBoard(ArrayList<Card> cards) {
@@ -127,24 +112,22 @@ public class CombinationAnalizer {
 
     /**
      * Finds the best combination possible, using the community cards on the board and the hand given
-     *
+     * Amount of cards of the board and the hand given must sum up to at least 5.
      * @param board community cards
      * @param hand  hand of the player, that will be used to make combination.
      * @return a pair of combination and the board that recreates this combination (the exact 5 cards)
+     * @throws IncorrectBoardException
+     * @exception IllegalArgumentException if amount of cards of the board and the hand combined is less than 5.
      */
-    public static ComboBoardPair recognizeCombinationOnBoard(Board board, ArrayList<Card> hand)
-            throws IncorrectHandException, IncorrectBoardException {
-        if (hand != null && hand.size() != 2) {
-            throw new IncorrectHandException();
-        }
+    public static ComboCardsPair recognizeCombinationOnBoard(Board board, Hand hand)
+           throws IncorrectBoardException {
         if (!isBoardValid(board, hand)) {
             throw new IncorrectBoardException();
         }
 
         ArrayList<Card> extendedCards = new ArrayList<Card>(board.getCards());
         if (hand != null) {
-            extendedCards.add(hand.get(0));
-            extendedCards.add(hand.get(1));
+            extendedCards.addAll(hand.getCardsAsArrayList());
         }
 
         if (extendedCards.size() < 5) {
@@ -154,20 +137,62 @@ public class CombinationAnalizer {
         // Sorts the board by increasing the card rank.
         sortBoard(extendedCards);
 
-        Board combBoard = findBestRoyalFlush(extendedCards);
-        if (combBoard != null) {
-            return new ComboBoardPair(Combinations.FLUSH_ROYAL, combBoard);
+        ArrayList<Card> combCards = findBestRoyalFlush(extendedCards);
+        if (combCards != null) {
+            return new ComboCardsPair(Combinations.FLUSH_ROYAL, combCards);
         }
 
-        combBoard = findBestStraightFlush(extendedCards);
-        if (combBoard != null) {
-            return new ComboBoardPair(Combinations.STRAIGHT_FLUSH, combBoard);
+        combCards = findBestStraightFlush(extendedCards);
+        if (combCards != null) {
+            return new ComboCardsPair(Combinations.STRAIGHT_FLUSH, combCards);
+        }
+
+//        combCards = findBestQuads(extendedCards);
+//        if (combCards != null) {
+//            return new ComboCardsPair(Combinations.QUADS, combCards);
+//        }
+
+        return null;
+    }
+
+    /**
+     * @param extendedCards Checks if there is a Royal flush on the board.
+     * @return Board containing the cards of the combination or {@code}null if the combination was not found
+     * @throws IncorrectBoardException in case the cards do not form a valid board
+     */
+    private static ArrayList<Card> findBestRoyalFlush(ArrayList<Card> extendedCards)
+            throws IncorrectBoardException {
+        Card.Suit majorSuit = countFlushSuit(extendedCards);
+        if (majorSuit == null) {
+            return null;
+        }
+
+        ArrayList<Card> suitedCards = new ArrayList<>();
+        for (int i = 0; i < extendedCards.size(); ++i) {
+            if (extendedCards.get(i).getSuit() == majorSuit) {
+                suitedCards.add(extendedCards.get(i));
+            }
+        }
+
+        int sum = 0;
+        for (Card card : suitedCards) {
+            sum += card.getRank().value;
+        }
+        // A + K + Q + J + T = 14 + 13 + 12 + 11 + 10 = 60
+        if (sum == 60) {
+            return suitedCards;
         }
         return null;
     }
 
-    private static Board findBestStraightFlush(ArrayList<Card> extendedCards)
-            throws IncorrectBoardException {
+    /**
+     * Checks if there is a straight flush on the board and finds the best one of there is.
+     *
+     * @param extendedCards cards being checked
+     * @return Board containing the cards of the combination or {@code}null if the combination was not found
+     * @throws IncorrectBoardException in case the cards do not form a valid board
+     */
+    private static ArrayList<Card> findBestStraightFlush(ArrayList<Card> extendedCards) throws IncorrectBoardException {
         Card.Suit majorSuit = countFlushSuit(extendedCards);
         if (majorSuit == null) {
             return null;
@@ -197,49 +222,22 @@ public class CombinationAnalizer {
                 for (int j = 0; j < 5; ++j) {
                     sf.add(suitedCards.get(j + i));
                 }
-                return new Board(sf);
+                return sf;
             }
-        }
-        return null;
-    }
-
-    // Should think if leave returning arrayList or some else
-    private static Board findBestRoyalFlush(ArrayList<Card> extendedCards) throws IncorrectBoardException {
-        Card.Suit majorSuit = countFlushSuit(extendedCards);
-        if (majorSuit == null) {
-            return null;
-        }
-
-        ArrayList<Card> suitedCards = new ArrayList<>();
-        for (int i = 0; i < extendedCards.size(); ++i) {
-            if (extendedCards.get(i).getSuit() == majorSuit) {
-                suitedCards.add(extendedCards.get(i));
-            }
-        }
-
-        int sum = 0;
-        for (Card card : suitedCards) {
-            sum += card.getRank().value;
-        }
-        // A + K + Q + J + T = 14 + 13 + 12 + 11 + 10 = 60
-        if (sum == 60) {
-            return new Board(suitedCards);
         }
         return null;
     }
 
 
     /**
-     * Returns the suit that makes a flush on board. If there is no such suit (5 or more cards
-     * of one suit), then null is returned
+     * Checks if the flush is present on the given board.
      *
      * @param extendedCards The board that is checked for flush suit.
      * @return suit of cards that make flush, null if no flush is present on the board.
      */
     public static Card.Suit countFlushSuit(ArrayList<Card> extendedCards) throws IncorrectBoardException {
         if (!isBoardValid(extendedCards)) {
-            throw new IncorrectBoardException("The board is incorrect. It can have no more then 5 cards and " +
-                    "must be valid.");
+            throw new IncorrectBoardException("The board is incorrect. It must be valid.");
         }
         int s = 0;
         int c = 0;

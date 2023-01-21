@@ -2,9 +2,7 @@ package models;
 
 import exceptions.IncorrectHandException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Class defining the entity of a game (1 hand played among players).
@@ -61,8 +59,8 @@ public class Game {
         this.date = date;
     }
 
-    public ArrayList<PlayerInGame> getPlayers() {
-        return new ArrayList<>(players.values());
+    public HashSet<PlayerInGame> getPlayers() {
+        return new HashSet<>(players.values());
     }
 
     public HashMap<PositionType, PlayerInGame> getPosPlayersMap() {
@@ -115,10 +113,20 @@ public class Game {
     }
 
     public void setPlayers(ArrayList<PlayerInGame> players) {
+        // Should think about working w nulls.
+        this.players = new HashMap<>();
         for (PlayerInGame p : players) {
             this.players.put(p.getPosition(), p);
         }
     }
+
+    public void setPlayers(Set<PlayerInGame> players) {
+        this.players = new HashMap<>();
+        for (PlayerInGame p : players) {
+            this.players.put(p.getPosition(), p);
+        }
+    }
+
 
     public boolean isExtraCash() {
         return extraCashAmount != 0;

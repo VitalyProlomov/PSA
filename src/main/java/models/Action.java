@@ -4,8 +4,9 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 /**
- * Class that describes what opponent has done.
- * Holds info about position, type of action (check, fold, bet, call, raise) and (where applicable) amount of bet.
+ * Class that describes the single action in game by a player.
+ * Holds info about position, type of action (check, fold, bet, call, raise)
+ * and (where applicable) the amount of bet.
  */
 public class Action {
     public enum ActionType {
@@ -19,22 +20,12 @@ public class Action {
     private ActionType actionType;
     private double amount;
     private PlayerInGame playerInGame;
-    private double potBeforeAction;
-
-//    public Action(ActionType actionType, PlayerInGame playerInGame) {
-//        this(actionType, playerInGame, 0);
-//    }
-//
-//    public Action(ActionType actionType, PlayerInGame playerInGame, double amount) {
-//
-//    }
+    private final double potBeforeAction;
 
     public Action(ActionType actionType, PlayerInGame playerInGame, double amount, double potBeforeAction) {
         this.actionType = actionType;
-        this.playerInGame = playerInGame;
-        // if (actionType == ActionType.BET || actionType == ActionType.RAISE || actionType == ActionType.CALL) {
+        this.playerInGame = new PlayerInGame(playerInGame);
         this.amount = amount;
-
         this.potBeforeAction = potBeforeAction;
     }
 
@@ -63,6 +54,10 @@ public class Action {
         this.playerInGame = playerInGame;
     }
 
+    /**
+     * Action is equal to another object only if it is another Action and the following
+     * fields are equal: actionType, potBeforeBetting, amount and playerInGame
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

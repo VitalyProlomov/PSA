@@ -85,4 +85,36 @@ public class BoardTest {
         b.setCards(cards);
         assertNotEquals(b, copy);
     }
+
+    @Test
+    public void testIncorrectBoard() throws IncorrectCardException, IncorrectBoardException {
+        assertThrows(IncorrectBoardException.class, () -> new Board("4c", "7d", "Ks", "2s", "Ks"));
+        assertThrows(IncorrectBoardException.class, () -> new Board("Qs", "Qs", "As", "2s", "Ks"));
+        assertThrows(IncorrectBoardException.class, () -> new Board(
+                new Card("Qs"),
+                new Card("Qs"),
+                new Card("As"),
+                new Card("2s"),
+                new Card("Ks")
+        ));
+
+        ArrayList<Card> cards = new ArrayList<>(List.of(
+                new Card("Js"),
+                new Card("Qs"),
+                new Card("As"),
+                new Card("As"),
+                new Card("Ks")
+        ));
+        assertThrows(IncorrectBoardException.class, () -> new Board(cards));
+
+        assertThrows(IncorrectBoardException.class, () -> new Board("2c", "2c", "3d", "Ad"));
+
+        assertThrows(IncorrectBoardException.class, () ->new Board("5c", "Qd", "2c", "8d", "Qd"));
+
+        assertThrows(IncorrectBoardException.class, () -> new Board("6h", "9d", "8h", "Ts", "Ts"));
+
+        assertDoesNotThrow(() -> new Board("3c", "3s", "3d"));
+
+    }
+
 }

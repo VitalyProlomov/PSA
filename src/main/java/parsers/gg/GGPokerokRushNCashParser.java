@@ -200,7 +200,7 @@ public class GGPokerokRushNCashParser implements Parser {
                 !wordsInLines.get(curLine).get(1).equals("shows")) {
             String hash = wordsInLines.get(curLine).get(0);
             hash = hash.substring(0, hash.length() - 1);
-            PlayerInGame curPlayer = game.getPlayers().get(0);
+            PlayerInGame curPlayer = null;
             for (PlayerInGame p : game.getPlayers()) {
                 if (p.getHash().equals(hash)) {
                     curPlayer = p;
@@ -208,7 +208,7 @@ public class GGPokerokRushNCashParser implements Parser {
                 }
             }
             // For me
-            if (!curPlayer.getHash().equals(hash)) {
+            if (curPlayer == null) {
                 throw new RuntimeException("Code is incorrect - couldn`t find the player " +
                         "with given hash in array of players in game.");
             }

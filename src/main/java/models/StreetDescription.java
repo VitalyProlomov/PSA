@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Class used for storing information about one street - all the action,
@@ -73,6 +74,13 @@ public class StreetDescription {
     }
 
     public void setPlayersAfterBetting(ArrayList<PlayerInGame> playersAfterBetting) {
+        this.playersAfterBetting = new HashMap<>();
+        for (PlayerInGame p : playersAfterBetting) {
+            this.playersAfterBetting.put(p.getPosition(), p);
+        }
+    }
+
+    public void setPlayersAfterBetting(Set<PlayerInGame> playersAfterBetting) {
         this.playersAfterBetting = new HashMap<>();
         for (PlayerInGame p : playersAfterBetting) {
             this.playersAfterBetting.put(p.getPosition(), p);
