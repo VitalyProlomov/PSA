@@ -103,7 +103,7 @@ public class GGPokerokRushNCashParser implements Parser {
 
         Card c1 = new Card(wordsInLines.get(curLine).get(3).substring(1));
         Card c2 = new Card((wordsInLines.get(curLine).get(4).substring(0, 2)));
-        ArrayList<Card> heroHand = new ArrayList<>(List.of(c1, c2));
+        Hand heroHand = new Hand(c1, c2);
         game.setHeroHand(heroHand);
     }
 
@@ -202,7 +202,7 @@ public class GGPokerokRushNCashParser implements Parser {
             hash = hash.substring(0, hash.length() - 1);
             PlayerInGame curPlayer = null;
             for (PlayerInGame p : game.getPlayers()) {
-                if (p.getHash().equals(hash)) {
+                if (p.getId().equals(hash)) {
                     curPlayer = p;
                     break;
                 }

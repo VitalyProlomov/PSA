@@ -7,9 +7,6 @@ import models.Hand;
 import models.PlayerInGame;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerInGameTests {
@@ -18,14 +15,14 @@ public class PlayerInGameTests {
         PlayerInGame p = new PlayerInGame("96112e6e");
         Hand h = new Hand(new Card("Ad"), new Card("4c"));
         p.setHand(h);
-        assertEquals(p.getHand().getFirstCard(), h.getFirstCard());
-        assertEquals(p.getHand().getSecondCard(), h.getSecondCard());
+        assertEquals(p.getHand(), h);
+        assertEquals(p.getHand(), h);
 
         assertThrows(IncorrectHandException.class,
-                () -> p.setHand(new ArrayList<>(List.of(new Card("Jd"), new Card("Jd")))));
+                () -> p.setHand(new Hand(new Card("Jd"), new Card("Jd"))));
 
         h = new Hand(new Card("Kd"), new Card("Jd"));
-        p.setHand(new ArrayList<>(List.of(new Card("Kd"), new Card("Jd"))));
+        p.setHand(new Hand(new Card("Kd"), new Card("Jd")));
 
         assertEquals(p.getHand(), h);
     }

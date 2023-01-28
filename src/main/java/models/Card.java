@@ -3,7 +3,6 @@ package models;
 import exceptions.IncorrectCardException;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * The class for Card entity. Card has a rank and a suit.
@@ -19,6 +18,7 @@ public class Card {
 
     /**
      * Constructs the Card by its String representation
+     *
      * @param strRepresentation String, that consists of the rank and the suit - both
      *                          represented by 1 character (standard notation is used)
      * @throws IncorrectCardException if the parameter is incorrect (either rank or suit are misspelled)
@@ -62,7 +62,6 @@ public class Card {
                             "assigned incorrectly.");
                 }
             }
-
         }
 
         char suitChar = strRepresentation.toLowerCase(Locale.ROOT).charAt(1);
@@ -75,8 +74,18 @@ public class Card {
         } else if (suitChar == 'd') {
             suit = Suit.DIAMONDS;
         } else {
-            throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
-                    " suit = 1st letter (ex: 4 of spades = 4s)");
+            if (suitChar == '♠') {
+                suit = Suit.SPADES;
+            } else if (suitChar == '♥') {
+                suit = Suit.HEARTS;
+            } else if (suitChar == '♦') {
+                suit = Suit.DIAMONDS;
+            } else if (suitChar == '♣') {
+                suit = Suit.CLUBS;
+            } else {
+                throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
+                        " suit = 1st letter (ex: 4 of spades = 4s)");
+            }
         }
     }
 
@@ -85,15 +94,15 @@ public class Card {
      * Suit of the card - 1 of 4. Has a field w string icon.
      */
     public enum Suit {
-        HEARTS("♥"),
-        SPADES("♠"),
-        DIAMONDS("♦"),
-        CLUBS("♣");
+        HEARTS('♥'),
+        SPADES('♠'),
+        DIAMONDS('♦'),
+        CLUBS('♣');
 
 
-        public final String icon;
+        public final char icon;
 
-        Suit(String icon) {
+        Suit(char icon) {
             this.icon = icon;
         }
 
@@ -136,6 +145,7 @@ public class Card {
     /**
      * Card is equal to another object only if it is another Card.
      * Cards are considered equal if both Rank and a Suit are equal.
+     *
      * @param obj
      * @return true if the objects are equal, false otherwise
      */
@@ -152,7 +162,15 @@ public class Card {
 
     @Override
     public int hashCode() {
-        return Objects.hash(rank, suit);
+        int suitHash = 0;
+        if (suit == Suit.HEARTS) {
+            suitHash = 1;
+        } else if (suit == Suit.CLUBS) {
+            suitHash = 2;
+        } else if (suit == Suit.SPADES) {
+            suitHash = 3;
+        }
+        return (suitHash * 13) + rank.value - 1;
     }
 
     @Override

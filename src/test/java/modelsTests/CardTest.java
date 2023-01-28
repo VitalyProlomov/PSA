@@ -108,6 +108,34 @@ public class CardTest {
         assertEquals(eightS, new Card(Card.Rank.EIGHT, Card.Suit.SPADES));
     }
 
+    @Test
+    public void testHashCode() throws IncorrectCardException {
+
+        char[] symbols = new char[] {'♦', '♥', '♣', '♠'};
+        int hash = 1;
+        for (char j : symbols) {
+            for (int i = 2; i <= 14; ++i) {
+                String repr = String.valueOf(i);
+                if (i == 10) {
+                    repr = "T";
+                } else if (i == 11) {
+                    repr = "J";
+                } else if (i == 12) {
+                    repr = "Q";
+                } else if (i == 13) {
+                    repr = "K";
+                } else if (i == 14) {
+                    repr = "A";
+                }
+
+                repr += j;
+
+                assertEquals(hash++, (new Card(repr).hashCode()));
+                System.out.println(new Card(repr).toString() + ", Hash: " + new Card(repr).hashCode());
+            }
+        }
+    }
+
 //    @Test
 //    public void equalsHashCodeContracts() {
 //        EqualsVerifier.forClass(Card.class).verify();

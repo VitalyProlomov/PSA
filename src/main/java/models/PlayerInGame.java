@@ -2,140 +2,172 @@ package models;
 
 import exceptions.IncorrectHandException;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Class that represents the player in a specific game.
+ */
 public class PlayerInGame {
-    private final String hash;
+    private final String id;
     private PositionType positionType;
     private UserProfile ref;
     private double balance$;
     private Hand hand;
 
-    public PlayerInGame(String hash) {
-        this.hash = hash;
+    /**
+     * Constructs new PlayerInGame with given hash
+     */
+    public PlayerInGame(String id) {
+        this.id = id;
     }
 
-    public PlayerInGame(String hash, PositionType position, double balance$) {
-        this(hash, position, balance$, null);
+    /**
+     * Constructs new PlayerInGame with given hash, position in the table
+     * and balance in dollars.
+     */
+    public PlayerInGame(String id, PositionType position, double balance$) {
+        this(id, position, balance$, null);
     }
 
-    public PlayerInGame(String hash, PositionType position, double balance, UserProfile ref) {
-        this.hash = hash;
+    /**
+     * Constructs new PlayerInGame with given hash, position in the table,
+     * balance in dollars and a Userprofile object (link to the real user).
+     */
+    public PlayerInGame(String id, PositionType position, double balance, UserProfile ref) {
+        this.id = id;
         this.positionType = position;
         this.balance$ = balance;
+        // Do not construct new UserProfile
         this.ref = ref;
     }
 
+    /**
+     * Constructs new PlayerInGame, copying all the fields of the given PlayerInGame
+     * @param copyPlayer Player, whose fields are going to be copied.
+     */
     public PlayerInGame(PlayerInGame copyPlayer) {
-        this.hash = copyPlayer.hash;
+        this.id = copyPlayer.id;
         this.positionType = copyPlayer.positionType;
         this.balance$ = copyPlayer.balance$;
         this.ref = copyPlayer.ref;
-        this.hand = copyPlayer.hand;
-        this.vpip = copyPlayer.vpip;
-        this.threeBetPercentage = copyPlayer.threeBetPercentage;
-        this.handsPlayed = copyPlayer.handsPlayed;
+        if (copyPlayer.hand != null) {
+            this.hand = new Hand(copyPlayer.hand);
+        }
+
+//        this.vpip = copyPlayer.vpip;
+//        this.threeBetPercentage = copyPlayer.threeBetPercentage;
+//        this.handsPlayed = copyPlayer.handsPlayed;
     }
 
-    // Not sure if i need that, but will leave for now
-    // Temporary stats - makes sense to understand how they are percieved
-    private int vpip;
-    private int threeBetPercentage;
-    private int handsPlayed;
+//    private int vpip;
+//    private int threeBetPercentage;
+//    private int handsPlayed;
 
-    public int getVpip() {
-        return vpip;
+    /**
+     * @return id of the player - string identification of the player in current session
+     */
+    public String getId() {
+        return id;
     }
 
-    public void setVpip(int vpip) {
-        this.vpip = vpip;
-    }
-
-    public int getThreeBetPercentage() {
-        return threeBetPercentage;
-    }
-
-    public void setThreeBetPercentage(int threeBetPercentage) {
-        this.threeBetPercentage = threeBetPercentage;
-    }
-
-    public int getHandsPlayed() {
-        return handsPlayed;
-    }
-
-    public void setHandsPlayed(int handsPlayed) {
-        this.handsPlayed = handsPlayed;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
+    /**
+     * @return position of the player in table.
+     */
     public PositionType getPosition() {
         return positionType;
     }
 
+    /**
+     * Sets position of the player in table.
+     * @param positionType position to set (no validation, so make sure ypu put correct position)
+     */
     public void setPositionType(PositionType positionType) {
         this.positionType = positionType;
     }
 
+    /**
+     * @return UserProfile that is linked to the current player in game
+     */
     public UserProfile getRef() {
         return ref;
     }
 
+    /**
+     * Sets UserProfile to the current player
+     * @param ref UserProfile link. Setting the actual object, NOT COPY.
+     *            SO ALL THE CHANGES OUTSIDE THE CLASS WILL BE SEEN
+     */
     public void setRef(UserProfile ref) {
         this.ref = ref;
     }
 
+    /**
+     * @return balance of this player in dollars
+     */
     public double getBalance() {
         return balance$;
     }
 
+    /**
+     * Sets balance of that player
+     * @param balance balance of that player in dollars
+     */
     public void setBalance(double balance) {
         this.balance$ = balance;
     }
 
+    /**
+     * PlayerInGame can be equal to another object only if that is another PlayerInGame
+     * @param obj
+     * @return true i the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null || obj.getClass() != PlayerInGame.class) {
             return false;
         }
         // Maybe I should change this to not just comparing the hashes
-        return ((PlayerInGame) obj).hash.equals(this.hash);
+        return ((PlayerInGame) obj).id.equals(this.id);
 
     }
 
+    /**
+     * Returns hashcode of this object only using the id field
+     * @return
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(hash);
+        return Objects.hash(id);
     }
 
+    /**
+     *
+     * @return string representation of player in game like following:
+     * (PlayerInGame| UserName: x, Id: h, Pos: p, Balance: b)
+     * where x is the name of userName attached to PlayerInGame (if userProfile is not defined, x = _UNDEFINED_),
+     * h is id, p is position, b is balance.
+     */
     @Override
     public String toString() {
-        String rep = "(PlayerInGame| {UserName: ";
+        String rep = "(PlayerInGame| UserName: ";
         if (ref != null) {
             rep +=  ref.userName;
         } else {
             rep += "_UNDEFINED_";
         }
-        rep += ", Hash: " + hash + ", Pos: " + positionType + ", Balance: " + balance$ + "})";
+        rep += ", Id: " + id + ", Pos: " + positionType + ", Balance: " + balance$ + ")";
         return rep;
     }
 
     public Hand getHand() throws IncorrectHandException {
-        return new Hand(hand.getFirstCard(), hand.getSecondCard());
+        return new Hand(hand);
     }
 
-    public void setHand(ArrayList<Card> hand) throws IncorrectHandException {
-        if (hand.size() != 2 || hand.get(0).equals(hand.get(1))) {
-            throw new IncorrectHandException();
-        }
 
-        this.hand = new Hand(hand.get(0), hand.get(1));
-    }
-
-    public void setHand(Hand hand) throws IncorrectHandException {
-        this.hand = new Hand(hand.getFirstCard(), hand.getSecondCard());
+    public void setHand(Hand hand){
+        this.hand = new Hand(hand);
     }
 }

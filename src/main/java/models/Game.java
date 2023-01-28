@@ -10,8 +10,15 @@ import java.util.*;
  * (if revealed) and other.
  */
 public class Game {
+    // Hope that it is unique for every game. But I will probably need to
+    // add the date as the key too. (And add in equals)
     private final String gameId;
 
+    /**
+     * Constructs a new game with given ID and BB (given in dollars)
+     * @param gameId Id of the game from PokerCraft parsed text view of the game
+     * @param bigBlindSize$ value of 1 big blind in dollars
+     */
     public Game(String gameId, double bigBlindSize$) {
         this.gameId = gameId;
         this.bigBlindSize$ = bigBlindSize$;
@@ -19,10 +26,11 @@ public class Game {
 
     private HashMap<PositionType, PlayerInGame> players = new HashMap<>();
 
+    // Amount of dollars as a cash drop (or 0 if there is no cash drop)
     private double extraCashAmount = 0;
     private Date date;
     private final double bigBlindSize$;
-    private Board board;
+
 
     private StreetDescription preFlop;
     private StreetDescription flop;
@@ -70,40 +78,48 @@ public class Game {
     /**
      * Returns the player in the game with the corresponding hash. If there is
      * no player in game with such hash, null is returned
-     * @param hash hash field of PlayerInGame
+     * @param hash hash field of PlayerInGame to get
      * @return player in game with same hash. Or null if no such player is found
      */
     public PlayerInGame getPlayer(String hash) {
         for (PositionType pos : players.keySet()) {
             PlayerInGame p = players.get(pos);
 
-            if (p.getHash().equals(hash)) {
+            if (p.getId().equals(hash)) {
                 return new PlayerInGame(p);
             }
         }
         return null;
     }
 
-    public void setPlayerHand(PositionType pos, ArrayList<Card> hand) throws IncorrectHandException {
-        if (hand.size() != 2 || hand.get(0).equals(hand.get(1))) {
-            throw new IllegalArgumentException("The hand must consist of 2 different cards");
-        }
+    /**
+     * Sets the hand of the player on given poosition to the given hand
+     * @param pos position of the player
+     * @param hand Hand to set
+     * @throws IncorrectHandException if
+     */
+    public void setPlayerHand(PositionType pos, Hand hand) {
         players.get(pos).setHand(hand);
     }
 
     public void setPlayerHand(String playerHash, Hand hand) throws IncorrectHandException {
 
         for (PositionType pos : players.keySet()) {
-            if (players.get(pos).getHash().equals(playerHash)) {
+            if (players.get(pos).getId().equals(playerHash)) {
                 players.get(pos).setHand(hand);
                 return;
             }
         }
     }
 
-    public void setHeroHand(ArrayList<Card> hand) throws IncorrectHandException {
+    /**
+     * Sets Hero`s hand to the given hand
+     * @param hand
+     * @throws IncorrectHandException
+     */
+    public void setHeroHand(Hand hand) throws IncorrectHandException {
         for (PositionType pos : players.keySet()) {
-            if (players.get(pos).getHash().equals("Hero")) {
+            if (players.get(pos).getId().equals("Hero")) {
                 setPlayerHand(pos, hand);
                 return;
             }
@@ -140,16 +156,12 @@ public class Game {
         extraCashAmount = amount;
     }
 
-//    public StreetDescription getPreFlop() {
-//        return preFlop;
-//    }
-
     public double getExtraCashAmount() {
         return extraCashAmount;
     }
 
     public double getSB() {
-        if (bigBlindSize$ % 2 == 0) {
+        if (bigBlindSize$ * 100 % 2 == 0) {
             return bigBlindSize$ / 2;
         }
         return bigBlindSize$ * 0.4;
@@ -163,8 +175,8 @@ public class Game {
     }
 
     public void setPreFlop(StreetDescription preFlop) {
-        if (this.preFlop == null) {
-            this.preFlop = preFlop;
+        if (preFlop == null) {
+            this.preFlop = null;
             return;
         }
         this.preFlop = new StreetDescription(preFlop);
@@ -215,20 +227,20 @@ public class Game {
         this.river = new StreetDescription(river);
     }
 
-    public Board getBoard() {
-        if (this.board == null) {
-            return null;
-        }
-        return new Board(board);
-    }
-
-    public void setBoard(Board board) {
-        if (board == null) {
-            this.board = null;
-            return;
-        }
-        this.board = new Board(board);
-    }
+//    public Board getBoard() {
+//        if (this.board == null) {
+//            return null;
+//        }
+//        return new Board(board);
+//    }
+//
+//    public void setBoard(Board board) {
+//        if (board == null) {
+//            this.board = null;
+//            return;
+//        }
+//        this.board = new Board(board);
+//    }
 
     public PlayerInGame getWinner() {
         if (winner == null) {

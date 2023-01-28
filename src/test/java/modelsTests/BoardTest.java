@@ -114,7 +114,15 @@ public class BoardTest {
         assertThrows(IncorrectBoardException.class, () -> new Board("6h", "9d", "8h", "Ts", "Ts"));
 
         assertDoesNotThrow(() -> new Board("3c", "3s", "3d"));
-
     }
+
+//    @Test
+//    public void testBoardHashCode() throws IncorrectBoardException, IncorrectCardException {
+//        Board b = new Board("4c", "Jd", "Qd", "Ad", "2s");
+//        Board bSame = new Board("4c", "Jd", "Qd", "Ad", "2s");
+//
+//        assertEquals(b, bSame);
+////        assertEquals();
+//    }
 
 }

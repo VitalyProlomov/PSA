@@ -1,15 +1,22 @@
 package models;
 
+import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
+/**
+ * Class that represents Hand of the player (2 unique cards)
+ */
 public class Hand {
     private final Card card1;
     private final Card card2;
 
+    /**
+     * Constructs new Hand with 2 given cards (they must be unique - not equal)
+     * @throws IncorrectHandException if cards are equal
+     */
     public Hand(Card c1, Card c2) throws IncorrectHandException {
         if (c1.equals(c2)) {
             throw new IncorrectHandException();
@@ -18,6 +25,34 @@ public class Hand {
         this.card2 = c2;
     }
 
+    /**
+     * Constructs new Hand using 2 String representations of cards.
+     * @throws IncorrectCardException If either card representation is incorrect
+     * @throws IncorrectHandException if cards are equal
+     */
+    public Hand(String cardRep1, String cardRep2) throws IncorrectCardException, IncorrectHandException {
+        Card c1 = new Card(cardRep1);
+        Card c2 = new Card(cardRep2);
+        if (c1.equals(c2)) {
+            throw new IncorrectHandException();
+        }
+        this.card1 = c1;
+        this.card2 = c2;
+    }
+
+    /**
+     * Constructs new Hand with the same cards as the Hand given as a parameter
+     */
+    public Hand(Hand another) {
+        this.card1 = another.card1;
+        this.card2 = another.card2;
+    }
+
+    /**
+     * Hand is equal to another object only if it is another Hand
+     * Hands are considered equal if both cards are equal (order does not matter).
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -31,24 +66,27 @@ public class Hand {
         return false;
     }
 
+    /**
+     * Counts the hash function using the following formula:
+     * h(card1)^3 + h(card2)^3, where h(x) = x.hashCode().
+     * @return hashCode of this object
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(card1, card2);
+        return (int)Math.pow(card1.hashCode(), 3) + (int)Math.pow(card2.hashCode(), 3);
     }
 
+    /**
+     * Returns string representation of the hand (x, y) as following:
+     * [x y], where x and y are cards that the hand is composed of.
+     * @return string representation of hand
+     */
     @Override
     public String toString() {
         return "[" + this.card1 + " " + this.card2 + "]";
     }
 
-    public Card getFirstCard() {
-        return new Card(card1.getRank(), card1.getSuit());
-    }
-    public Card getSecondCard() {
-        return new Card(card2.getRank(), card2.getSuit());
-    }
-
-    public ArrayList<Card> getCardsAsArrayList() {
-        return new ArrayList<>(List.of(card1, card2));
+    public HashSet<Card> getCardsAsSet() {
+        return new HashSet<>(List.of(card1, card2));
     }
 }

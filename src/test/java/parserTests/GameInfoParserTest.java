@@ -54,9 +54,9 @@ public class GameInfoParserTest {
 
         assertEquals(new HashSet<>(correctPlayers), new HashSet<>(topG.getPlayers()));
 
-        ArrayList<Card> heroHand = new ArrayList<>(List.of(new Card("Ad"), new Card("Ts")));
+        Hand heroHand = new Hand(new Card("Ad"), new Card("Ts"));
         correctPlayers.get(2).setHand(heroHand);
-        assertEquals(topG.getPosPlayersMap().get(PositionType.BB).getHand(), new Hand(heroHand.get(0), heroHand.get(1)));
+        assertEquals(topG.getPosPlayersMap().get(PositionType.BB).getHand(), new Hand(heroHand));
 
         ArrayList<Action> actions = new ArrayList<>();
         actions.add(new Action(Action.ActionType.BET, correctPlayers.get(1), 0.1, 0));

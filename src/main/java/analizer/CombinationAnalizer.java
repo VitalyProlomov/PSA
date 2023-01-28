@@ -40,7 +40,7 @@ public class CombinationAnalizer {
     public static boolean isBoardValid(Board board, Hand hand) throws IncorrectBoardException {
         ArrayList<Card> ext = board.getCards();
         if (hand != null) {
-            ext.addAll(hand.getCardsAsArrayList());
+            ext.addAll(hand.getCardsAsSet());
         }
         return isBoardValid(ext);
     }
@@ -127,7 +127,7 @@ public class CombinationAnalizer {
 
         ArrayList<Card> extendedCards = new ArrayList<Card>(board.getCards());
         if (hand != null) {
-            extendedCards.addAll(hand.getCardsAsArrayList());
+            extendedCards.addAll(hand.getCardsAsSet());
         }
 
         if (extendedCards.size() < 5) {

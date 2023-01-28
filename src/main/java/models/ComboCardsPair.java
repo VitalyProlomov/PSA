@@ -19,8 +19,8 @@ public class ComboCardsPair {
      * Constructs ComboCardsPair with given parameters.
      * Does not check if the Cards actually make the combination, does not check if cards
      * make up a valid board
-     * @param combo
-     * @param cards
+     * @param combo Combination on board
+     * @param cards Cards that make up a combination
      */
     public ComboCardsPair(CombinationAnalizer.Combinations combo, ArrayList<Card> cards) {
         this.combination = combo;
@@ -41,6 +41,12 @@ public class ComboCardsPair {
         return combination;
     }
 
+    /**
+     * ComboCardsPair is equal to another object only if it is another ComboCardsPair.
+     * ComboCardsPairs are considered equal if both combination and cards fields are equal.
+     * @param obj
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null || obj.getClass() != ComboCardsPair.class) {
