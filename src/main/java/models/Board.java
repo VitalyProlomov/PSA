@@ -9,17 +9,18 @@ import java.util.*;
  * Class representing the board in the game. Can contain from 3 to 5 unique cards.
  */
 public class Board {
-    private ArrayList<Card> cards = new ArrayList<>();
+    private final ArrayList<Card> cards = new ArrayList<>();
 
     private final String incorrectLengthMessage = "Board must contain from 3 to 5 cards.";
 
     /**
      * Constructs the Board with the array of cards (the amount of cards must be in [3; 5])
+     *
      * @param cards
      * @throws IncorrectBoardException if the cards given are invalid
-     *      * (not unique or length is not in [3; 5]
+     *                                 (not unique or length is not in [3; 5]
      */
-    public Board (Card ... cards) throws IncorrectBoardException {
+    public Board(Card... cards) throws IncorrectBoardException {
         if (cards.length < 3 || cards.length > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
@@ -33,11 +34,12 @@ public class Board {
     /**
      * Constructs the Board with the array of cards generateed by given
      * String card representations (the amount of cards must be in [3; 5])
+     *
      * @param cardReps String representations of cards.
      * @throws IncorrectBoardException if the cards given are invalid
-     * (not unique or length is not in [3; 5]
+     *                                 (not unique or length is not in [3; 5]
      */
-    public Board(String ... cardReps) throws IncorrectBoardException, IncorrectCardException {
+    public Board(String... cardReps) throws IncorrectBoardException, IncorrectCardException {
         if (cardReps.length < 3 || cardReps.length > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
@@ -58,12 +60,13 @@ public class Board {
 
     /**
      * Constructs the Board with the given cards
+     *
      * @param cards
      * @throws IncorrectBoardException if the cards given are invalid
-     * (not unique or length is not in [3; 5]
+     *                                 (not unique or length is not in [3; 5]
      */
     public Board(ArrayList<Card> cards) throws IncorrectBoardException {
-        if (cards.size() < 3 || cards.size()> 5) {
+        if (cards.size() < 3 || cards.size() > 5) {
             throw new IncorrectBoardException(incorrectLengthMessage);
         }
         HashSet<Card> unique = new HashSet<Card>(cards);
@@ -77,6 +80,7 @@ public class Board {
     /**
      * Constructs Board by copying the values of the Board parameter
      * (all links are going to be new)
+     *
      * @param copyBoard board to copy from
      */
     public Board(Board copyBoard) {
@@ -89,21 +93,16 @@ public class Board {
     }
 
 
+    /**
+     * @return copy of array of cards, that this board contains.
+     */
     public ArrayList<Card> getCards() {
         return new ArrayList<>(cards);
-    }
-
-    public void setCards(ArrayList<Card> cards) throws IncorrectBoardException {
-        if (cards.size() < 3 || cards.size() > 5) {
-            throw new IncorrectBoardException(incorrectLengthMessage);
-        }
-        this.cards = new ArrayList<>(cards);
     }
 
     public int size() {
         return cards.size();
     }
-
 
     /**
      * Board can be equal with another object only if it is another board.
@@ -113,14 +112,17 @@ public class Board {
      */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null || obj.getClass() != Board.class) {
             return false;
         }
-        if (this.size() != ((Board)obj).size()) {
+        if (this.size() != ((Board) obj).size()) {
             return false;
         }
 
-        Board b = ((Board)obj);
+        Board b = ((Board) obj);
         Set<Card> set1 = new HashSet<>(this.cards.subList(0, 3));
         Set<Card> set2 = new HashSet<>(b.cards.subList(0, 3));
 
@@ -136,6 +138,7 @@ public class Board {
         }
         return set2.size() == 0 && trSame;
     }
+
 
     @Override
     public int hashCode() {

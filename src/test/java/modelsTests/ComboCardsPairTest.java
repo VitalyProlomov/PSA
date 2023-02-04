@@ -1,6 +1,6 @@
 package modelsTests;
 
-import analizer.CombinationAnalizer;
+import analizer.Combination;
 import exceptions.IncorrectBoardException;
 import exceptions.IncorrectCardException;
 import models.Board;
@@ -18,7 +18,7 @@ public class ComboCardsPairTest {
     public void testEquals() throws IncorrectBoardException, IncorrectCardException {
         Board br = new Board("2c", "Jd", "Th", "8h", "Ks");
         ArrayList<Card> b = br.getCards();
-        CombinationAnalizer.Combinations p = CombinationAnalizer.Combinations.PAIR;
+        Combination p = Combination.PAIR;
 
         ComboCardsPair cbp = new ComboCardsPair(p, b);
         ArrayList sameCards = new ArrayList(
@@ -30,14 +30,6 @@ public class ComboCardsPairTest {
                 ));
         ComboCardsPair cbpSame = new ComboCardsPair(p, sameCards);
         assertEquals(cbp, cbpSame);
-
-//        b = new Board("2c", "Jd", "Th", "8h", "Ad");
-//        ComboCardsPair cbpDiff = new ComboCardsPair(p, new Board("2c", "Jd", "Th", "8h", "Ad"));
-//        assertNotEquals(cbp, cbpDiff);
-
-//        p = CombinationAnalizer.Combinations.STRAIGHT;
-//        cbpDiff = new ComboCardsPair(p, b);
-//        assertNotEquals(cbp, cbpDiff);
     }
 
     @Test
@@ -49,7 +41,7 @@ public class ComboCardsPairTest {
                         new Card("7c"),
                         new Card("8h")
                 ));
-        ComboCardsPair cbp = new ComboCardsPair(CombinationAnalizer.Combinations.STRAIGHT, sameCards);
+        ComboCardsPair cbp = new ComboCardsPair(Combination.STRAIGHT, sameCards);
 
         assertEquals("(ComboBoard| Combination: STRAIGHT, Cards: [4♣, 5♦, 6♣, 7♣, 8♥])", cbp.toString());
         System.out.println(cbp.toString());

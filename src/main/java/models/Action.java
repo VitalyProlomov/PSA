@@ -17,41 +17,70 @@ public class Action {
         RAISE
     }
 
-    private ActionType actionType;
-    private double amount;
-    private PlayerInGame playerInGame;
+    private final ActionType actionType;
+    private final double amount;
+    private final PlayerInGame playerInGame;
     private final double potBeforeAction;
 
+    /**
+     * Constructs new Action using given ActionType, playerInGame, amount contributed in pot,
+     * and pot before this action.
+     *
+     * @param actionType      Type of action (ex: CHECK, FOLD, RAISE)
+     * @param playerInGame    Player that is doing the action
+     * @param amount          amount (in dollars), contributed to the pot by this action (will be 0 for FOLD and CHECK),
+     *                        can NOT be <= 0 for CALL, BET and RAISE types
+     * @param potBeforeAction amount of pot in dollars before this action
+     * @throws IllegalArgumentException is thrown if amount is <= 0 for CALL, BET, or RAISE Action types
+     *                                  or because pot before action is < 0.
+     */
     public Action(ActionType actionType, PlayerInGame playerInGame, double amount, double potBeforeAction) {
         this.actionType = actionType;
         this.playerInGame = new PlayerInGame(playerInGame);
-        this.amount = amount;
+        if (actionType == ActionType.FOLD || actionType == ActionType.CHECK) {
+            this.amount = 0;
+        } else {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Amount, contributed to the pot can not be equal or less than 0 " +
+                        "for CALL, BET and RAISE action types");
+            }
+
+            this.amount = amount;
+        }
+
+        if (potBeforeAction < 0) {
+            throw new IllegalArgumentException("Pot before action can not be less than 0.");
+        }
         this.potBeforeAction = potBeforeAction;
     }
 
 
+    /**
+     * @return ActionType of this action
+     */
     public ActionType getActionType() {
         return actionType;
     }
 
-    public void setActionType(ActionType actionType) {
-        this.actionType = actionType;
-    }
-
+    /**
+     * @return amount contributed to the pot by this action (in dollars)
+     */
     public double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    /**
+     * @return amount in dollars in the pot before this action.
+     */
+    public double getPotBeforeAction() {
+        return potBeforeAction;
     }
 
+    /**
+     * @return copy of the playerInGame in this Action
+     */
     public PlayerInGame getPlayerInGame() {
-        return playerInGame;
-    }
-
-    public void setPlayerInGame(PlayerInGame playerInGame) {
-        this.playerInGame = playerInGame;
+        return new PlayerInGame(playerInGame);
     }
 
     /**
@@ -60,6 +89,9 @@ public class Action {
      */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -74,11 +106,22 @@ public class Action {
     }
 
 
+    /**
+     * @return hash function of this Action, using actionType, amount,
+     * playerInGame and potBeforeAction fields.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(actionType, amount, playerInGame, potBeforeAction);
     }
 
+    /**
+     * Returns string representation of this action as such
+     * a) if (Action is CHECK or FOLD) => (Action| Type: t, PotBeforeAction: p, pg)
+     * b) if (Action is CALL, BET, or RAISE) => (Action| Type: t, Amount: a, Pot before action: p, pg",
+     * where t = actionType, a = amount, p = potBeforeAction, pg = playerInGame
+     * @return String representation of this Action
+     */
     @Override
     public String toString() {
         String repr = "(Action| Type: " + actionType;
@@ -88,8 +131,9 @@ public class Action {
             repr += ", Amount: " + amount;
         }
         DecimalFormat dcf = new DecimalFormat("###.##");
-        String rep = dcf.format(potBeforeAction);
-        repr += ", Pot before action: " + rep + ", " + playerInGame;
+        String potRep = dcf.format(potBeforeAction);
+        potRep = potRep.replace(",", ".");
+        repr += ", Pot before action: " + potRep + ", " + playerInGame + ")";
         return repr;
     }
 }

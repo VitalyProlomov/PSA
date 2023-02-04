@@ -37,12 +37,7 @@ public class BoardTest {
 
         assertEquals(actual, expected);
         ArrayList<Card> nc = new ArrayList<>(List.of(new Card[]{c2, c5, c3, c8, c4}));
-        b.setCards(nc);
-
-        assertEquals(b.getCards(), new ArrayList<Card>(List.of(new Card[]{c2, c5, c3, c8, c4})));
-
-        assertThrows(IncorrectBoardException.class, () -> b.setCards(new ArrayList<>(List.of(new Card[]{c2, c5}))));
-    }
+     }
 
     @Test
     public void testBoardEquals() throws IncorrectBoardException, IncorrectCardException {
@@ -79,11 +74,6 @@ public class BoardTest {
         Board b = new Board("Kc", "Jd", "6s", "As", "2s");
         Board copy = new Board(b);
         assertEquals(b, copy);
-
-        ArrayList<Card> cards = b.getCards();
-        cards.set(2, new Card("Qh"));
-        b.setCards(cards);
-        assertNotEquals(b, copy);
     }
 
     @Test

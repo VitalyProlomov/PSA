@@ -117,7 +117,8 @@ public class PlayerInGame {
     }
 
     /**
-     * PlayerInGame can be equal to another object only if that is another PlayerInGame
+     * PlayerInGame can be equal to another object only if that is another PlayerInGame.
+     * IMPORTANT: only use it to compare Players in one exact game, NOT players from different games
      * @param obj
      * @return true i the objects are equal, false otherwise
      */
@@ -135,8 +136,7 @@ public class PlayerInGame {
     }
 
     /**
-     * Returns hashcode of this object only using the id field
-     * @return
+     * @return hashcode of this object only using the id field
      */
     @Override
     public int hashCode() {

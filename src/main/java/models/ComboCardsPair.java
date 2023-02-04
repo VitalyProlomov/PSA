@@ -1,6 +1,7 @@
 package models;
 
 import analizer.CombinationAnalizer;
+import analizer.Combination;
 import exceptions.IncorrectBoardException;
 
 import java.util.ArrayList;
@@ -9,10 +10,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * The Class for Pair of Combination on baord and the cards that make up this combination
+ * The Class for Pair of Combination on board and the cards that make up this combination
  */
 public class ComboCardsPair {
-    private final CombinationAnalizer.Combinations combination;
+    private final Combination combination;
     private final HashSet<Card> cards;
 
     /**
@@ -22,12 +23,12 @@ public class ComboCardsPair {
      * @param combo Combination on board
      * @param cards Cards that make up a combination
      */
-    public ComboCardsPair(CombinationAnalizer.Combinations combo, ArrayList<Card> cards) {
+    public ComboCardsPair(Combination combo, ArrayList<Card> cards) {
         this.combination = combo;
         this.cards = new HashSet<>(cards);
     }
 
-    public ComboCardsPair(CombinationAnalizer.Combinations combo, Set<Card> cards) {
+    public ComboCardsPair(Combination combo, Set<Card> cards) {
         this.combination = combo;
         this.cards = new HashSet<>(cards);
     }
@@ -37,7 +38,7 @@ public class ComboCardsPair {
         return new HashSet<>(cards);
     }
 
-    public CombinationAnalizer.Combinations getCombination() {
+    public Combination getCombination() {
         return combination;
     }
 
@@ -49,6 +50,9 @@ public class ComboCardsPair {
      */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null || obj.getClass() != ComboCardsPair.class) {
             return false;
         }
