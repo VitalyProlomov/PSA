@@ -1,7 +1,5 @@
 package models;
 
-import exceptions.IncorrectBoardException;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +18,7 @@ public class StreetDescription {
     private ArrayList<Action> allActions = new ArrayList<>();
     private boolean isAllIn = false;
 
-    public StreetDescription(double potAfterBetting, Board board, ArrayList<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions)
-            throws IncorrectBoardException {
+    public StreetDescription(double potAfterBetting, Board board, ArrayList<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions) {
         this.potAfterBetting = potAfterBetting;
         if (board != null) {
             this.board = new Board(board);
@@ -51,6 +48,8 @@ public class StreetDescription {
         } else {
             this.board = null;
         }
+
+        this.isAllIn = strCopy.isAllIn;
     }
 
     public StreetDescription() {
@@ -126,15 +125,11 @@ public class StreetDescription {
             return false;
         }
         if (obj.getClass() == StreetDescription.class) {
-            StreetDescription st = (StreetDescription)obj;
-            boolean eq = Math.abs(this.potAfterBetting - st.potAfterBetting) < 0.01 &&
+            StreetDescription st = (StreetDescription) obj;
+            return Math.abs(this.potAfterBetting - st.potAfterBetting) < 0.01 &&
                     this.allActions.equals(st.allActions) &&
-                    this.playersAfterBetting.equals((st.playersAfterBetting));
-            if (this.board == null) {
-                return eq && st.board == null;
-            } else {
-                return eq && this.board.equals(st.board);
-            }
+                    this.playersAfterBetting.equals((st.playersAfterBetting)) &&
+                    (this.board == null && st.board == null || this.board.equals(st.board));
         }
         return false;
     }
@@ -149,7 +144,7 @@ public class StreetDescription {
         DecimalFormat dcf = new DecimalFormat("###.##");
         String dRep = dcf.format(potAfterBetting);
         return "(StreetDescription| Board: " + board + ", pot after betting: " + dRep + ", Players left: " + playersAfterBetting +
-                 "\n, Actions: " + allActions;
+                "\n, Actions: " + allActions;
     }
 
     public boolean isAllIn() {

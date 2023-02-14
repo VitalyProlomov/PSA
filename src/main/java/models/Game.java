@@ -76,7 +76,7 @@ public class Game {
     }
 
     /**
-     * Returns the player in the game with the corresponding hash. If there is
+     * Returns the copy player in the game with the corresponding hash. If there is
      * no player in game with such hash, null is returned
      * @param hash hash field of PlayerInGame to get
      * @return player in game with same hash. Or null if no such player is found

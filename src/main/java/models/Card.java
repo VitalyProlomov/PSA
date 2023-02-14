@@ -25,7 +25,7 @@ public class Card {
      */
     public Card(String strRepresentation) throws IncorrectCardException {
         if (strRepresentation.length() != 2) {
-            throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
+            throw new IncorrectCardException("Was given : " + strRepresentation + ". Representation of the card must be [Rank][suit], 10 being T," +
                     " suit = 1st letter (ex: 4 of spades = 4s)");
         }
 

@@ -19,7 +19,7 @@ public class Hand {
      */
     public Hand(Card c1, Card c2) throws IncorrectHandException {
         if (c1.equals(c2)) {
-            throw new IncorrectHandException();
+            throw new IncorrectHandException("Cards must be unique, but was: " + c1 + ", " + c1);
         }
         this.card1 = c1;
         this.card2 = c2;

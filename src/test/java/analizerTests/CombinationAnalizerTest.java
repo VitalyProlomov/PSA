@@ -17,7 +17,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CombinationAnalizerTest {
-
     // region Finding Combination
     @Test
     public void testFlushCountingMethod() throws IncorrectCardException, IncorrectBoardException {
@@ -393,10 +392,6 @@ public class CombinationAnalizerTest {
         assertEquals(ccp, CombinationAnalizer.recognizeCombinationOnBoard(b, h));
 
     }
-    //endregion
-
-    //region
-
     //endregion
 
     //region Board Validation method

@@ -19,7 +19,7 @@ public class Action {
 
     private final ActionType actionType;
     private final double amount;
-    private final PlayerInGame playerInGame;
+    private final String playerInGameId;
     private final double potBeforeAction;
 
     /**
@@ -27,16 +27,16 @@ public class Action {
      * and pot before this action.
      *
      * @param actionType      Type of action (ex: CHECK, FOLD, RAISE)
-     * @param playerInGame    Player that is doing the action
+     * @param playerInGameId  ID of the player that is doing the action
      * @param amount          amount (in dollars), contributed to the pot by this action (will be 0 for FOLD and CHECK),
      *                        can NOT be <= 0 for CALL, BET and RAISE types
      * @param potBeforeAction amount of pot in dollars before this action
      * @throws IllegalArgumentException is thrown if amount is <= 0 for CALL, BET, or RAISE Action types
      *                                  or because pot before action is < 0.
      */
-    public Action(ActionType actionType, PlayerInGame playerInGame, double amount, double potBeforeAction) {
+    public Action(ActionType actionType, String playerInGameId, double amount, double potBeforeAction) {
         this.actionType = actionType;
-        this.playerInGame = new PlayerInGame(playerInGame);
+        this.playerInGameId = playerInGameId;
         if (actionType == ActionType.FOLD || actionType == ActionType.CHECK) {
             this.amount = 0;
         } else {
@@ -79,8 +79,8 @@ public class Action {
     /**
      * @return copy of the playerInGame in this Action
      */
-    public PlayerInGame getPlayerInGame() {
-        return new PlayerInGame(playerInGame);
+    public String getPlayerId() {
+        return playerInGameId;
     }
 
     /**
@@ -100,7 +100,7 @@ public class Action {
             return this.actionType == ac.actionType &&
                     Math.abs(this.potBeforeAction - ac.potBeforeAction) < 0.01 &&
                     Math.abs(this.amount - ac.amount) < 0.01 &&
-                    this.playerInGame.equals(ac.playerInGame);
+                    this.playerInGameId.equals(ac.playerInGameId);
         }
         return false;
     }
@@ -108,18 +108,18 @@ public class Action {
 
     /**
      * @return hash function of this Action, using actionType, amount,
-     * playerInGame and potBeforeAction fields.
+     * playerInGameId and potBeforeAction fields.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(actionType, amount, playerInGame, potBeforeAction);
+        return Objects.hash(actionType, amount, playerInGameId, potBeforeAction);
     }
 
     /**
      * Returns string representation of this action as such
-     * a) if (Action is CHECK or FOLD) => (Action| Type: t, PotBeforeAction: p, pg)
-     * b) if (Action is CALL, BET, or RAISE) => (Action| Type: t, Amount: a, Pot before action: p, pg",
-     * where t = actionType, a = amount, p = potBeforeAction, pg = playerInGame
+     * a) if (Action is CHECK or FOLD) => "(Action| Type: t, PotBeforeAction: p, pg)"
+     * b) if (Action is CALL, BET, or RAISE) => "(Action| Type: t, Amount: a, Pot before action: p, Player Id: pg)",
+     * where t = actionType, a = amount, p = potBeforeAction, pg = playerInGameId
      * @return String representation of this Action
      */
     @Override
@@ -128,12 +128,13 @@ public class Action {
         if (actionType == ActionType.RAISE ||
                 actionType == ActionType.BET ||
                 actionType == ActionType.CALL) {
-            repr += ", Amount: " + amount;
+            DecimalFormat dcf = new DecimalFormat("###.##");
+            repr += ", Amount: " + dcf.format(amount).replace(',', '.');
         }
         DecimalFormat dcf = new DecimalFormat("###.##");
         String potRep = dcf.format(potBeforeAction);
         potRep = potRep.replace(",", ".");
-        repr += ", Pot before action: " + potRep + ", " + playerInGame + ")";
+        repr += ", Pot before action: " + potRep + ", Player Id: " + playerInGameId + ")";
         return repr;
     }
 }
