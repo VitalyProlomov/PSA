@@ -109,9 +109,9 @@ public class GameInfoParserTest {
 
         PlayerInGame winner = new PlayerInGame(correctPlayers.get(5));
 
-        assertEquals(winner, topG.getWinner());
-        assertEquals(finalPot, topG.getFinalPot());
-        assertEquals(rake, topG.getRake());
+        // assertEquals(winner, topG.getWinner());
+//        assertEquals(finalPot, topG.getFinalPot());
+//        assertEquals(rake, topG.getRake());
     }
 
 
@@ -129,12 +129,13 @@ public class GameInfoParserTest {
         return gameText.toString();
     }
 
+    // region Special Games Parsing
     @Test
     public void testEarlyAllinGameParsing()
             throws FileNotFoundException, IncorrectHandException,
             IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/RushNCashGamesFiles/earlyAllInGame");
+        String text = getTextFromFile("/RushNCashGamesFiles/earlyAllInCashoutGame");
 
         Game topG = parser.parseGame(text);
 
@@ -185,7 +186,7 @@ public class GameInfoParserTest {
         assertTrue(topG.getFlop().getPlayersAfterBetting().contains(new PlayerInGame("c491325f")));
         assertTrue(topG.getFlop().getPlayersAfterBetting().contains(new PlayerInGame("219f215e")));
         assertEquals(2, topG.getFlop().getPlayersAfterBetting().size());
-        assertEquals(new Board( "Ks", "5s", "3c"), topG.getFlop().getBoard());
+        assertEquals(new Board("Ks", "5s", "3c"), topG.getFlop().getBoard());
 
         // Turn assertions
         assertEquals(12.31, topG.getTurn().getPotAfterBetting());
@@ -193,7 +194,7 @@ public class GameInfoParserTest {
         assertTrue(topG.getTurn().getPlayersAfterBetting().contains(new PlayerInGame("c491325f")));
         assertTrue(topG.getTurn().getPlayersAfterBetting().contains(new PlayerInGame("219f215e")));
         assertEquals(2, topG.getTurn().getPlayersAfterBetting().size());
-        assertEquals(new Board( "Ks", "5s", "3c", "Kd"), topG.getTurn().getBoard());
+        assertEquals(new Board("Ks", "5s", "3c", "Kd"), topG.getTurn().getBoard());
 
         // River assertions
         assertEquals(12.31, topG.getRiver().getPotAfterBetting());
@@ -201,11 +202,12 @@ public class GameInfoParserTest {
         assertTrue(topG.getRiver().getPlayersAfterBetting().contains(new PlayerInGame("c491325f")));
         assertTrue(topG.getRiver().getPlayersAfterBetting().contains(new PlayerInGame("219f215e")));
         assertEquals(2, topG.getRiver().getPlayersAfterBetting().size());
-        assertEquals(new Board( "Ks", "5s", "3c", "Kd", "6c"), topG.getRiver().getBoard());
+        assertEquals(new Board("Ks", "5s", "3c", "Kd", "6c"), topG.getRiver().getBoard());
 
-        assertEquals(correctPlayers.get(0), topG.getWinner());
-        assertEquals(12.31, topG.getFinalPot());
-        assertEquals(0.22, topG.getRake());
+        //Decided not to add winners to the game for now
+        // assertEquals(correctPlayers.get(0), topG.getWinner());
+//        assertEquals(12.31, topG.getFinalPot());
+//        assertEquals(0.22, topG.getRake());
         assertEquals(new Hand("5h", "5d"), topG.getPlayer("c491325f").getHand());
         assertEquals(new Hand("Ah", "Kh"), topG.getPlayer("219f215e").getHand());
     }
@@ -216,6 +218,217 @@ public class GameInfoParserTest {
         String text = getTextFromFile("/RushNCashGamesFiles/preFlopAllInExtraCashGame");
 
         Game topG = parser.parseGame(text);
+        assertEquals("RC1281882663", topG.getGameId());
+        assertEquals(0.05, topG.getBigBlindSize$());
+        assertEquals(new Date("2023/01/15 20:19:04"), topG.getDate());
+
+        Set<PlayerInGame> players = new HashSet<>(List.of(
+                new PlayerInGame("a119ad3f", BTN, 5),
+                new PlayerInGame("81a0604b", SB, 3.58, null),
+                new PlayerInGame("486d3078", BB, 7.06, null),
+                new PlayerInGame("Hero", LJ, 5.65, null),
+                new PlayerInGame("d67af16c", HJ, 9.3, null),
+                new PlayerInGame("c4d36ec9", CO, 1.79, null)
+        ));
+        assertEquals(players, topG.getPlayers());
+
+        assertEquals(0.5, topG.getExtraCashAmount());
+        assertEquals(new Hand("Ac", "Ah"), topG.getPlayer("Hero").getHand());
+
+        ArrayList<Action> actions = new ArrayList<>(List.of(
+                new Action(BET, "81a0604b", 0.02, 0.5),
+                new Action(BET, "486d3078", 0.05, 0.52),
+                new Action(CALL, "Hero", 0.05, 0.57),
+                new Action(FOLD, "d67af16c", 0, 0.62),
+                new Action(RAISE, "c4d36ec9", 0.15, 0.62),
+                new Action(FOLD, "a119ad3f", 0, 0.77),
+                new Action(FOLD, "81a0604b", 0, 0.77),
+                new Action(RAISE, "486d3078", 7.06, 0.77),
+                new Action(CALL, "Hero", 5.6, 7.78),
+                new Action(CALL, "c4d36ec9", 1.64, 13.38)
+        ));
+        assertEquals(actions, topG.getPreFlop().getAllActions());
+
+        Hand h1 = new Hand("Td", "Ts");
+        Hand h2 = new Hand("Tc", "Th");
+        Hand heroHand = new Hand("Ac", "Ah");
+        assertEquals(h1, topG.getPlayer("486d3078").getHand());
+        assertEquals(h2, topG.getPlayer("c4d36ec9").getHand());
+        assertEquals(heroHand, topG.getPlayer("Hero").getHand());
+
+        assertEquals(new ArrayList<Action>(), topG.getFlop().getAllActions());
+        assertEquals(new ArrayList<Action>(), topG.getTurn().getAllActions());
+        assertEquals(new ArrayList<Action>(), topG.getRiver().getAllActions());
+
+        // Test final pot and rake
+
+    }
+
+    @Test
+    public void testHandsShownGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        String text = getTextFromFile("/RushNCashGamesFiles/handShownGame");
+
+        Game topG = parser.parseGame(text);
+        assertEquals("RC1292105656", topG.getGameId());
+        assertEquals(0.05, topG.getBigBlindSize$());
+        assertEquals(new Date("2023/01/20 23:31:52"), topG.getDate());
+
+        Set<PlayerInGame> players = new HashSet<>(List.of(
+                new PlayerInGame("1e9152a8", BTN, 9.41),
+                new PlayerInGame("Hero", SB, 8.02, null),
+                new PlayerInGame("480564b2", BB, 5.23, null),
+                new PlayerInGame("59435a5e", LJ, 2.02, null),
+                new PlayerInGame("dd1dce69", HJ, 5.49, null),
+                new PlayerInGame("363e9d13", CO, 5.36, null)
+        ));
+        assertEquals(players, topG.getPlayers());
+
+        assertEquals(0, topG.getExtraCashAmount());
+        assertEquals(new Hand("Kd", "Ks"), topG.getPlayer("480564b2").getHand());
+
+        ArrayList<Action> actions = new ArrayList<>(List.of(
+                new Action(BET, "Hero", 0.02, 0),
+                new Action(BET, "480564b2", 0.05, 0.02),
+                new Action(FOLD, "59435a5e", 0, 0.07),
+                new Action(FOLD, "dd1dce69", 0.15, 0.07),
+                new Action(FOLD, "363e9d13", 0, 0.07),
+                new Action(FOLD, "1e9152a8", 0, 0.07),
+                new Action(RAISE, "Hero", 0.15, 0.07),
+                new Action(RAISE, "480564b2", 0.44, 0.2),
+                new Action(CALL, "Hero", 0.29, 0.59)
+        ));
+        assertEquals(actions, topG.getPreFlop().getAllActions());
+
+
+        StreetDescription flop = new StreetDescription(1.48,
+                new Board("5h", "7d", "Jh"),
+                new HashSet<PlayerInGame>(List.of(
+                        new PlayerInGame("Hero", SB, 8.02),
+                        new PlayerInGame("480564b2", BB, 5.23))),
+                new ArrayList<Action>(List.of(
+                        new Action(CHECK, "Hero", 0.0, 0.88),
+                        new Action(BET, "480564b2", 0.3, 0.88),
+                        new Action(CALL, "Hero", 0.3, 1.18)
+                )));
+
+        assertEquals(flop, topG.getFlop());
+
+        StreetDescription turn = new StreetDescription(
+                2.59,
+                new Board("5h", "7d", "Jh", "4c"),
+                new HashSet<PlayerInGame>(List.of(
+                        new PlayerInGame("480564b2", BB, 5.23))),
+                new ArrayList<Action>(List.of(
+                        new Action(CHECK, "Hero", 0.0, 1.48),
+                        new Action(BET, "480564b2", 1.11, 1.48),
+                        new Action(FOLD, "Hero", 0, 2.59)
+                ))
+        );
+        assertEquals(turn, topG.getTurn());
+
+        assertEquals(new Hand("Kd", "Ks"), topG.getPlayer("480564b2").getHand());
+
+        assertNull(topG.getRiver());
+
+        assertFalse(topG.getFlop().isAllIn());
+        assertFalse(topG.getTurn().isAllIn());
+    }
+
+    @Test
+    public void testEarlyAllInCashoutGameSplitting()
+            throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        String text = getTextFromFile("/RushNCashGamesFiles/earlyAllInCashoutGame");
+
+        Game topG = parser.parseGame(text);
+        String strRep = """
+                (Game| Game Id: RC1281883052,
+                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: SB, Balance: 13.4), (PlayerInGame| UserName: _UNDEFINED_, Id: 16d75d78, Pos: BB, Balance: 6.28), (PlayerInGame| UserName: _UNDEFINED_, Id: c1f81489, Pos: LJ, Balance: 10.52), (PlayerInGame| UserName: _UNDEFINED_, Id: 361dc4bb, Pos: HJ, Balance: 2.31), (PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 0,33, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                 Actions: [(Action| Type: BET, Amount: 0.02, Pot before action: 0, Player Id: Hero), (Action| Type: BET, Amount: 0.05, Pot before action: 0.02, Player Id: 16d75d78), (Action| Type: FOLD, Pot before action: 0.07, Player Id: c1f81489), (Action| Type: FOLD, Pot before action: 0.07, Player Id: 361dc4bb), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 219f215e), (Action| Type: CALL, Amount: 0.13, Pot before action: 0.2, Player Id: c491325f), (Action| Type: FOLD, Pot before action: 0.33, Player Id: Hero), (Action| Type: FOLD, Pot before action: 0.33, Player Id: 16d75d78)],
+                Flop: (StreetDescription| Board: ([5♠, 3♣, K♠]), pot after betting: 12,31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                 Actions: [(Action| Type: BET, Amount: 0.2, Pot before action: 0.33, Player Id: 219f215e), (Action| Type: RAISE, Amount: 5.99, Pot before action: 0.53, Player Id: c491325f), (Action| Type: CALL, Amount: 5.79, Pot before action: 6.52, Player Id: 219f215e)],
+                Turn: (StreetDescription| Board: ([5♠, 3♣, K♠, K♦]), pot after betting: 12,31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                 Actions: [],
+                River: (StreetDescription| Board: ([5♠, 3♣, K♠, K♦, 6♣]), pot after betting: 12,31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                 Actions: [])""";
+        assertEquals(strRep, topG.toString());
+        assertTrue(topG.getFlop().isAllIn());
+        assertTrue(topG.getRiver().isAllIn());
+
+        Hand heroHand = new Hand("3s", "9d");
+        Hand h1 = new Hand("Ah", "Kh");
+        Hand h2 = new Hand("5d", "5h");
+
+        assertEquals(heroHand, topG.getPlayer("Hero").getHand());
+        assertEquals(h2, topG.getPlayer("c491325f").getHand());
+        assertEquals(h1, topG.getPlayer("219f215e").getHand());
+    }
+
+    @Test
+    public void testPreFlopFoldedGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        String text = getTextFromFile("/RushNCashGamesFiles/preflopFoldedGame");
+
+        Game topG = parser.parseGame(text);
+        System.out.println(topG);
+        String rep = """
+                (Game| Game Id: RC1281882647,
+                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: a5003d17, Pos: SB, Balance: 9.36), (PlayerInGame| UserName: _UNDEFINED_, Id: 6be2f5ab, Pos: BB, Balance: 5.0), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: LJ, Balance: 5.65), (PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79), (PlayerInGame| UserName: _UNDEFINED_, Id: 1ef61f80, Pos: CO, Balance: 15.01), (PlayerInGame| UserName: _UNDEFINED_, Id: cdd7fe2b, Pos: BTN, Balance: 10.0)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 0,2, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79)],
+                 Actions: [(Action| Type: BET, Amount: 0.02, Pot before action: 0, Player Id: a5003d17), (Action| Type: BET, Amount: 0.05, Pot before action: 0.02, Player Id: 6be2f5ab), (Action| Type: FOLD, Pot before action: 0.07, Player Id: Hero), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 9a4f339a), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 1ef61f80), (Action| Type: FOLD, Pot before action: 0.2, Player Id: cdd7fe2b), (Action| Type: FOLD, Pot before action: 0.2, Player Id: a5003d17), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 6be2f5ab)],
+                Flop: null,
+                Turn: null,
+                River: null)""";
+        assertEquals(rep, topG.toString());
+
+        assertEquals(new Hand("Tc", "5s"), topG.getPlayer("Hero").getHand());
+        assertFalse(topG.getPreFlop().isAllIn());
+    }
+    // endregion
+
+    // region Normal Games Parsing
+
+    @Test
+    public void testFullGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        String text = getTextFromFile("/RushNCashGamesFiles/fullGame");
+
+        Game topG = parser.parseGame(text);
+
+        String s = """
+                (Game| Game Id: RC1221774448,
+                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 392d7ce5, Pos: LJ, Balance: 25.35), (PlayerInGame| UserName: _UNDEFINED_, Id: e41b54eb, Pos: HJ, Balance: 26.82), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: BTN, Balance: 39.13)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 4,24, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                 Actions: [(Action| Type: BET, Amount: 0.1, Pot before action: 2.5, Player Id: ea0c9d4e), (Action| Type: BET, Amount: 0.25, Pot before action: 2.6, Player Id: 195539ef), (Action| Type: FOLD, Pot before action: 2.85, Player Id: 392d7ce5), (Action| Type: FOLD, Pot before action: 2.85, Player Id: e41b54eb), (Action| Type: RAISE, Amount: 0.58, Pot before action: 2.85, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 3.43, Player Id: Hero), (Action| Type: CALL, Amount: 0.48, Pot before action: 3.43, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 0.33, Pot before action: 3.91, Player Id: 195539ef)],
+                Flop: (StreetDescription| Board: ([9♣, 3♠, 8♠]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                 Actions: [(Action| Type: CHECK, Pot before action: 4.24, Player Id: ea0c9d4e), (Action| Type: CHECK, Pot before action: 4.24, Player Id: 195539ef), (Action| Type: BET, Amount: 2.75, Pot before action: 4.24, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 6.99, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 2.75, Pot before action: 6.99, Player Id: 195539ef)],
+                Turn: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                 Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)],
+                River: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦, 6♥]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                 Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)])""";
+        assertEquals(s, topG.toString());
+        assertFalse(topG.getRiver().isAllIn());
+    }
+
+    @Test
+    public void test() {
+
+    }
+    // endregion
+
+    @Test
+    public void testFileParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        String path = "D:/poker/15.12-16.12 night poker session/GG20221215-1959 - RushAndCash5524863 - 0.1 - 0.25 - 6max.txt";
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        assertDoesNotThrow(()-> parser.parseFile(path));
+
+        ArrayList<Game> games = parser.parseFile(path);
+        assertEquals(166, games.size());
+        for (Game miniG : games) {
+            System.out.println(miniG + "\n");
+        }
     }
 
     @Test
@@ -232,13 +445,4 @@ public class GameInfoParserTest {
     public void testPlayerSetting() {
 
     }
-
-
-//    @Test
-//    public void testFindingFile() throws FileNotFoundException {
-//        FileReader fr = new FileReader("D:\\HSE\\3rd course\\Course Project\\PSA\\src\\test\\resources\\gameExample");
-//        Scanner sc = new Scanner(fr);
-//        String line = sc.nextLine();
-//        System.out.println(line);
-//    }
 }

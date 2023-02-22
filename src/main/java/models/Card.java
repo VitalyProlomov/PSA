@@ -83,7 +83,7 @@ public class Card {
             } else if (suitChar == '♣') {
                 suit = Suit.CLUBS;
             } else {
-                throw new IncorrectCardException("Representation of the card must be [Rank][suit], 10 being T," +
+                throw new IncorrectCardException("Incorrect Representation: '" + strRepresentation + "'. Representation of the card must be [Rank][suit], 10 being T," +
                         " suit = 1st letter (ex: 4 of spades = 4s)");
             }
         }

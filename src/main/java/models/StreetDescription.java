@@ -1,10 +1,10 @@
 package models;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
+import static models.PositionType.*;
+import static models.PositionType.BTN;
 
 /**
  * Class used for storing information about one street - all the action,
@@ -18,7 +18,7 @@ public class StreetDescription {
     private ArrayList<Action> allActions = new ArrayList<>();
     private boolean isAllIn = false;
 
-    public StreetDescription(double potAfterBetting, Board board, ArrayList<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions) {
+    public StreetDescription(double potAfterBetting, Board board, Collection<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions) {
         this.potAfterBetting = potAfterBetting;
         if (board != null) {
             this.board = new Board(board);
@@ -124,12 +124,16 @@ public class StreetDescription {
         if (obj == null) {
             return false;
         }
+
         if (obj.getClass() == StreetDescription.class) {
             StreetDescription st = (StreetDescription) obj;
+            if (this.board == null && st.board != null) {
+                return false;
+            }
             return Math.abs(this.potAfterBetting - st.potAfterBetting) < 0.01 &&
                     this.allActions.equals(st.allActions) &&
                     this.playersAfterBetting.equals((st.playersAfterBetting)) &&
-                    (this.board == null && st.board == null || this.board.equals(st.board));
+                    ((this.board == null && st.board == null) || this.board.equals(st.board));
         }
         return false;
     }
@@ -141,10 +145,18 @@ public class StreetDescription {
 
     @Override
     public String toString() {
+        ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
+        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, LJ, HJ, CO, BTN));
+        for (int i = 0; i < orderPos.size(); ++i) {
+            PlayerInGame p = playersAfterBetting.get(orderPos.get(i));
+            if (p != null)
+            orderedPlayers.add(p);
+        }
+
         DecimalFormat dcf = new DecimalFormat("###.##");
         String dRep = dcf.format(potAfterBetting);
-        return "(StreetDescription| Board: " + board + ", pot after betting: " + dRep + ", Players left: " + playersAfterBetting +
-                "\n, Actions: " + allActions;
+        return "(StreetDescription| Board: " + board + ", pot after betting: " + dRep + ", Players after betting: " + orderedPlayers +
+                ",\n Actions: " + allActions;
     }
 
     public boolean isAllIn() {
