@@ -4,6 +4,8 @@ import exceptions.IncorrectHandException;
 
 import java.util.*;
 
+import static models.PositionType.*;
+
 /**
  * Class defining the entity of a game (1 hand played among players).
  * Contains information about cards, pot size, hands dealt to players
@@ -37,7 +39,7 @@ public class Game {
     private StreetDescription turn;
     private StreetDescription river;
 
-    private PlayerInGame winner;
+    private HashMap<String, Double> allWinners;
     private double finalPot;
     private double rake;
 
@@ -242,19 +244,16 @@ public class Game {
 //        this.board = new Board(board);
 //    }
 
-    public PlayerInGame getWinner() {
-        if (winner == null) {
+    public HashMap<String, Double> getWinners() {
+        if (allWinners == null) {
             return null;
         }
-        return new PlayerInGame(winner);
+        return new HashMap<String, Double>(allWinners);
     }
 
-    public void setWinner(PlayerInGame winner) {
-        if (winner == null) {
-            this.winner = null;
-            return;
-        }
-        this.winner = new PlayerInGame(winner);
+    public void setWinner(PlayerInGame winner, double amount) {
+        this.allWinners = new HashMap<>();
+        allWinners.put(winner.getId(), amount);
     }
 
     public double getFinalPot() {
@@ -271,5 +270,19 @@ public class Game {
 
     public void setRake(double rake) {
         this.rake = rake;
+    }
+
+    @Override
+    public String toString() {
+        ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
+        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, LJ, HJ, CO, BTN));
+        for (int i = 0; i < orderPos.size(); ++i) {
+            PlayerInGame p = players.get(orderPos.get(i));
+            if (p != null)
+                orderedPlayers.add(p);
+        }
+
+        return "(Game| Game Id: " + gameId +  ",\nPlayers: " + orderedPlayers +
+                ",\nPreflop: " + preFlop + ",\nFlop: " + flop + ",\nTurn: " + turn + ",\nRiver: " + river + ")";
     }
 }

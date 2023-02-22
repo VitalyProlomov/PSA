@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameTest {
     @Test
-    public void testGetSB() {
+    public void testGameGetSB() {
         Game game = new Game("RC3", 0.02);
         assertEquals(game.getSB(), 0.01);
 
@@ -23,6 +23,11 @@ public class GameTest {
 
         game = new Game("RC4", 1);
         assertEquals(game.getSB(), 0.5);
+    }
+
+    @Test
+    public void testGameToString() {
+
     }
 
 }

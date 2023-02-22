@@ -6,8 +6,13 @@ import exceptions.IncorrectHandException;
 import models.*;
 import parsers.Parser;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Double.parseDouble;
@@ -17,9 +22,18 @@ import static models.PositionType.SB;
 public class GGPokerokRushNCashParser implements Parser {
     private int curLine = 0;
 
+    enum PlayerStatus {
+        ACTIVE,
+        FOLDED,
+        ALL_IN
+    }
+
+    HashMap<String, PlayerStatus> statuses;
+
     @Override
     public Game parseGame(String gameText)
             throws IncorrectCardException, IncorrectHandException, IncorrectBoardException {
+        statuses = new HashMap<>();
         curLine = 0;
         String[] lines = gameText.split("\n");
 
@@ -30,12 +44,18 @@ public class GGPokerokRushNCashParser implements Parser {
 
         Game game = initiateGame(wordsInLines);
         parseDate(game, wordsInLines);
+
         parsePlayers(game, wordsInLines);
+        for (PlayerInGame p : game.getPlayers()) {
+            statuses.put(p.getId(), PlayerStatus.ACTIVE);
+        }
+
         parseExtraCash(game, wordsInLines);
         parseHeroHand(game, wordsInLines);
         parseStreetDescriptions(game, wordsInLines, game.getExtraCashAmount());
 
-        parseWinnings(game, wordsInLines);
+        // I decided not to parse winning s for now.
+        // parseWinnings(game, wordsInLines);
         return game;
     }
 
@@ -135,6 +155,9 @@ public class GGPokerokRushNCashParser implements Parser {
 
     private void parseFlop(Game game, ArrayList<ArrayList<String>> wordsInLines)
             throws IncorrectCardException, IncorrectBoardException, IncorrectHandException {
+        if (game.getPreFlop().getPlayersAfterBetting().size() == 1) {
+            return;
+        }
         Card c1 = new Card(wordsInLines.get(curLine).get(3).substring(1));
         Card c2 = new Card(wordsInLines.get(curLine).get(4));
         Card c3 = new Card(wordsInLines.get(curLine).get(5).substring(0, 2));
@@ -162,6 +185,9 @@ public class GGPokerokRushNCashParser implements Parser {
     }
 
     private void parseTurn(Game game, ArrayList<ArrayList<String>> wordsInLines) throws IncorrectCardException, IncorrectBoardException, IncorrectHandException {
+        if (game.getFlop() == null || game.getFlop().getPlayersAfterBetting().size() == 1) {
+            return;
+        }
         Card tCard = new Card(wordsInLines.get(curLine).get(6).substring(1, 3));
         ++curLine;
 
@@ -172,7 +198,7 @@ public class GGPokerokRushNCashParser implements Parser {
         if (!game.getFlop().isAllIn()) {
             turn = parseStreetAction(game, wordsInLines, curPot);
         } else {
-            turn  = new StreetDescription(
+            turn = new StreetDescription(
                     game.getFlop().getPotAfterBetting(),
                     null,
                     game.getFlop().getPlayersAfterBetting(),
@@ -189,17 +215,20 @@ public class GGPokerokRushNCashParser implements Parser {
 
     private void parseRiver(Game game, ArrayList<ArrayList<String>> wordsInLines)
             throws IncorrectCardException, IncorrectBoardException, IncorrectHandException {
+        if (game.getTurn() == null || game.getTurn().getPlayersAfterBetting().size() == 1) {
+            return;
+        }
         Card rCard = new Card(wordsInLines.get(curLine).get(7).substring(1, 3));
         ++curLine;
 
         double curPot = game.getTurn().getPotAfterBetting();
         StreetDescription river;
 
-        if(!game.getTurn().isAllIn()) {
+        if (!game.getTurn().isAllIn()) {
             river = parseStreetAction(game, wordsInLines, curPot);
             // if (game.getRiver().getPlayersAfterBetting().size() > 1) {
-                parseAndAddShownHands(game, wordsInLines);
-           // }
+            parseAndAddShownHands(game, wordsInLines);
+            // }
         } else {
             river = new StreetDescription(
                     game.getTurn().getPotAfterBetting(),
@@ -220,11 +249,13 @@ public class GGPokerokRushNCashParser implements Parser {
         StreetDescription st = new StreetDescription();
         // Adding blinds posting and players left on pre-flop.
         if (curPot - (game.getBigBlindSize$() + game.getSB() + game.getExtraCashAmount()) < 0.01) {
-            st.addAction(new Action(Action.ActionType.BET, game.getPosPlayersMap().get(SB).getId(), game.getSB(), 0));
-            st.addAction(new Action(Action.ActionType.BET, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB()));
+            st.addAction(new Action(Action.ActionType.BET, game.getPosPlayersMap().get(SB).getId(), game.getSB(), game.getExtraCashAmount()));
+            st.addAction(new Action(Action.ActionType.BET, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()));
 
             st.setPlayersAfterBetting(game.getPlayers());
-        } else {
+        }
+        // Setting players is essential for the condition in the next while loop.
+        else {
             if (game.getTurn() != null) {
                 st.setPlayersAfterBetting(game.getTurn().getPlayersAfterBetting());
             } else if (game.getFlop() != null) {
@@ -235,10 +266,10 @@ public class GGPokerokRushNCashParser implements Parser {
         }
         st.setPotAfterBetting(curPot);
 
-        int allInPlayers = 0;
         while (wordsInLines.get(curLine).get(0).charAt(wordsInLines.get(curLine).get(0).length() - 1) == ':' &&
                 st.getPlayersAfterBetting().size() > 1 &&
-                !wordsInLines.get(curLine).get(1).equals("shows")) {
+                !wordsInLines.get(curLine).get(1).equals("shows") &&
+                !wordsInLines.get(curLine).get(1).equals("Pays")) {
             String hash = wordsInLines.get(curLine).get(0);
             hash = hash.substring(0, hash.length() - 1);
             PlayerInGame curPlayer = game.getPlayer(hash);
@@ -248,8 +279,12 @@ public class GGPokerokRushNCashParser implements Parser {
                 throw new RuntimeException("Code is incorrect - couldn't find the player " +
                         "with given hash in array of players in game.");
             }
-
-            addAction(wordsInLines.get(curLine), st, curPlayer);
+            ArrayList<String> lineW = wordsInLines.get(curLine);
+            addAction(lineW, st, curPlayer);
+            if (lineW.get(lineW.size() - 1).equals("all-in")) {
+                statuses.remove(curPlayer.getId());
+                statuses.put(curPlayer.getId(), PlayerStatus.ALL_IN);
+            }
             ++curLine;
         }
 
@@ -266,7 +301,18 @@ public class GGPokerokRushNCashParser implements Parser {
             Hand hand = new Hand(card1, card2);
             game.setPlayerHand(hash, hand);
             ++curLine;
+        }
 
+        // Counts amount of all-in players - needed for correct all-in street
+        // assessment if a player went all-in on previous street, but players continued
+        // playing on later streets.
+        int allInAm = 0;
+        for (PlayerInGame p : st.getPlayersAfterBetting()) {
+            if (statuses.get(p.getId()).equals(PlayerStatus.ALL_IN)) {
+                ++allInAm;
+            }
+        }
+        if (st.getPlayersAfterBetting().size() > 1 && allInAm >= st.getPlayersAfterBetting().size() - 1) {
             st.setAllIn(true);
         }
 
@@ -281,6 +327,8 @@ public class GGPokerokRushNCashParser implements Parser {
             case "folds" -> {
                 action = new Action(Action.ActionType.FOLD, curPlayer.getId(), 0, st.getPotAfterBetting());
                 st.removePlayerAfterBetting(curPlayer);
+                statuses.remove(curPlayer.getId());
+                statuses.put(curPlayer.getId(), PlayerStatus.FOLDED);
             }
             case "raises" -> {
                 double lastAmount = 0;
@@ -295,18 +343,23 @@ public class GGPokerokRushNCashParser implements Parser {
                 amount = parseDouble(line.get(4).substring(1));
                 action = new Action(Action.ActionType.RAISE, curPlayer.getId(), amount, st.getPotAfterBetting());
                 st.setPotAfterBetting(st.getPotAfterBetting() + amount - lastAmount);
+
+                curPlayer.setBalance(curPlayer.getBalance() - (amount - lastAmount));
             }
             case "calls" -> {
                 amount = parseDouble(line.get(2).substring(1));
                 action = new Action(Action.ActionType.CALL, curPlayer.getId(), amount, st.getPotAfterBetting());
                 st.setPotAfterBetting(st.getPotAfterBetting() + amount);
+                curPlayer.setBalance(curPlayer.getBalance() - amount);
             }
             case "bets" -> {
                 amount = parseDouble(line.get(2).substring(1));
                 action = new Action(Action.ActionType.BET, curPlayer.getId(), amount, st.getPotAfterBetting());
                 st.setPotAfterBetting(st.getPotAfterBetting() + amount);
+                curPlayer.setBalance(curPlayer.getBalance() - amount);
             }
-            default -> action = new Action(Action.ActionType.CHECK, curPlayer.getId(), 0, st.getPotAfterBetting());
+            case "checks" -> action = new Action(Action.ActionType.CHECK, curPlayer.getId(), 0, st.getPotAfterBetting());
+            default -> throw new RuntimeException("unexpected line in parsed file (was expected line with action, but got): " + line);
         }
 
         st.addAction(action);
@@ -329,40 +382,31 @@ public class GGPokerokRushNCashParser implements Parser {
         }
     }
 
-    private void parseWinnings(Game game, ArrayList<ArrayList<String>> wordsInLines) {
-        while (!wordsInLines.get(curLine).get(1).equals("collected")) {
-            ++curLine;
-        }
-        ArrayList<String> allWinners = new ArrayList<>();
-        while (wordsInLines.size() < curLine + 1 && wordsInLines.get(curLine + 1).get(1).equals("collected")) {
-            ++curLine;
-            allWinners.add(wordsInLines.get(curLine).get(0));
-        }
-
-        String winnerHash = wordsInLines.get(curLine).get(0);
-        game.setWinner(game.getPlayer(winnerHash));
-
-        curLine += 2;
-
-        double finalPot = parseDouble(wordsInLines.get(curLine).get(2).substring(1));
-        double rake = parseDouble(wordsInLines.get(curLine).get(5).substring(1));
-        // Jackpot rake.
-        rake += parseDouble(wordsInLines.get(curLine).get(8).substring(1));
-        // Bingo rake
-        rake += parseDouble(wordsInLines.get(curLine).get(11).substring(1));
-        // Only for new games (not sure about date, but definitely not
-        // before 15.12.2022)
-        if (wordsInLines.get(curLine).size() > 13) {
-            // "Fortune" rake
-            rake += parseDouble(wordsInLines.get(curLine).get(14).substring(1));
-        }
-        game.setFinalPot(finalPot);
-        game.setRake(rake);
-    }
-
-
     @Override
-    public ArrayList<Game> parseFile(String path) {
-        return null;
+    public ArrayList<Game> parseFile(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        ArrayList<Game> parsedGames = new ArrayList<>();
+
+        File file = new File(path);
+        FileReader fr = new FileReader(file);
+        BufferedReader bfr = new BufferedReader(fr);
+
+        String line = bfr.readLine();
+        while (line != null) {
+            StringBuilder gameText = new StringBuilder();
+            // Getting to the first line of the game text.
+            while (line != null && (line.equals("") || !line.substring(0, 5).equals("Poker"))) {
+                line = bfr.readLine();
+            }
+
+            while (line != null && !line.equals("")) {
+                gameText.append(line).append("\n");
+                line = bfr.readLine();
+            }
+
+            if (line != null) {
+                parsedGames.add(parseGame(gameText.toString()));
+            }
+        }
+        return parsedGames;
     }
 }
