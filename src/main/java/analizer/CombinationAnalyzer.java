@@ -13,7 +13,7 @@ import java.util.HashSet;
  * Class that contains methods for analyzing the board and identifying the
  * combination that are present on the board.
  */
-public class CombinationAnalizer {
+public class CombinationAnalyzer {
     /**
      * Checks if the given set of cards is valid and could exist in real life.
      *

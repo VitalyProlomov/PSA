@@ -4,6 +4,7 @@ import exceptions.IncorrectHandException;
 
 import java.util.*;
 
+import static models.Action.ActionType.RAISE;
 import static models.PositionType.*;
 
 /**
@@ -18,7 +19,8 @@ public class Game {
 
     /**
      * Constructs a new game with given ID and BB (given in dollars)
-     * @param gameId Id of the game from PokerCraft parsed text view of the game
+     *
+     * @param gameId        Id of the game from PokerCraft parsed text view of the game
      * @param bigBlindSize$ value of 1 big blind in dollars
      */
     public Game(String gameId, double bigBlindSize$) {
@@ -33,7 +35,6 @@ public class Game {
     private Date date;
     private final double bigBlindSize$;
 
-
     private StreetDescription preFlop;
     private StreetDescription flop;
     private StreetDescription turn;
@@ -43,15 +44,84 @@ public class Game {
     private double finalPot;
     private double rake;
 
-    // It is probably better to just make methods, that will
-    // return the following info - will save space.
-    // However, maybe it will make the analyzing time go up.
-    private boolean isPot3Bet;
-    private boolean isPot4Bet;
-    private boolean isPot5Bet;
-    private boolean isPotMultiWay;
-    private boolean isGameFoldedPF;
-    private boolean isHeroInGame;
+    private final HashMap<String, Card> shownOneCards = new HashMap<>();
+
+    /**
+     * Adds information about one shown card (needed when player shows just one of his cards, not both).
+     *
+     * @param playerId id of hte player, that showed card.
+     * @param card card that was shown
+     * @return true, if the player with given id is present in that game and information is added;
+     * false, otherwise.
+     */
+    public boolean addShownOneCard(String playerId, Card card) {
+        if (this.players.containsValue(new PlayerInGame(playerId))) {
+            shownOneCards.put(playerId, card);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public HashMap<String, Card> getShownOneCards() {
+        return new HashMap<>(shownOneCards);
+    }
+
+    private int preFlopRaisesAmount = -1;
+
+    public void countPreFlopRaises() {
+        StreetDescription pf = getFlop();
+        preFlopRaisesAmount = 0;
+        for (int i = 0; i < pf.getAllActions().size(); ++i) {
+            if (pf.getAllActions().get(i).getActionType().equals(RAISE)) {
+                ++preFlopRaisesAmount;
+            }
+        }
+    }
+
+    public boolean isSingleRaised() {
+        if (preFlopRaisesAmount == -1) {
+            countPreFlopRaises();
+        }
+        return preFlopRaisesAmount == 2;
+    }
+
+    public boolean isPot3Bet() {
+        if (preFlopRaisesAmount == -1) {
+            countPreFlopRaises();
+        }
+        return preFlopRaisesAmount == 3;
+    }
+
+    public boolean isPot4Bet() {
+        if (preFlopRaisesAmount == -1) {
+            countPreFlopRaises();
+        }
+        return preFlopRaisesAmount == 4;
+    }
+
+    public boolean isPot5Bet() {
+        if (preFlopRaisesAmount == -1) {
+            countPreFlopRaises();
+        }
+        return preFlopRaisesAmount == 5;
+    }
+
+    public boolean isPotMultiWay() {
+        return preFlop.getPlayersAfterBetting().size() > 2;
+    }
+
+    public boolean isGameFoldedPreFlop() {
+        return preFlop.getPlayersAfterBetting().size() == 1;
+    }
+
+    public boolean isHeroInGame() {
+        return getPlayer("Hero") != null;
+    }
+
+    public boolean isHeroPostFlop() {
+        return preFlop.getPlayersAfterBetting().contains(new PlayerInGame("Hero"));
+    }
 
     public String getGameId() {
         return gameId;
@@ -80,6 +150,7 @@ public class Game {
     /**
      * Returns the copy player in the game with the corresponding hash. If there is
      * no player in game with such hash, null is returned
+     *
      * @param hash hash field of PlayerInGame to get
      * @return player in game with same hash. Or null if no such player is found
      */
@@ -96,9 +167,9 @@ public class Game {
 
     /**
      * Sets the hand of the player on given poosition to the given hand
-     * @param pos position of the player
+     *
+     * @param pos  position of the player
      * @param hand Hand to set
-     * @throws IncorrectHandException if
      */
     public void setPlayerHand(PositionType pos, Hand hand) {
         players.get(pos).setHand(hand);
@@ -116,10 +187,10 @@ public class Game {
 
     /**
      * Sets Hero`s hand to the given hand
+     *
      * @param hand
-     * @throws IncorrectHandException
      */
-    public void setHeroHand(Hand hand) throws IncorrectHandException {
+    public void setHeroHand(Hand hand) {
         for (PositionType pos : players.keySet()) {
             if (players.get(pos).getId().equals("Hero")) {
                 setPlayerHand(pos, hand);
@@ -275,14 +346,14 @@ public class Game {
     @Override
     public String toString() {
         ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
-        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, LJ, HJ, CO, BTN));
+        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, TB, UTG, UTG_1, UTG_2, LJ, HJ, CO, BTN));
         for (int i = 0; i < orderPos.size(); ++i) {
             PlayerInGame p = players.get(orderPos.get(i));
             if (p != null)
                 orderedPlayers.add(p);
         }
 
-        return "(Game| Game Id: " + gameId +  ",\nPlayers: " + orderedPlayers +
+        return "(Game| Game Id: " + gameId + ",\nPlayers: " + orderedPlayers +
                 ",\nPreflop: " + preFlop + ",\nFlop: " + flop + ",\nTurn: " + turn + ",\nRiver: " + river + ")";
     }
 }

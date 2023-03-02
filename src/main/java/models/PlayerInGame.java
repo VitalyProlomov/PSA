@@ -154,7 +154,7 @@ public class PlayerInGame {
     public String toString() {
         String rep = "(PlayerInGame| UserName: ";
         if (ref != null) {
-            rep +=  ref.userName;
+            rep +=  ref.getUserName();
         } else {
             rep += "_UNDEFINED_";
         }

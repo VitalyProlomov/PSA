@@ -1,6 +1,6 @@
 package models;
 
-import analizer.CombinationAnalizer;
+import analizer.CombinationAnalyzer;
 import analizer.Combination;
 import exceptions.IncorrectBoardException;
 
@@ -68,7 +68,7 @@ public class ComboCardsPair {
     @Override
     public String toString() {
         ArrayList<Card> cardsAr = new ArrayList<>(cards);
-        CombinationAnalizer.sortBoard(cardsAr);
+        CombinationAnalyzer.sortBoard(cardsAr);
         return "(ComboBoard| Combination: " + combination + ", Cards: " + cardsAr + ")";
     }
 }

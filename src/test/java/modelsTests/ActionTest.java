@@ -49,7 +49,7 @@ public class ActionTest {
         assertEquals(correctStr, action.toString());
 
         action = new Action(Action.ActionType.CHECK, p.getId(), 0, 3.2);
-        System.out.println(action);
+//        System.out.println(action);
         correctStr = "(Action| Type: CHECK, Pot before action: 3.2, " +
                 "Player Id: 345lk)";
         assertEquals(correctStr, action.toString());
