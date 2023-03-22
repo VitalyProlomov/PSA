@@ -14,7 +14,12 @@ public class Action {
         BET,
         FOLD,
         CALL,
-        RAISE
+        RAISE,
+
+        BLIND,
+        ANTE,
+        STRADDLE,
+        MISSED_BLIND
     }
 
     private final ActionType actionType;
@@ -42,7 +47,7 @@ public class Action {
         } else {
             if (amount <= 0) {
                 throw new IllegalArgumentException("Amount, contributed to the pot can not be equal or less than 0 " +
-                        "for CALL, BET and RAISE action types");
+                        "for any action type other than FOLD and CHECK");
             }
 
             this.amount = amount;
@@ -120,14 +125,13 @@ public class Action {
      * a) if (Action is CHECK or FOLD) => "(Action| Type: t, PotBeforeAction: p, pg)"
      * b) if (Action is CALL, BET, or RAISE) => "(Action| Type: t, Amount: a, Pot before action: p, Player Id: pg)",
      * where t = actionType, a = amount, p = potBeforeAction, pg = playerInGameId
+     *
      * @return String representation of this Action
      */
     @Override
     public String toString() {
         String repr = "(Action| Type: " + actionType;
-        if (actionType == ActionType.RAISE ||
-                actionType == ActionType.BET ||
-                actionType == ActionType.CALL) {
+        if (actionType != ActionType.FOLD && actionType != ActionType.CHECK) {
             DecimalFormat dcf = new DecimalFormat("###.##");
             repr += ", Amount: " + dcf.format(amount).replace(',', '.');
         }

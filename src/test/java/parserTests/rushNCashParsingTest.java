@@ -39,7 +39,7 @@ public class rushNCashParsingTest {
     public void testFullGameInfoSplitting() throws IOException, IncorrectCardException, IncorrectHandException, IncorrectBoardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
-        Game topG = parser.parseGame(getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/gameExample"));
+        Game topG = parser.parseGame(getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/gameExample.txt"));
 
         String correctID = "RC1221829603";
         assertEquals(correctID, topG.getGameId());
@@ -66,8 +66,8 @@ public class rushNCashParsingTest {
         assertEquals(topG.getPosPlayersMap().get(PositionType.BB).getHand(), new Hand(heroHand));
 
         ArrayList<Action> actions = new ArrayList<>();
-        actions.add(new Action(BET, correctPlayers.get(1).getId(), 0.1, 0));
-        actions.add(new Action(RAISE, correctPlayers.get(2).getId(), 0.25, 0.1));
+        actions.add(new Action(BLIND, correctPlayers.get(1).getId(), 0.1, 0));
+        actions.add(new Action(BLIND, correctPlayers.get(2).getId(), 0.25, 0.1));
         actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(3).getId(), 0, 0.35));
         actions.add(new Action(Action.ActionType.FOLD, correctPlayers.get(4).getId(), 0, 0.35));
         actions.add(new Action(Action.ActionType.RAISE, correctPlayers.get(5).getId(), 0.63, 0.35));
@@ -134,7 +134,7 @@ public class rushNCashParsingTest {
             throws FileNotFoundException, IncorrectHandException,
             IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame.txt");
 
         Game topG = parser.parseGame(text);
 
@@ -162,8 +162,8 @@ public class rushNCashParsingTest {
         assertEquals(heroHand, topG.getPlayer("Hero").getHand());
 
         ArrayList<Action> preFlopActions = new ArrayList<>(List.of(
-                new Action(BET, "Hero", 0.02, 0),
-                new Action(RAISE, "16d75d78", 0.05, 0.02),
+                new Action(BLIND, "Hero", 0.02, 0),
+                new Action(BLIND, "16d75d78", 0.05, 0.02),
                 new Action(FOLD, "c1f81489", 0, 0.07),
                 new Action(FOLD, "361dc4bb", 0, 0.07),
                 new Action(RAISE, "219f215e", 0.13, 0.07),
@@ -200,7 +200,7 @@ public class rushNCashParsingTest {
     @Test
     public void testPreFlopAllInExtraCashGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt");
 
         Game topG = parser.parseGame(text);
         assertEquals("RC1281882663", topG.getGameId());
@@ -221,8 +221,8 @@ public class rushNCashParsingTest {
         assertEquals(new Hand("Ac", "Ah"), topG.getPlayer("Hero").getHand());
 
         ArrayList<Action> actions = new ArrayList<>(List.of(
-                new Action(BET, "81a0604b", 0.02, 0.5),
-                new Action(RAISE, "486d3078", 0.05, 0.52),
+                new Action(BLIND, "81a0604b", 0.02, 0.5),
+                new Action(BLIND, "486d3078", 0.05, 0.52),
                 new Action(CALL, "Hero", 0.05, 0.57),
                 new Action(FOLD, "d67af16c", 0, 0.62),
                 new Action(RAISE, "c4d36ec9", 0.15, 0.62),
@@ -253,7 +253,7 @@ public class rushNCashParsingTest {
     @Test
     public void testHandsShownGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/handShownGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/handShownGame.txt");
 
         Game topG = parser.parseGame(text);
         assertEquals("RC1292105656", topG.getGameId());
@@ -274,8 +274,8 @@ public class rushNCashParsingTest {
         assertEquals(new Hand("Kd", "Ks"), topG.getPlayer("480564b2").getHand());
 
         ArrayList<Action> actions = new ArrayList<>(List.of(
-                new Action(BET, "Hero", 0.02, 0),
-                new Action(RAISE, "480564b2", 0.05, 0.02),
+                new Action(BLIND, "Hero", 0.02, 0),
+                new Action(BLIND, "480564b2", 0.05, 0.02),
                 new Action(FOLD, "59435a5e", 0, 0.07),
                 new Action(FOLD, "dd1dce69", 0.15, 0.07),
                 new Action(FOLD, "363e9d13", 0, 0.07),
@@ -325,14 +325,14 @@ public class rushNCashParsingTest {
     public void testEarlyAllInCashoutGameSplitting()
             throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame.txt");
 
         Game topG = parser.parseGame(text);
         String strRep = """
                 (Game| Game Id: RC1281883052,
                 Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: SB, Balance: 13.4), (PlayerInGame| UserName: _UNDEFINED_, Id: 16d75d78, Pos: BB, Balance: 6.28), (PlayerInGame| UserName: _UNDEFINED_, Id: c1f81489, Pos: LJ, Balance: 10.52), (PlayerInGame| UserName: _UNDEFINED_, Id: 361dc4bb, Pos: HJ, Balance: 2.31), (PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
                 Preflop: (StreetDescription| Board: null, pot after betting: 0,33, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
-                 Actions: [(Action| Type: BET, Amount: 0.02, Pot before action: 0, Player Id: Hero), (Action| Type: RAISE, Amount: 0.05, Pot before action: 0.02, Player Id: 16d75d78), (Action| Type: FOLD, Pot before action: 0.07, Player Id: c1f81489), (Action| Type: FOLD, Pot before action: 0.07, Player Id: 361dc4bb), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 219f215e), (Action| Type: CALL, Amount: 0.13, Pot before action: 0.2, Player Id: c491325f), (Action| Type: FOLD, Pot before action: 0.33, Player Id: Hero), (Action| Type: FOLD, Pot before action: 0.33, Player Id: 16d75d78)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0, Player Id: Hero), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 16d75d78), (Action| Type: FOLD, Pot before action: 0.07, Player Id: c1f81489), (Action| Type: FOLD, Pot before action: 0.07, Player Id: 361dc4bb), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 219f215e), (Action| Type: CALL, Amount: 0.13, Pot before action: 0.2, Player Id: c491325f), (Action| Type: FOLD, Pot before action: 0.33, Player Id: Hero), (Action| Type: FOLD, Pot before action: 0.33, Player Id: 16d75d78)],
                 Flop: (StreetDescription| Board: ([5♠, 3♣, K♠]), pot after betting: 12,31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
                  Actions: [(Action| Type: BET, Amount: 0.2, Pot before action: 0.33, Player Id: 219f215e), (Action| Type: RAISE, Amount: 5.99, Pot before action: 0.53, Player Id: c491325f), (Action| Type: CALL, Amount: 5.79, Pot before action: 6.52, Player Id: 219f215e)],
                 Turn: null,
@@ -354,15 +354,15 @@ public class rushNCashParsingTest {
     @Test
     public void testPreFlopFoldedGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preflopFoldedGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preflopFoldedGame.txt");
 
         Game topG = parser.parseGame(text);
-//        System.out.println(topG);
+
         String rep = """
                 (Game| Game Id: RC1281882647,
                 Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: a5003d17, Pos: SB, Balance: 9.36), (PlayerInGame| UserName: _UNDEFINED_, Id: 6be2f5ab, Pos: BB, Balance: 5.0), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: LJ, Balance: 5.65), (PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79), (PlayerInGame| UserName: _UNDEFINED_, Id: 1ef61f80, Pos: CO, Balance: 15.01), (PlayerInGame| UserName: _UNDEFINED_, Id: cdd7fe2b, Pos: BTN, Balance: 10.0)],
                 Preflop: (StreetDescription| Board: null, pot after betting: 0,2, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79)],
-                 Actions: [(Action| Type: BET, Amount: 0.02, Pot before action: 0, Player Id: a5003d17), (Action| Type: RAISE, Amount: 0.05, Pot before action: 0.02, Player Id: 6be2f5ab), (Action| Type: FOLD, Pot before action: 0.07, Player Id: Hero), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 9a4f339a), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 1ef61f80), (Action| Type: FOLD, Pot before action: 0.2, Player Id: cdd7fe2b), (Action| Type: FOLD, Pot before action: 0.2, Player Id: a5003d17), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 6be2f5ab)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0, Player Id: a5003d17), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 6be2f5ab), (Action| Type: FOLD, Pot before action: 0.07, Player Id: Hero), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 9a4f339a), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 1ef61f80), (Action| Type: FOLD, Pot before action: 0.2, Player Id: cdd7fe2b), (Action| Type: FOLD, Pot before action: 0.2, Player Id: a5003d17), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 6be2f5ab)],
                 Flop: null,
                 Turn: null,
                 River: null)""";
@@ -378,7 +378,7 @@ public class rushNCashParsingTest {
     @Test
     public void testFullGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/fullGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt");
 
         Game topG = parser.parseGame(text);
 
@@ -386,7 +386,7 @@ public class rushNCashParsingTest {
                 (Game| Game Id: RC1221774448,
                 Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 392d7ce5, Pos: LJ, Balance: 25.35), (PlayerInGame| UserName: _UNDEFINED_, Id: e41b54eb, Pos: HJ, Balance: 26.82), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: BTN, Balance: 39.13)],
                 Preflop: (StreetDescription| Board: null, pot after betting: 4,24, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
-                 Actions: [(Action| Type: BET, Amount: 0.1, Pot before action: 2.5, Player Id: ea0c9d4e), (Action| Type: RAISE, Amount: 0.25, Pot before action: 2.6, Player Id: 195539ef), (Action| Type: FOLD, Pot before action: 2.85, Player Id: 392d7ce5), (Action| Type: FOLD, Pot before action: 2.85, Player Id: e41b54eb), (Action| Type: RAISE, Amount: 0.58, Pot before action: 2.85, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 3.43, Player Id: Hero), (Action| Type: CALL, Amount: 0.48, Pot before action: 3.43, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 0.33, Pot before action: 3.91, Player Id: 195539ef)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.1, Pot before action: 2.5, Player Id: ea0c9d4e), (Action| Type: BLIND, Amount: 0.25, Pot before action: 2.6, Player Id: 195539ef), (Action| Type: FOLD, Pot before action: 2.85, Player Id: 392d7ce5), (Action| Type: FOLD, Pot before action: 2.85, Player Id: e41b54eb), (Action| Type: RAISE, Amount: 0.58, Pot before action: 2.85, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 3.43, Player Id: Hero), (Action| Type: CALL, Amount: 0.48, Pot before action: 3.43, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 0.33, Pot before action: 3.91, Player Id: 195539ef)],
                 Flop: (StreetDescription| Board: ([9♣, 3♠, 8♠]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
                  Actions: [(Action| Type: CHECK, Pot before action: 4.24, Player Id: ea0c9d4e), (Action| Type: CHECK, Pot before action: 4.24, Player Id: 195539ef), (Action| Type: BET, Amount: 2.75, Pot before action: 4.24, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 6.99, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 2.75, Pot before action: 6.99, Player Id: 195539ef)],
                 Turn: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
@@ -400,10 +400,9 @@ public class rushNCashParsingTest {
     @Test
     public void testProblemGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/fullGame");
+        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/problemGame.txt");
 
         Game topG = parser.parseGame(text);
-
     }
     // endregion
 
@@ -416,7 +415,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFileParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession");
+        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));
@@ -430,7 +429,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFileParsing2() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession2");
+        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));
@@ -445,7 +444,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFilePArsing3() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession3");
+        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession3.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));

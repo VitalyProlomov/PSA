@@ -46,6 +46,8 @@ public interface GGParser extends Parser {
     public default ArrayList<Game> parseFile(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         ArrayList<Game> parsedGames = new ArrayList<>();
 
+//        Files.lines(path);
+        // try with resources
         File file = new File(path);
         FileReader fr = new FileReader(file);
         BufferedReader bfr = new BufferedReader(fr);

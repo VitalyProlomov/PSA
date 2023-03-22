@@ -16,16 +16,13 @@ import static models.PositionType.SB;
 
 public class GGPokerokRushNCashParser implements GGParser {
     private int curLine = 0;
-    enum PlayerStatus {
-        ACTIVE,
-        FOLDED,
-        ALL_IN
-    }
 
     HashMap<String, PlayerStatus> statuses;
 
+
     /**
      * Parses text representation of the game.
+     *
      * @param gameText text of the game (must be in correct format - as it is on Pokercraft.com)
      * @return instance of the game that was embedded into the given text
      * @throws IncorrectCardException
@@ -48,9 +45,6 @@ public class GGPokerokRushNCashParser implements GGParser {
         parseDate(game, wordsInLines);
 
         parsePlayers(game, wordsInLines);
-        for (PlayerInGame p : game.getPlayers()) {
-            statuses.put(p.getId(), PlayerStatus.ACTIVE);
-        }
 
         parseExtraCash(game, wordsInLines);
         parseHeroHand(game, wordsInLines);
@@ -75,6 +69,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         String dateRep = wordsInLines.get(curLine).get(9);
         dateRep += " " + wordsInLines.get(curLine).get(10);
         Date date = new Date(dateRep);
+
         game.setDate(date);
 
         ++curLine;
@@ -102,7 +97,12 @@ public class GGPokerokRushNCashParser implements GGParser {
         for (int i = 0; i < 6; ++i) {
             players.add(new PlayerInGame(hashes.get(i), positions.get(i), balances.get(i)));
         }
+
         game.setPlayers(players);
+
+        for (PlayerInGame p : game.getPlayers()) {
+            statuses.put(p.getId(), PlayerStatus.ACTIVE);
+        }
     }
 
     private void parseExtraCash(Game game, ArrayList<ArrayList<String>> wordsInLines) {
@@ -114,7 +114,6 @@ public class GGPokerokRushNCashParser implements GGParser {
         } else {
             game.setExtraCash(0);
         }
-
     }
 
     private void parseHeroHand(Game game, ArrayList<ArrayList<String>> wordsInLines)
@@ -261,8 +260,8 @@ public class GGPokerokRushNCashParser implements GGParser {
         StreetDescription st = new StreetDescription();
         // Adding blinds posting and players left on pre-flop.
         if (curPot - (game.getBigBlindSize$() + game.getSB() + game.getExtraCashAmount()) < 0.01) {
-            st.addAction(new Action(Action.ActionType.BET, game.getPosPlayersMap().get(SB).getId(), game.getSB(), game.getExtraCashAmount()));
-            st.addAction(new Action(Action.ActionType.RAISE, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()));
+            st.addAction(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(SB).getId(), game.getSB(), game.getExtraCashAmount()));
+            st.addAction(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()));
 
             st.setPlayersAfterBetting(game.getPlayers());
         }

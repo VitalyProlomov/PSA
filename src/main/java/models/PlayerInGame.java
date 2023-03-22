@@ -14,6 +14,7 @@ public class PlayerInGame {
     private double balance$;
     private Hand hand;
 
+
     /**
      * Constructs new PlayerInGame with given hash
      */

@@ -4,13 +4,17 @@ package models;
 // Or maybe I will just add another enum for it
 
 /**
- * Names of positions in 6 handed table
+ * Names of positions in game.
  */
 public enum PositionType {
     BTN,
     SB,
     BB,
+    TB,
+    UTG,
+    UTG_1,
+    UTG_2,
     LJ,
     HJ,
-    CO;
+    CO
 }

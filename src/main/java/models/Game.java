@@ -83,28 +83,28 @@ public class Game {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
         }
-        return preFlopRaisesAmount == 2;
+        return preFlopRaisesAmount == 1;
     }
 
     public boolean isPot3Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
         }
-        return preFlopRaisesAmount == 3;
+        return preFlopRaisesAmount == 2;
     }
 
     public boolean isPot4Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
         }
-        return preFlopRaisesAmount == 4;
+        return preFlopRaisesAmount == 3;
     }
 
     public boolean isPot5Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
         }
-        return preFlopRaisesAmount == 5;
+        return preFlopRaisesAmount == 4;
     }
 
     public boolean isPotMultiWay() {
@@ -215,7 +215,6 @@ public class Game {
             this.players.put(p.getPosition(), p);
         }
     }
-
 
     public boolean isExtraCash() {
         return extraCashAmount != 0;
