@@ -44,13 +44,13 @@ public class ActionTest {
     public void testActionToString() {
         PlayerInGame p = new PlayerInGame("345lk");
         Action action = new Action(Action.ActionType.CALL, p.getId(), 1.2, 2.4);
-        String correctStr = "(Action| Type: CALL, Amount: 1.2, Pot before action: 2.4, " +
+        String correctStr = "(Action| Type: CALL, Amount: 1.20, Pot before action: 2.40, " +
                 "Player Id: 345lk)";
         assertEquals(correctStr, action.toString());
 
         action = new Action(Action.ActionType.CHECK, p.getId(), 0, 3.2);
 //        System.out.println(action);
-        correctStr = "(Action| Type: CHECK, Pot before action: 3.2, " +
+        correctStr = "(Action| Type: CHECK, Pot before action: 3.20, " +
                 "Player Id: 345lk)";
         assertEquals(correctStr, action.toString());
     }

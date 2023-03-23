@@ -132,10 +132,10 @@ public class Action {
     public String toString() {
         String repr = "(Action| Type: " + actionType;
         if (actionType != ActionType.FOLD && actionType != ActionType.CHECK) {
-            DecimalFormat dcf = new DecimalFormat("###.##");
+            DecimalFormat dcf = new DecimalFormat("##0.00");
             repr += ", Amount: " + dcf.format(amount).replace(',', '.');
         }
-        DecimalFormat dcf = new DecimalFormat("###.##");
+        DecimalFormat dcf = new DecimalFormat("##0.00");
         String potRep = dcf.format(potBeforeAction);
         potRep = potRep.replace(",", ".");
         repr += ", Pot before action: " + potRep + ", Player Id: " + playerInGameId + ")";

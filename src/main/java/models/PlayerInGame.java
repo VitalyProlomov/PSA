@@ -2,6 +2,7 @@ package models;
 
 import exceptions.IncorrectHandException;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 
 /**
@@ -13,6 +14,8 @@ public class PlayerInGame {
     private UserProfile ref;
     private double balance$;
     private Hand hand;
+
+//    private PlayerStatus status;
 
 
     /**
@@ -54,6 +57,8 @@ public class PlayerInGame {
         if (copyPlayer.hand != null) {
             this.hand = new Hand(copyPlayer.hand);
         }
+
+//        this.status = copyPlayer.status;
 
 //        this.vpip = copyPlayer.vpip;
 //        this.threeBetPercentage = copyPlayer.threeBetPercentage;
@@ -159,7 +164,9 @@ public class PlayerInGame {
         } else {
             rep += "_UNDEFINED_";
         }
-        rep += ", Id: " + id + ", Pos: " + positionType + ", Balance: " + balance$ + ")";
+        String balanceStr = new DecimalFormat("#0.00").format(balance$);
+        balanceStr = balanceStr.replace(',', '.');
+        rep += ", Id: " + id + ", Pos: " + positionType + ", Balance: " + balanceStr + ")";
         return rep;
     }
 

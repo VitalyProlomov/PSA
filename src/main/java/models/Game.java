@@ -29,6 +29,7 @@ public class Game {
     }
 
     private HashMap<PositionType, PlayerInGame> players = new HashMap<>();
+    private HashMap<String, Double> initialBalances = new HashMap<>();
 
     // Amount of dollars as a cash drop (or 0 if there is no cash drop)
     private double extraCashAmount = 0;
@@ -50,7 +51,7 @@ public class Game {
      * Adds information about one shown card (needed when player shows just one of his cards, not both).
      *
      * @param playerId id of hte player, that showed card.
-     * @param card card that was shown
+     * @param card     card that was shown
      * @return true, if the player with given id is present in that game and information is added;
      * false, otherwise.
      */
@@ -151,15 +152,26 @@ public class Game {
      * Returns the copy player in the game with the corresponding hash. If there is
      * no player in game with such hash, null is returned
      *
-     * @param hash hash field of PlayerInGame to get
+     * @param id hash field of PlayerInGame to get
      * @return player in game with same hash. Or null if no such player is found
      */
-    public PlayerInGame getPlayer(String hash) {
+    public PlayerInGame getPlayer(String id) {
         for (PositionType pos : players.keySet()) {
             PlayerInGame p = players.get(pos);
 
-            if (p.getId().equals(hash)) {
+            if (p.getId().equals(id)) {
                 return new PlayerInGame(p);
+            }
+        }
+        return null;
+    }
+
+    private PlayerInGame getPlayerLink(String id) {
+        for (PositionType pos : players.keySet()) {
+            PlayerInGame p = players.get(pos);
+
+            if (p.getId().equals(id)) {
+                return p;
             }
         }
         return null;
@@ -207,12 +219,44 @@ public class Game {
         for (PlayerInGame p : players) {
             this.players.put(p.getPosition(), p);
         }
+        setInitialBalances(players);
     }
 
     public void setPlayers(Set<PlayerInGame> players) {
         this.players = new HashMap<>();
         for (PlayerInGame p : players) {
             this.players.put(p.getPosition(), p);
+        }
+    }
+
+    /**
+     * Subtracts given amount from the balance of the player with given Id.
+     *
+     * @param id         Id of player whose balance is needed to be decreased
+     * @param decrAmount amount that will be decreased from given player`s balance
+     * @throws IllegalArgumentException if {@code decrAmount} is less than players balance or decrAmount is less than 0
+     */
+    public void decrementPlayersBalance(String id, double decrAmount) {
+        if (decrAmount < 0) {
+            throw new IllegalArgumentException("Decrement amount must be positive (ypu can not add chips to player`s balance during hand");
+        }
+
+        PlayerInGame p = this.getPlayerLink(id);
+        if (p != null) {
+            double balance = p.getBalance();
+
+            if (decrAmount - balance > 0.01) {
+                throw new IllegalArgumentException("Decrement amount must be less or equal to the balance of the player");
+            }
+
+            players.get(p.getPosition()).setBalance(p.getBalance() - decrAmount);
+        }
+    }
+
+    public void returnUncalledChips(String playerId, double returnAmount) {
+        PlayerInGame p = getPlayerLink(playerId);
+        if (p != null) {
+            p.setBalance(p.getBalance() + returnAmount);
         }
     }
 
@@ -299,21 +343,6 @@ public class Game {
         this.river = new StreetDescription(river);
     }
 
-//    public Board getBoard() {
-//        if (this.board == null) {
-//            return null;
-//        }
-//        return new Board(board);
-//    }
-//
-//    public void setBoard(Board board) {
-//        if (board == null) {
-//            this.board = null;
-//            return;
-//        }
-//        this.board = new Board(board);
-//    }
-
     public HashMap<String, Double> getWinners() {
         if (allWinners == null) {
             return null;
@@ -328,6 +357,16 @@ public class Game {
 
     public double getFinalPot() {
         return finalPot;
+    }
+
+    public HashMap<String, Double> getInitialBalances() {
+        return new HashMap<>(initialBalances);
+    }
+
+    public void setInitialBalances(List<PlayerInGame> players) {
+        for (PlayerInGame p : players) {
+            initialBalances.put(p.getId(), p.getBalance());
+        }
     }
 
     public void setFinalPot(double finalPot) {
@@ -346,10 +385,14 @@ public class Game {
     public String toString() {
         ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
         ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, TB, UTG, UTG_1, UTG_2, LJ, HJ, CO, BTN));
-        for (int i = 0; i < orderPos.size(); ++i) {
-            PlayerInGame p = players.get(orderPos.get(i));
+        for (PositionType orderPo : orderPos) {
+            PlayerInGame p = players.get(orderPo);
             if (p != null)
-                orderedPlayers.add(p);
+                orderedPlayers.add(new PlayerInGame(p));
+        }
+
+        for (PlayerInGame p : orderedPlayers) {
+            p.setBalance(this.initialBalances.get(p.getId()));
         }
 
         return "(Game| Game Id: " + gameId + ",\nPlayers: " + orderedPlayers +

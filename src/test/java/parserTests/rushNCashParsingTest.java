@@ -155,9 +155,11 @@ public class rushNCashParsingTest {
             assertTrue(topG.getPlayers().contains(correctPlayers.get(i)));
             assertEquals(correctPlayers.get(i).getPosition(),
                     topG.getPlayer(correctPlayers.get(i).getId()).getPosition());
-            assertEquals(correctPlayers.get(i).getBalance(),
-                    topG.getPlayer(correctPlayers.get(i).getId()).getBalance());
         }
+
+        assertEquals(0, topG.getPlayer("c491325f").getBalance());
+        assertEquals(7.75 - 5.99, topG.getPlayer("219f215e").getBalance());
+
         Hand heroHand = new Hand("3s", "9d");
         assertEquals(heroHand, topG.getPlayer("Hero").getHand());
 
@@ -330,11 +332,11 @@ public class rushNCashParsingTest {
         Game topG = parser.parseGame(text);
         String strRep = """
                 (Game| Game Id: RC1281883052,
-                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: SB, Balance: 13.4), (PlayerInGame| UserName: _UNDEFINED_, Id: 16d75d78, Pos: BB, Balance: 6.28), (PlayerInGame| UserName: _UNDEFINED_, Id: c1f81489, Pos: LJ, Balance: 10.52), (PlayerInGame| UserName: _UNDEFINED_, Id: 361dc4bb, Pos: HJ, Balance: 2.31), (PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
-                Preflop: (StreetDescription| Board: null, pot after betting: 0,33, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
-                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0, Player Id: Hero), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 16d75d78), (Action| Type: FOLD, Pot before action: 0.07, Player Id: c1f81489), (Action| Type: FOLD, Pot before action: 0.07, Player Id: 361dc4bb), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 219f215e), (Action| Type: CALL, Amount: 0.13, Pot before action: 0.2, Player Id: c491325f), (Action| Type: FOLD, Pot before action: 0.33, Player Id: Hero), (Action| Type: FOLD, Pot before action: 0.33, Player Id: 16d75d78)],
-                Flop: (StreetDescription| Board: ([5♠, 3♣, K♠]), pot after betting: 12,31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
-                 Actions: [(Action| Type: BET, Amount: 0.2, Pot before action: 0.33, Player Id: 219f215e), (Action| Type: RAISE, Amount: 5.99, Pot before action: 0.53, Player Id: c491325f), (Action| Type: CALL, Amount: 5.79, Pot before action: 6.52, Player Id: 219f215e)],
+                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: SB, Balance: 13.40), (PlayerInGame| UserName: _UNDEFINED_, Id: 16d75d78, Pos: BB, Balance: 6.28), (PlayerInGame| UserName: _UNDEFINED_, Id: c1f81489, Pos: LJ, Balance: 10.52), (PlayerInGame| UserName: _UNDEFINED_, Id: 361dc4bb, Pos: HJ, Balance: 2.31), (PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.88), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 6.12)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 0.33, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 7.75), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 5.99)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0.00, Player Id: Hero), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 16d75d78), (Action| Type: FOLD, Pot before action: 0.07, Player Id: c1f81489), (Action| Type: FOLD, Pot before action: 0.07, Player Id: 361dc4bb), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 219f215e), (Action| Type: CALL, Amount: 0.13, Pot before action: 0.20, Player Id: c491325f), (Action| Type: FOLD, Pot before action: 0.33, Player Id: Hero), (Action| Type: FOLD, Pot before action: 0.33, Player Id: 16d75d78)],
+                Flop: (StreetDescription| Board: ([5♠, 3♣, K♠]), pot after betting: 12.31, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 219f215e, Pos: CO, Balance: 1.76), (PlayerInGame| UserName: _UNDEFINED_, Id: c491325f, Pos: BTN, Balance: 0.00)],
+                 Actions: [(Action| Type: BET, Amount: 0.20, Pot before action: 0.33, Player Id: 219f215e), (Action| Type: RAISE, Amount: 5.99, Pot before action: 0.53, Player Id: c491325f), (Action| Type: CALL, Amount: 5.79, Pot before action: 6.52, Player Id: 219f215e)],
                 Turn: null,
                 River: null)""";
         assertEquals(strRep, topG.toString());
@@ -360,9 +362,9 @@ public class rushNCashParsingTest {
 
         String rep = """
                 (Game| Game Id: RC1281882647,
-                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: a5003d17, Pos: SB, Balance: 9.36), (PlayerInGame| UserName: _UNDEFINED_, Id: 6be2f5ab, Pos: BB, Balance: 5.0), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: LJ, Balance: 5.65), (PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79), (PlayerInGame| UserName: _UNDEFINED_, Id: 1ef61f80, Pos: CO, Balance: 15.01), (PlayerInGame| UserName: _UNDEFINED_, Id: cdd7fe2b, Pos: BTN, Balance: 10.0)],
-                Preflop: (StreetDescription| Board: null, pot after betting: 0,2, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79)],
-                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0, Player Id: a5003d17), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 6be2f5ab), (Action| Type: FOLD, Pot before action: 0.07, Player Id: Hero), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 9a4f339a), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 1ef61f80), (Action| Type: FOLD, Pot before action: 0.2, Player Id: cdd7fe2b), (Action| Type: FOLD, Pot before action: 0.2, Player Id: a5003d17), (Action| Type: FOLD, Pot before action: 0.2, Player Id: 6be2f5ab)],
+                Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: a5003d17, Pos: SB, Balance: 9.36), (PlayerInGame| UserName: _UNDEFINED_, Id: 6be2f5ab, Pos: BB, Balance: 5.00), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: LJ, Balance: 5.65), (PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.79), (PlayerInGame| UserName: _UNDEFINED_, Id: 1ef61f80, Pos: CO, Balance: 15.01), (PlayerInGame| UserName: _UNDEFINED_, Id: cdd7fe2b, Pos: BTN, Balance: 10.00)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 0.20, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 9a4f339a, Pos: HJ, Balance: 17.74)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.02, Pot before action: 0.00, Player Id: a5003d17), (Action| Type: BLIND, Amount: 0.05, Pot before action: 0.02, Player Id: 6be2f5ab), (Action| Type: FOLD, Pot before action: 0.07, Player Id: Hero), (Action| Type: RAISE, Amount: 0.13, Pot before action: 0.07, Player Id: 9a4f339a), (Action| Type: FOLD, Pot before action: 0.20, Player Id: 1ef61f80), (Action| Type: FOLD, Pot before action: 0.20, Player Id: cdd7fe2b), (Action| Type: FOLD, Pot before action: 0.20, Player Id: a5003d17), (Action| Type: FOLD, Pot before action: 0.20, Player Id: 6be2f5ab)],
                 Flop: null,
                 Turn: null,
                 River: null)""";
@@ -370,6 +372,15 @@ public class rushNCashParsingTest {
 
         assertEquals(new Hand("Tc", "5s"), topG.getPlayer("Hero").getHand());
         assertFalse(topG.getPreFlop().isAllIn());
+    }
+
+    @Test
+    public void testTwoRunoutsGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        String txt = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt");
+        Game topG = parser.parseGame(txt);
+
+        System.out.println(topG);
     }
     // endregion
 
@@ -385,13 +396,13 @@ public class rushNCashParsingTest {
         String s = """
                 (Game| Game Id: RC1221774448,
                 Players: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 392d7ce5, Pos: LJ, Balance: 25.35), (PlayerInGame| UserName: _UNDEFINED_, Id: e41b54eb, Pos: HJ, Balance: 26.82), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87), (PlayerInGame| UserName: _UNDEFINED_, Id: Hero, Pos: BTN, Balance: 39.13)],
-                Preflop: (StreetDescription| Board: null, pot after betting: 4,24, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 51.37), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
-                 Actions: [(Action| Type: BLIND, Amount: 0.1, Pot before action: 2.5, Player Id: ea0c9d4e), (Action| Type: BLIND, Amount: 0.25, Pot before action: 2.6, Player Id: 195539ef), (Action| Type: FOLD, Pot before action: 2.85, Player Id: 392d7ce5), (Action| Type: FOLD, Pot before action: 2.85, Player Id: e41b54eb), (Action| Type: RAISE, Amount: 0.58, Pot before action: 2.85, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 3.43, Player Id: Hero), (Action| Type: CALL, Amount: 0.48, Pot before action: 3.43, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 0.33, Pot before action: 3.91, Player Id: 195539ef)],
-                Flop: (StreetDescription| Board: ([9♣, 3♠, 8♠]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                Preflop: (StreetDescription| Board: null, pot after betting: 4.24, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: ea0c9d4e, Pos: SB, Balance: 50.79), (PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 26.79), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.29)],
+                 Actions: [(Action| Type: BLIND, Amount: 0.10, Pot before action: 2.50, Player Id: ea0c9d4e), (Action| Type: BLIND, Amount: 0.25, Pot before action: 2.60, Player Id: 195539ef), (Action| Type: FOLD, Pot before action: 2.85, Player Id: 392d7ce5), (Action| Type: FOLD, Pot before action: 2.85, Player Id: e41b54eb), (Action| Type: RAISE, Amount: 0.58, Pot before action: 2.85, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 3.43, Player Id: Hero), (Action| Type: CALL, Amount: 0.48, Pot before action: 3.43, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 0.33, Pot before action: 3.91, Player Id: 195539ef)],
+                Flop: (StreetDescription| Board: ([9♣, 3♠, 8♠]), pot after betting: 9.74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 24.04), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 79.54)],
                  Actions: [(Action| Type: CHECK, Pot before action: 4.24, Player Id: ea0c9d4e), (Action| Type: CHECK, Pot before action: 4.24, Player Id: 195539ef), (Action| Type: BET, Amount: 2.75, Pot before action: 4.24, Player Id: a7067c39), (Action| Type: FOLD, Pot before action: 6.99, Player Id: ea0c9d4e), (Action| Type: CALL, Amount: 2.75, Pot before action: 6.99, Player Id: 195539ef)],
-                Turn: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                Turn: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦]), pot after betting: 9.74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 24.04), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 79.54)],
                  Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)],
-                River: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦, 6♥]), pot after betting: 9,74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 27.37), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 82.87)],
+                River: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦, 6♥]), pot after betting: 9.74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 24.04), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 79.54)],
                  Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)])""";
         assertEquals(s, topG.toString());
         assertFalse(topG.getRiver().isAllIn());
