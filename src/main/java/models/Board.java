@@ -139,7 +139,11 @@ public class Board {
         return set2.size() == 0 && trSame;
     }
 
-
+    /**
+     * returns hashcode of the Board object - first 3 cards` order does not matter,
+     * but 4th and 5th cards order matters.
+     * @return
+     */
     @Override
     public int hashCode() {
         if (size() == 3) {
@@ -150,6 +154,10 @@ public class Board {
         return Objects.hash(new HashSet<>(cards.subList(0, 3)), get(3), get(4));
     }
 
+    /**
+     * @return string representation of the board
+     * Example: (As 4h 5c 6d 7s)
+     */
     @Override
     public String toString() {
         return "(" + this.cards + ")";

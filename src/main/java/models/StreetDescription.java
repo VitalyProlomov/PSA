@@ -17,6 +17,13 @@ public class StreetDescription {
     private ArrayList<Action> allActions = new ArrayList<>();
     private boolean isAllIn = false;
 
+    /**
+     * Constructs a StreetDescription with given parameters
+     * @param potAfterBetting pot size after betting in dollars
+     * @param board board of given StreetDescription
+     * @param playersAfterBetting players who did not fold after betting
+     * @param allActions all actions of all players that took place during this StreetDescription
+     */
     public StreetDescription(double potAfterBetting, Board board, Collection<PlayerInGame> playersAfterBetting, ArrayList<Action> allActions) {
         this.potAfterBetting = potAfterBetting;
         if (board != null) {
@@ -32,6 +39,10 @@ public class StreetDescription {
         this.allActions = new ArrayList<>(allActions);
     }
 
+    /**
+     * Constructs a new StreetDescription by copying values of all the fields of give StreetDescription
+     * @param strCopy given StreetDescription
+     */
     public StreetDescription(StreetDescription strCopy) {
         this.potAfterBetting = strCopy.potAfterBetting;
 
@@ -51,10 +62,18 @@ public class StreetDescription {
         this.isAllIn = strCopy.isAllIn;
     }
 
+    /**
+     * Constructs empty StreetDescription
+     */
     public StreetDescription() {
 
     }
 
+    /**
+     * Sets balance of the given player
+     * @param playerId id of the player
+     * @param amount amount to set
+     */
     public void setPlayerBalance(String playerId, double amount) {
         for (PositionType pos : playersAfterBetting.keySet()) {
             if (playersAfterBetting.get(pos).getId().equals(playerId)) {
@@ -63,6 +82,11 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * Reduces balance of the player with given id
+     * @param playerId
+     * @param decrAmount
+     */
     public void decrementPlayerBalance(String playerId, double decrAmount) {
         for (PositionType pos : playersAfterBetting.keySet()) {
             if (playersAfterBetting.get(pos).getId().equals(playerId)) {
@@ -71,16 +95,18 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * @return list of all actions
+     */
     public ArrayList<Action> getAllActions() {
         return new ArrayList<>(allActions);
     }
 
-    public void setAllActions(ArrayList<Action> allActions) {
-        this.allActions = new ArrayList<>(allActions);
-    }
-
-
-    public void addAction(Action action) {
+    /**
+     * adds Action to the list of all actions
+     * @param action action to add
+     */
+    private void addAction(Action action) {
         allActions.add(action);
     }
 
@@ -105,6 +131,11 @@ public class StreetDescription {
         addAction(action);
     }
 
+    /**
+     * returns amount of uncalled bet to the players balance
+     * @param id id of the player that needs a return
+     * @param returnedAmount amount of returned money in dollars
+     */
     public void returnUncalledChips(String id, double returnedAmount) {
         if (returnedAmount < 0) {
             throw new IllegalArgumentException("returned amount can not be less than 0.");
@@ -116,10 +147,17 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * @return an ArrayList of all the players that didnt fold after all the actions
+     */
     public ArrayList<PlayerInGame> getPlayersAfterBetting() {
         return new ArrayList<>(playersAfterBetting.values());
     }
 
+    /**
+     * Sets players after betting
+     * @param playersAfterBetting players to set
+     */
     public void setPlayersAfterBetting(ArrayList<PlayerInGame> playersAfterBetting) {
         this.playersAfterBetting = new HashMap<>();
         for (PlayerInGame p : playersAfterBetting) {
@@ -127,6 +165,10 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * Sets players after betting
+     * @param playersAfterBetting players to set
+     */
     public void setPlayersAfterBetting(Set<PlayerInGame> playersAfterBetting) {
         this.playersAfterBetting = new HashMap<>();
         for (PlayerInGame p : playersAfterBetting) {
@@ -134,6 +176,10 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * adds a single player to the players after betting
+     * @param player player to add
+     */
     // I may make it return boolean to show weather the player was added or not
     public void addPlayerAfterBetting(PlayerInGame player) {
         if (!this.playersAfterBetting.containsKey(player.getPosition())) {
@@ -141,18 +187,32 @@ public class StreetDescription {
         }
     }
 
+    /**
+     * Removes a single player from players after betting
+     * @param player player to remove (position is looked at when the removal is occurred)
+     */
     public void removePlayerAfterBetting(PlayerInGame player) {
         this.playersAfterBetting.remove(player.getPosition());
     }
 
+    /**
+     * @return pot after all the actions
+     */
     public double getPotAfterBetting() {
         return potAfterBetting;
     }
 
+    /**
+     * Sets potAfterBetting
+     * @param potAfterBetting pot to set
+     */
     public void setPotAfterBetting(double potAfterBetting) {
         this.potAfterBetting = potAfterBetting;
     }
 
+    /**
+     * @return the board of this Street
+     */
     public Board getBoard() {
         if (board == null) {
             return null;
@@ -160,10 +220,39 @@ public class StreetDescription {
         return new Board(board);
     }
 
+    /**
+     * Sets board
+     * @param board board to set
+     */
     public void setBoard(Board board) {
         this.board = new Board(board);
     }
 
+    /**
+     * isAllIn is ture if all players went all-in on this Street
+     * (if just one player still has chips and didnt fold,
+     * the condition is also met).
+     * @return value of isAllIn field
+     */
+    public boolean isAllIn() {
+        return isAllIn;
+    }
+
+    /**
+     * Sets isAllIn field
+     * @param allIn value to set
+     */
+    public void setAllIn(boolean allIn) {
+        isAllIn = allIn;
+    }
+
+    /**
+     * StreetDescription is equal to another object only if this object is StreetDescription.
+     * Two StreetDescriptions are only equal if boards, pot after betting,
+     * all actions (order also matters) and players after betting are equal
+     * @param obj compared object
+     * @return true if the objects are equal, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -186,11 +275,18 @@ public class StreetDescription {
         return false;
     }
 
+    /**
+     * @return hashcode of the StreetDescription using potAfterBetting, board, playersAfterBetting, allActions.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(potAfterBetting, board, playersAfterBetting, allActions);
     }
 
+    /**
+     * @return String representation of this StreetDescription with its board,
+     * players after betting, pot after betting and all actions.
+     */
     @Override
     public String toString() {
         ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
@@ -204,15 +300,9 @@ public class StreetDescription {
 
         DecimalFormat dcf = new DecimalFormat("##0.00");
         String dRep = dcf.format(potAfterBetting);
-        return "(StreetDescription| Board: " + board + ", pot after betting: " + dRep.replace(',', '.') + ", Players after betting: " + orderedPlayers +
+        return "(StreetDescription| Board: " + board +
+                ", pot after betting: " + dRep.replace(',', '.') +
+                ", Players after betting: " + orderedPlayers +
                 ",\n Actions: " + allActions;
-    }
-
-    public boolean isAllIn() {
-        return isAllIn;
-    }
-
-    public void setAllIn(boolean allIn) {
-        isAllIn = allIn;
     }
 }

@@ -1,7 +1,5 @@
 package models;
 
-import exceptions.IncorrectHandException;
-
 import java.text.DecimalFormat;
 import java.util.Objects;
 
@@ -9,14 +7,15 @@ import java.util.Objects;
  * Class that represents the player in a specific game.
  */
 public class PlayerInGame {
+    /**
+     * id of the player - only unique in one specific game.
+     * Also stays the same for a single user in one session (on one table)
+     */
     private final String id;
     private PositionType positionType;
     private UserProfile ref;
     private double balance$;
     private Hand hand;
-
-//    private PlayerStatus status;
-
 
     /**
      * Constructs new PlayerInGame with given hash
@@ -57,8 +56,6 @@ public class PlayerInGame {
         if (copyPlayer.hand != null) {
             this.hand = new Hand(copyPlayer.hand);
         }
-
-//        this.status = copyPlayer.status;
 
 //        this.vpip = copyPlayer.vpip;
 //        this.threeBetPercentage = copyPlayer.threeBetPercentage;
@@ -123,9 +120,24 @@ public class PlayerInGame {
     }
 
     /**
+     * @return hand of this player (copy, not a link)
+     */
+    public Hand getHand(){
+        return new Hand(hand);
+    }
+
+    /**
+     * Sets a hand (copy, not a link)
+     * @param hand hand to set
+     */
+    public void setHand(Hand hand){
+        this.hand = new Hand(hand);
+    }
+
+    /**
      * PlayerInGame can be equal to another object only if that is another PlayerInGame.
      * IMPORTANT: only use it to compare Players in one exact game, NOT players from different games
-     * @param obj
+     * @param obj compared Object
      * @return true i the objects are equal, false otherwise
      */
     @Override
@@ -168,14 +180,5 @@ public class PlayerInGame {
         balanceStr = balanceStr.replace(',', '.');
         rep += ", Id: " + id + ", Pos: " + positionType + ", Balance: " + balanceStr + ")";
         return rep;
-    }
-
-    public Hand getHand() throws IncorrectHandException {
-        return new Hand(hand);
-    }
-
-
-    public void setHand(Hand hand){
-        this.hand = new Hand(hand);
     }
 }

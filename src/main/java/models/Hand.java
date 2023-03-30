@@ -49,6 +49,14 @@ public class Hand {
     }
 
     /**
+     * @return set of 2 cards in this hand.
+     */
+    public HashSet<Card> getCardsAsSet() {
+        return new HashSet<>(List.of(card1, card2));
+    }
+
+
+    /**
      * Hand is equal to another object only if it is another Hand
      * Hands are considered equal if both cards are equal (order does not matter).
      * @return true if the objects are equal, false otherwise
@@ -87,9 +95,5 @@ public class Hand {
     @Override
     public String toString() {
         return "[" + this.card1 + " " + this.card2 + "]";
-    }
-
-    public HashSet<Card> getCardsAsSet() {
-        return new HashSet<>(List.of(card1, card2));
     }
 }

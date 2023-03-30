@@ -194,10 +194,11 @@ public class CombinationAnalyzer {
     }
 
     /**
-     * Checks if there is a straight flush on the board and finds the best one of there is.
+     * Checks if there is a straight flush on the board and finds the best one there is.
      *
-     * @param extendedCards cards being checked
-     * @return Board containing the cards of the combination or {@code}null if the combination was not found
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *      *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null} if the combination was not found
      * @throws IncorrectBoardException in case the cards do not form a valid board
      */
     private static ArrayList<Card> findBestStraightFlush(ArrayList<Card> extendedCards) throws IncorrectBoardException {
@@ -216,6 +217,13 @@ public class CombinationAnalyzer {
         return findBestStraight(suitedCards);
     }
 
+    /**
+     * Checks if there is quads on the board and finds the best one there is.
+     *
+     * @param sortedExtendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
+     */
     private static ArrayList<Card> findBestQuads(ArrayList<Card> sortedExtendedCards) {
         int counter = 1;
         for (int i = sortedExtendedCards.size() - 2; i >= 0; --i) {
@@ -243,8 +251,10 @@ public class CombinationAnalyzer {
     }
 
     /**
-     * @param extendedCards
-     * @return
+     * Checks if there is a full house on the board and finds the best one there is.
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
      */
     private static ArrayList<Card> findBestFullHouse(ArrayList<Card> extendedCards) {
         boolean isThreeSame = false;
@@ -302,6 +312,13 @@ public class CombinationAnalyzer {
         return null;
     }
 
+    /**
+     * Checks if there is a flush on the board and finds the best one there is.
+     *
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
+     */
     private static ArrayList<Card> findBestFlush(ArrayList<Card> extendedCards) throws IncorrectBoardException {
         Card.Suit suit = countFlushSuit(extendedCards);
         if (suit == null) {
@@ -318,6 +335,13 @@ public class CombinationAnalyzer {
         return flushBoard;
     }
 
+    /**
+     * Checks if there is a straight on the board and finds the best one there is.
+     *
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
+     */
     private static ArrayList<Card> findBestStraight(ArrayList<Card> extendedCards) {
         ArrayList<Card> straightBoard = new ArrayList<>();
         int cons = 1;
@@ -355,6 +379,13 @@ public class CombinationAnalyzer {
         return null;
     }
 
+    /**
+     * Checks if there is a set on the board and finds the best one there is.
+     *
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null} if the combination was not found
+     */
     private static ArrayList<Card> findBestSet(ArrayList<Card> extendedCards) {
         int same = 1;
         int i = extendedCards.size() - 2;
@@ -387,6 +418,13 @@ public class CombinationAnalyzer {
         return null;
     }
 
+    /**
+     * Checks if there are two pairs on the board and finds the best one there is.
+     *
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
+     */
     private static ArrayList<Card> findBestTwoPairs(ArrayList<Card> extendedCards) {
         ArrayList<Card> bestTwoPairs = new ArrayList<>();
 
@@ -410,6 +448,13 @@ public class CombinationAnalyzer {
         return null;
     }
 
+    /**
+     * Checks if there is a pair on the board and finds the best one there is.
+     *
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination or {@code null}if the combination was not found
+     */
     private static ArrayList<Card> findBestPair(ArrayList<Card> extendedCards) {
         int i = extendedCards.size() - 2;
         ArrayList<Card> bestPair = new ArrayList<>();
@@ -435,6 +480,12 @@ public class CombinationAnalyzer {
         return null;
     }
 
+    /**
+     * Returns the best high card combination.
+     * @param extendedCards cards being checked - must be sorted by method {@code sortBoard}
+     *                            for method to work correctly
+     * @return Board containing the cards of the combination.
+     */
     private static ArrayList<Card> findBestHighCard(ArrayList<Card> extendedCards) {
         ArrayList<Card> highCardBoard = new ArrayList<>();
         for (int i = 0; i < 5; ++i) {
@@ -447,7 +498,7 @@ public class CombinationAnalyzer {
      * Checks if the flush is present on the given board.
      *
      * @param extendedCards The board that is checked for flush suit.
-     * @return suit of cards that make flush, null if no flush is present on the board.
+     * @return suit of cards that make flush, or {@code null} if no flush is present on the board.
      */
     public static Card.Suit countFlushSuit(ArrayList<Card> extendedCards) throws IncorrectBoardException {
         if (!isBoardValid(extendedCards)) {

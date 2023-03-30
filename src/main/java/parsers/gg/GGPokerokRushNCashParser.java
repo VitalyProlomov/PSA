@@ -252,9 +252,9 @@ public class GGPokerokRushNCashParser implements GGParser {
         StreetDescription st = new StreetDescription();
         // Adding blinds posting and players left on pre-flop.
         if (curPot - (game.getBigBlindSize$() + game.getSB() + game.getExtraCashAmount()) < 0.01) {
-            st.addAction(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(SB).getId(), game.getSB(), game.getExtraCashAmount()));
+            st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(SB).getId(), game.getSB(), game.getExtraCashAmount()), game.getSB());
             game.decrementPlayersBalance(game.getPosPlayersMap().get(SB).getId(), game.getSB());
-            st.addAction(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()));
+            st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()), game.getBigBlindSize$());
             game.decrementPlayersBalance(game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$());
 
             st.setPlayersAfterBetting(game.getPlayers());

@@ -1,6 +1,6 @@
 package analizer;
     /**
-     * Names of all possible combinations
+     * All possible combinations in Texas Holdem
      */
     public enum Combination {
         HIGH_CARD,

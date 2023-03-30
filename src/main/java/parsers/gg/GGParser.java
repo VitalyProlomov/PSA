@@ -9,29 +9,50 @@ import parsers.Parser;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Interface for parsers of games that take place in GG poker room
+ */
 public interface GGParser extends Parser {
-    public default ArrayList<Game> parseDirectoryFiles(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
+    /**
+     * Parses all the text files in directory
+     *
+     * @param path Path of the directory to parse
+     * @return ArrayList of parsed Games
+     * @throws IOException if something is wrong with file reading
+     */
+    public default ArrayList<Game> parseDirectoryFiles(String path)
+            throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         File dir = new File(path);
         if (!dir.exists()) {
             throw new FileNotFoundException("Given path " + path + "could not have been found");
         }
+
         ArrayList<Game> allGames = new ArrayList<>();
         if (dir.isDirectory()) {
             if (dir.listFiles() == null) {
                 return new ArrayList<>();
             }
             for (File f : dir.listFiles()) {
-                if (f.isDirectory()) {
-                    addSubDirectoryGames(allGames, f);
-                }
-                if (f.isFile()) {
-                    allGames.addAll(parseFile(f.getPath()));
+                    if (f.isDirectory()) {
+                        addSubDirectoryGames(allGames, f);
+                    }
+                    if (f.isFile()) {
+                        allGames.addAll(parseFile(f.getPath()));
+                    }
                 }
             }
-        }
+        // I need to log all the exceptions someway
         return allGames;
     }
 
+    /**
+     * @param allGames
+     * @param dir
+     * @throws IncorrectHandException
+     * @throws IncorrectBoardException
+     * @throws IOException
+     * @throws IncorrectCardException
+     */
     private void addSubDirectoryGames(ArrayList<Game> allGames, File dir) throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
         for (File f : dir.listFiles()) {
             if (f.isDirectory()) {
@@ -46,7 +67,6 @@ public interface GGParser extends Parser {
     public default ArrayList<Game> parseFile(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         ArrayList<Game> parsedGames = new ArrayList<>();
 
-//        Files.lines(path);
         // try with resources
         File file = new File(path);
         FileReader fr = new FileReader(file);

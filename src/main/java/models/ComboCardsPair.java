@@ -1,8 +1,7 @@
 package models;
 
-import analizer.CombinationAnalyzer;
 import analizer.Combination;
-import exceptions.IncorrectBoardException;
+import analizer.CombinationAnalyzer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,16 +27,29 @@ public class ComboCardsPair {
         this.cards = new HashSet<>(cards);
     }
 
+    /**
+     * Constructs ComboCardsPair with given parameters.
+     * Does not check if the Cards actually make the combination, does not check if cards
+     * make up a valid board
+     * @param combo Combination on board
+     * @param cards Set of cards that make up a combination
+     */
     public ComboCardsPair(Combination combo, Set<Card> cards) {
         this.combination = combo;
         this.cards = new HashSet<>(cards);
     }
 
 
-    public HashSet<Card> getBoard() throws IncorrectBoardException {
+    /**
+     * @return a new hashSet of cards with the same cards as in combination (not a link)
+     */
+    public HashSet<Card> getBoard() {
         return new HashSet<>(cards);
     }
 
+    /**
+     * @return combination value
+     */
     public Combination getCombination() {
         return combination;
     }
@@ -45,7 +57,7 @@ public class ComboCardsPair {
     /**
      * ComboCardsPair is equal to another object only if it is another ComboCardsPair.
      * ComboCardsPairs are considered equal if both combination and cards fields are equal.
-     * @param obj
+     * @param obj object to compare to
      * @return true if the objects are equal, false otherwise
      */
     @Override
@@ -60,15 +72,22 @@ public class ComboCardsPair {
                 this.cards.equals(((ComboCardsPair)obj).cards);
     }
 
+    /**
+     * @return standard hashcode function for ComboCardsPair object
+     */
     @Override
     public int hashCode() {
         return Objects.hash(combination, cards);
     }
 
+    /**
+     * @return string representation like such: (ComboBoardPair| Combination: x, Cards: y),
+     * where x is combination name, y is the list of cards string representations.
+     */
     @Override
     public String toString() {
         ArrayList<Card> cardsAr = new ArrayList<>(cards);
         CombinationAnalyzer.sortBoard(cardsAr);
-        return "(ComboBoard| Combination: " + combination + ", Cards: " + cardsAr + ")";
+        return "(ComboBoardPair| Combination: " + combination + ", Cards: " + cardsAr + ")";
     }
 }

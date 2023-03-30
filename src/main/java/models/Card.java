@@ -11,6 +11,11 @@ public class Card {
     private final Rank rank;
     private final Suit suit;
 
+    /**
+     * Creates new instance of the Card with given Rank and Suit.
+     * @param rank rank of the created card (could be 2 .. 9, or T, J, Q, K, A)
+     * @param suit suit of the created card (could be one of the 4 possible suits)
+     */
     public Card(Rank rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
@@ -91,7 +96,7 @@ public class Card {
 
 
     /**
-     * Suit of the card - 1 of 4. Has a field w string icon.
+     * Suit of the card. Has a field w char icon.
      */
     public enum Suit {
         HEARTS('♥'),
@@ -146,7 +151,7 @@ public class Card {
      * Card is equal to another object only if it is another Card.
      * Cards are considered equal if both Rank and a Suit are equal.
      *
-     * @param obj
+     * @param obj comapred object
      * @return true if the objects are equal, false otherwise
      */
     @Override
@@ -163,6 +168,10 @@ public class Card {
         return false;
     }
 
+    /**
+     * @return hashcode of the Card object. Every one of the 52 possible cards is
+     * assigned a unique hashcode - a number between 1 and 52.
+     */
     @Override
     public int hashCode() {
         int suitHash = 0;
@@ -176,6 +185,11 @@ public class Card {
         return (suitHash * 13) + rank.value - 1;
     }
 
+    /**
+     * @return a string representation of the card: [Rank][Suit]
+     * Rank is a number if it is in [2; 9], and a letter otherwise,
+     * suit is the char icon, assigned to the suit.
+     */
     @Override
     public String toString() {
         String rankRepr = "" + rank.value;

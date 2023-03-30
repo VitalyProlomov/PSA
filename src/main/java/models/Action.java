@@ -5,10 +5,13 @@ import java.util.Objects;
 
 /**
  * Class that describes the single action in game by a player.
- * Holds info about position, type of action (check, fold, bet, call, raise)
+ * Holds info about position, type of action (check, fold, bet, call, and others.)
  * and (where applicable) the amount of bet.
  */
 public class Action {
+    /**
+     * Lists all the Action types
+     */
     public enum ActionType {
         CHECK,
         BET,
