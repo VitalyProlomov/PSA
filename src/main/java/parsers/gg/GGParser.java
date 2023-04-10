@@ -33,14 +33,14 @@ public interface GGParser extends Parser {
                 return new ArrayList<>();
             }
             for (File f : dir.listFiles()) {
-                    if (f.isDirectory()) {
-                        addSubDirectoryGames(allGames, f);
-                    }
-                    if (f.isFile()) {
-                        allGames.addAll(parseFile(f.getPath()));
-                    }
+                if (f.isDirectory()) {
+                    addSubDirectoryGames(allGames, f);
+                }
+                if (f.isFile()) {
+                    allGames.addAll(parseFile(f.getPath()));
                 }
             }
+        }
         // I need to log all the exceptions someway
         return allGames;
     }
@@ -85,7 +85,7 @@ public interface GGParser extends Parser {
                 line = bfr.readLine();
             }
 //            System.out.println(gameText.substring(0, 25));
-            if (line != null) {
+            if (!gameText.toString().isEmpty()) {
                 parsedGames.add(parseGame(gameText.toString()));
             }
         }
