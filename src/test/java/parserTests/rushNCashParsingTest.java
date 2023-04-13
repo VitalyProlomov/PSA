@@ -380,7 +380,6 @@ public class rushNCashParsingTest {
         String txt = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt");
         Game topG = parser.parseGame(txt);
 
-        System.out.println(topG);
     }
     // endregion
 

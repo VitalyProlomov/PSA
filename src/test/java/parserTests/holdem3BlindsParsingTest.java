@@ -49,12 +49,7 @@ public class holdem3BlindsParsingTest {
                 new PlayerInGame("Hero", CO,25.06),
                 new PlayerInGame("Hero", BTN,25.06)
                 ));
-        System.out.println(topG);
 
     }
 
-    @Test
-    public void testPlayersAmount() {
-
-    }
 }
