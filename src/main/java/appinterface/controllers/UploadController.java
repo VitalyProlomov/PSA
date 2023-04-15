@@ -18,8 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class UploadController {
-    private final String UPLOADED_GAMES_LIST_PATH = "/serializedGames.txt";
-
     public ArrayList<Game> uploadFiles(List<File> files) throws IOException {
         ArrayList<Game> allGames = new ArrayList<>();
         ArrayList<Exception> allExceptions = new ArrayList<>();

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.*;
 
 public class GamesListController {
+    private final static String UPLOADED_GAMES_LIST_NAME = "/serializedGames.txt";
 
     @FXML
     private ResourceBundle resources;
@@ -61,7 +62,10 @@ public class GamesListController {
             try {
                 UploadController uploadController = new UploadController();
                 ArrayList<Game> addedGames = uploadController.uploadFiles(selectedFiles);
+
                 updateTable(addedGames);
+                gamesSet.addGames(new HashSet<>(addedGames));
+                serializeGames();
             } catch (IOException ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Something went wrong while uploading files..");
@@ -78,7 +82,6 @@ public class GamesListController {
         gamesTableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("BigBlindSize$"));
         gamesTableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("finalPot"));
 
-        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
     }
 
     private void initializeSerializedSavedGames() throws IOException {
@@ -88,11 +91,17 @@ public class GamesListController {
             URL url = PSAApplication.class.getResource("/serializedGames.txt");
 
             String path = url.getFile().replace("%20", " ");
-            if (new File(path).length() == 0) {
-                return;
+
+            if (new File(path).length() != 0) {
+                gamesSet = objectMapper.readValue(new File(path), GamesSet.class);
             }
-            gamesSet = objectMapper.readValue(new File(path), GamesSet.class);
-            gamesTableView.getItems().addAll(gamesSet.getGames());
+            if (this.gamesSet == null) {
+                this.gamesSet = new GamesSet();
+            }
+
+            if (gamesSet.getGames().size() != 0) {
+                gamesTableView.getItems().addAll(gamesSet.getGames());
+            }
         } catch (Exception ex) {
             System.out.println(ex.getStackTrace());
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -117,7 +126,26 @@ public class GamesListController {
         if (gamesToAdd == null) {
             return;
         }
-        gamesTableView.getItems().addAll(gamesToAdd);
+        for (Game g : gamesToAdd) {
+            if (!gamesSet.getGames().contains(g)) {
+                gamesTableView.getItems().add(g);
+            }
+        }
     }
 
+    private void serializeGames() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            URL url = PSAApplication.class.getResource(UPLOADED_GAMES_LIST_NAME);
+            String path = url.getFile().replace("%20", " ");
+            File file = new File(path);
+
+            objectMapper.writeValue(file, gamesSet);
+
+        } catch (Exception exception) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("File with saved games was not able to upload, please close it if it is opened");
+        }
+    }
 }
