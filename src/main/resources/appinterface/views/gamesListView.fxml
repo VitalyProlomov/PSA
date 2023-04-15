@@ -22,7 +22,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
-                <Button maxHeight="1.7976931348623157E308" maxWidth="400" mnemonicParsing="false" prefHeight="30.0" prefWidth="158.0" text="Button" GridPane.hgrow="ALWAYS" />
+                <Button maxHeight="1.7976931348623157E308" maxWidth="400" mnemonicParsing="false" prefHeight="30.0" prefWidth="158.0" text="Games List" GridPane.hgrow="ALWAYS" />
                 <Button fx:id="uploadButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="153.0" text="Upload Files" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="163.0" text="Examine Players" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="179.0" text="Profile" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />

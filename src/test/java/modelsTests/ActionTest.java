@@ -23,7 +23,7 @@ public class ActionTest {
 
         PlayerInGame p2 = new PlayerInGame("g6jj8w90l");
         p2.setHand(new Hand("8h", "Ah"));
-        p2.setPositionType(PositionType.BB);
+        p2.setPosition(PositionType.BB);
         act = new Action(Action.ActionType.CHECK, p2.getId(), 1.0, 5.4);
         assertDoesNotThrow(() -> new Action(Action.ActionType.BET, p2.getId(), 2.06, 0));
         assertEquals(Action.ActionType.CHECK, act.getActionType());

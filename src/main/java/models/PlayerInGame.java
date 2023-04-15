@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.text.DecimalFormat;
 import java.util.Objects;
 
@@ -36,7 +39,9 @@ public class PlayerInGame {
      * Constructs new PlayerInGame with given hash, position in the table,
      * balance in dollars and a Userprofile object (link to the real user).
      */
-    public PlayerInGame(String id, PositionType position, double balance, UserProfile ref) {
+    @JsonCreator
+    public PlayerInGame(@JsonProperty("id)") String id, @JsonProperty("position") PositionType position,
+                        @JsonProperty("balance") double balance, @JsonProperty("ref") UserProfile ref) {
         this.id = id;
         this.positionType = position;
         this.balance$ = balance;
@@ -84,7 +89,7 @@ public class PlayerInGame {
      * Sets position of the player in table.
      * @param positionType position to set (no validation, so make sure ypu put correct position)
      */
-    public void setPositionType(PositionType positionType) {
+    public void setPosition(PositionType positionType) {
         this.positionType = positionType;
     }
 
@@ -123,6 +128,9 @@ public class PlayerInGame {
      * @return hand of this player (copy, not a link)
      */
     public Hand getHand(){
+        if (hand == null) {
+            return null;
+        }
         return new Hand(hand);
     }
 
@@ -131,6 +139,10 @@ public class PlayerInGame {
      * @param hand hand to set
      */
     public void setHand(Hand hand){
+        if (hand == null) {
+            this.hand = null;
+            return;
+        }
         this.hand = new Hand(hand);
     }
 

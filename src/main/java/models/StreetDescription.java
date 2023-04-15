@@ -69,31 +69,31 @@ public class StreetDescription {
 
     }
 
-    /**
-     * Sets balance of the given player
-     * @param playerId id of the player
-     * @param amount amount to set
-     */
-    public void setPlayerBalance(String playerId, double amount) {
-        for (PositionType pos : playersAfterBetting.keySet()) {
-            if (playersAfterBetting.get(pos).getId().equals(playerId)) {
-                playersAfterBetting.get(pos).setBalance(amount);
-            }
-        }
-    }
-
-    /**
-     * Reduces balance of the player with given id
-     * @param playerId
-     * @param decrAmount
-     */
-    public void decrementPlayerBalance(String playerId, double decrAmount) {
-        for (PositionType pos : playersAfterBetting.keySet()) {
-            if (playersAfterBetting.get(pos).getId().equals(playerId)) {
-                playersAfterBetting.get(pos).setBalance(playersAfterBetting.get(pos).getBalance() - decrAmount);
-            }
-        }
-    }
+//    /**
+//     * Sets balance of the given player
+//     * @param playerId id of the player
+//     * @param amount amount to set
+//     */
+//    public void setPlayerBalance(String playerId, double amount) {
+//        for (PositionType pos : playersAfterBetting.keySet()) {
+//            if (playersAfterBetting.get(pos).getId().equals(playerId)) {
+//                playersAfterBetting.get(pos).setBalance(amount);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Reduces balance of the player with given id
+//     * @param playerId
+//     * @param decrAmount
+//     */
+//    public void decrementPlayerBalance(String playerId, double decrAmount) {
+//        for (PositionType pos : playersAfterBetting.keySet()) {
+//            if (playersAfterBetting.get(pos).getId().equals(playerId)) {
+//                playersAfterBetting.get(pos).setBalance(playersAfterBetting.get(pos).getBalance() - decrAmount);
+//            }
+//        }
+//    }
 
     /**
      * @return list of all actions
@@ -154,22 +154,22 @@ public class StreetDescription {
         return new ArrayList<>(playersAfterBetting.values());
     }
 
-    /**
-     * Sets players after betting
-     * @param playersAfterBetting players to set
-     */
-    public void setPlayersAfterBetting(ArrayList<PlayerInGame> playersAfterBetting) {
-        this.playersAfterBetting = new HashMap<>();
-        for (PlayerInGame p : playersAfterBetting) {
-            this.playersAfterBetting.put(p.getPosition(), new PlayerInGame(p));
-        }
-    }
+//    /**
+//     * Sets players after betting
+//     * @param playersAfterBetting players to set
+//     */
+//    public void setPlayersAfterBetting(ArrayList<PlayerInGame> playersAfterBetting) {
+//        this.playersAfterBetting = new HashMap<>();
+//        for (PlayerInGame p : playersAfterBetting) {
+//            this.playersAfterBetting.put(p.getPosition(), new PlayerInGame(p));
+//        }
+//    }
 
     /**
      * Sets players after betting
      * @param playersAfterBetting players to set
      */
-    public void setPlayersAfterBetting(Set<PlayerInGame> playersAfterBetting) {
+    public void setPlayersAfterBetting(Collection<PlayerInGame> playersAfterBetting) {
         this.playersAfterBetting = new HashMap<>();
         for (PlayerInGame p : playersAfterBetting) {
             this.playersAfterBetting.put(p.getPosition(), new PlayerInGame(p));
@@ -225,6 +225,10 @@ public class StreetDescription {
      * @param board board to set
      */
     public void setBoard(Board board) {
+        if (board == null) {
+           this.board = null;
+            return;
+        }
         this.board = new Board(board);
     }
 

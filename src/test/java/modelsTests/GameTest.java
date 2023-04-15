@@ -25,9 +25,6 @@ public class GameTest {
         assertEquals(game.getSB(), 0.5);
     }
 
-    @Test
-    public void testGameToString() {
-
-    }
+    // toString() test
 
 }

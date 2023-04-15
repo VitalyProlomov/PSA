@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashSet;
 
 public class UserProfile {
@@ -14,7 +17,8 @@ public class UserProfile {
 
     int bbWinlossAllTime;
 
-    public UserProfile(String userName) {
+    @JsonCreator
+    public UserProfile(@JsonProperty("userName") String userName) {
         this.userName = userName;
     }
 
@@ -29,5 +33,17 @@ public class UserProfile {
 
     public void get3BetPercent() {
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != UserProfile.class) {
+            return false;
+        }
+
+        return this.userName.equals(((UserProfile) obj).userName);
     }
 }

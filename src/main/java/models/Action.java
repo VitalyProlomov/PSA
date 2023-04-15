@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.text.DecimalFormat;
 import java.util.Objects;
 
@@ -42,7 +45,11 @@ public class Action {
      * @throws IllegalArgumentException is thrown if amount is <= 0 for CALL, BET, or RAISE Action types
      *                                  or because pot before action is < 0.
      */
-    public Action(ActionType actionType, String playerInGameId, double amount, double potBeforeAction) {
+    @JsonCreator
+    public Action(@JsonProperty("actionType") ActionType actionType,
+                  @JsonProperty("playerInGameId") String playerInGameId,
+                  @JsonProperty("amount") double amount,
+                  @JsonProperty("potBeforeAction") double potBeforeAction) {
         this.actionType = actionType;
         this.playerInGameId = playerInGameId;
         if (actionType == ActionType.FOLD || actionType == ActionType.CHECK) {
@@ -87,6 +94,7 @@ public class Action {
     /**
      * @return copy of the playerInGame in this Action
      */
+    @JsonProperty("playerInGameId")
     public String getPlayerId() {
         return playerInGameId;
     }

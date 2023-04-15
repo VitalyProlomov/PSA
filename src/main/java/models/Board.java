@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import exceptions.IncorrectBoardException;
 import exceptions.IncorrectCardException;
 
@@ -11,8 +13,6 @@ import java.util.*;
 public class Board {
     private final ArrayList<Card> cards = new ArrayList<>();
 
-    private final String incorrectLengthMessage = "Board must contain from 3 to 5 cards.";
-
     /**
      * Constructs the Board with the array of cards (the amount of cards must be in [3; 5])
      *
@@ -22,7 +22,7 @@ public class Board {
      */
     public Board(Card... cards) throws IncorrectBoardException {
         if (cards.length < 3 || cards.length > 5) {
-            throw new IncorrectBoardException(incorrectLengthMessage);
+            throw new IncorrectBoardException( "Board must contain from 3 to 5 cards.");
         }
         HashSet<Card> unique = new HashSet<>(List.of(cards));
         if (unique.size() != cards.length) {
@@ -41,7 +41,7 @@ public class Board {
      */
     public Board(String... cardReps) throws IncorrectBoardException, IncorrectCardException {
         if (cardReps.length < 3 || cardReps.length > 5) {
-            throw new IncorrectBoardException(incorrectLengthMessage);
+            throw new IncorrectBoardException( "Board must contain from 3 to 5 cards.");
         }
 
         HashSet<Card> unique = new HashSet<Card>();
@@ -65,9 +65,10 @@ public class Board {
      * @throws IncorrectBoardException if the cards given are invalid
      *                                 (not unique or length is not in [3; 5]
      */
-    public Board(ArrayList<Card> cards) throws IncorrectBoardException {
+    @JsonCreator
+    public Board(@JsonProperty("cards") ArrayList<Card> cards) throws IncorrectBoardException {
         if (cards.size() < 3 || cards.size() > 5) {
-            throw new IncorrectBoardException(incorrectLengthMessage);
+            throw new IncorrectBoardException( "Board must contain from 3 to 5 cards.");
         }
         HashSet<Card> unique = new HashSet<Card>(cards);
         if (unique.size() != cards.size()) {

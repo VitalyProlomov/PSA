@@ -17,8 +17,8 @@ public class HandTest {
         Card c1 = new Card("Kc");
         Card c2 = new Card("Js");
         Hand h = new Hand(c1, c2);
-        assertTrue(h.getCardsAsSet().contains(c1));
-        assertTrue(h.getCardsAsSet().contains(c2));
+        assertTrue(h.getCards().contains(c1));
+        assertTrue(h.getCards().contains(c2));
 
         Card cSame = new Card("Kc");
         assertThrows(IncorrectHandException.class, () -> new Hand(c1, cSame));

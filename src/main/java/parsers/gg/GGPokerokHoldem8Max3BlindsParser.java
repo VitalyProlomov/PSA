@@ -6,10 +6,7 @@ import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
 import models.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Double.parseDouble;
 import static models.Action.ActionType.*;
@@ -109,7 +106,7 @@ public class GGPokerokHoldem8Max3BlindsParser implements GGParser {
 //            statuses.put(p.getId(), PlayerStatus.ACTIVE);
 //        }
 
-        game.setPlayers(players);
+        game.setPlayers(new HashSet<>(players));
     }
 
     private ArrayList<Action> parseAntesAndBlinds(Game game, ArrayList<ArrayList<String>> wordsInLines) {

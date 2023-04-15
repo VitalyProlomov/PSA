@@ -1,5 +1,9 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.*;
 
 import static models.Action.ActionType.RAISE;
@@ -20,12 +24,13 @@ public class Game {
      * @param gameId        Id of the game from PokerCraft parsed text view of the game
      * @param bigBlindSize$ value of 1 big blind in dollars
      */
-    public Game(String gameId, double bigBlindSize$) {
+    @JsonCreator
+    public Game(@JsonProperty("gameId") String gameId, @JsonProperty("bigBlindSize$") double bigBlindSize$) {
         this.gameId = gameId;
         this.bigBlindSize$ = bigBlindSize$;
     }
 
-    private HashMap<PositionType, PlayerInGame> players = new HashMap<>();
+    private HashSet<PlayerInGame> players = new HashSet<>();
     private final HashMap<String, Double> initialBalances = new HashMap<>();
 
     // Amount of dollars as a cash drop (or 0 if there is no cash drop)
@@ -56,7 +61,7 @@ public class Game {
      * false, otherwise.
      */
     public boolean addShownOneCard(String playerId, Card card) {
-        if (this.players.containsValue(new PlayerInGame(playerId))) {
+        if (this.players.contains(new PlayerInGame(playerId))) {
             shownOneCards.put(playerId, card);
             return true;
         } else {
@@ -78,6 +83,9 @@ public class Game {
      */
     private void countPreFlopRaises() {
         StreetDescription pf = getFlop();
+        if (pf == null) {
+            return;
+        }
         preFlopRaisesAmount = 0;
         for (int i = 0; i < pf.getAllActions().size(); ++i) {
             if (pf.getAllActions().get(i).getActionType().equals(RAISE)) {
@@ -90,6 +98,7 @@ public class Game {
      * @return true, if the pot is single raised (only one raise took pace during preflop),
      * false otherwise
      */
+    @JsonIgnore
     public boolean isSingleRaised() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
@@ -101,6 +110,7 @@ public class Game {
      * @return true, if the pot is 3 bet (2 raises took pace during preflop),
      * false otherwise
      */
+    @JsonIgnore
     public boolean isPot3Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
@@ -112,6 +122,7 @@ public class Game {
      * @return true, if the pot is 4 bet (3 raises took pace during preflop),
      * false otherwise
      */
+    @JsonIgnore
     public boolean isPot4Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
@@ -123,6 +134,7 @@ public class Game {
      * @return true, if the pot is 5 bet (4 raises took pace during preflop),
      * false otherwise
      */
+    @JsonIgnore
     public boolean isPot5Bet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
@@ -134,6 +146,7 @@ public class Game {
      * @return true if more than 2 players were active (didnt fold) after preflop,
      * false otherwise.
      */
+    @JsonIgnore
     public boolean isPotMultiWay() {
         return preFlop.getPlayersAfterBetting().size() > 2;
     }
@@ -142,6 +155,7 @@ public class Game {
      * @return true if everybody but winner of the game folded on preflop,
      * false otherwise
      */
+    @JsonIgnore
     public boolean isGameFoldedPreFlop() {
         return preFlop.getPlayersAfterBetting().size() == 1;
     }
@@ -149,6 +163,7 @@ public class Game {
     /**
      * @return true if Hero is in the game
      */
+    @JsonIgnore
     public boolean isHeroInGame() {
         return getPlayer("Hero") != null;
     }
@@ -157,6 +172,7 @@ public class Game {
      * @return if Hero did NOT fold on preflop,
      * false otherwise
      */
+    @JsonIgnore
     public boolean isHeroPostFlop() {
         return preFlop.getPlayersAfterBetting().contains(new PlayerInGame("Hero"));
     }
@@ -195,14 +211,24 @@ public class Game {
      * @return a HashSet of the players in game (copy, not a link)
      */
     public HashSet<PlayerInGame> getPlayers() {
-        return new HashSet<>(players.values());
+        if (players == null) {
+            return null;
+        }
+        return new HashSet<>(players);
     }
 
     /**
      * @return a HashMap of the players in game (copy, not a link)
      */
     public HashMap<PositionType, PlayerInGame> getPosPlayersMap() {
-        return new HashMap<PositionType, PlayerInGame>(players);
+        if (players == null) {
+            return null;
+        }
+        HashMap<PositionType, PlayerInGame> posP = new HashMap<>();
+        for (PlayerInGame p : players) {
+            posP.put(p.getPosition(), p);
+        }
+        return posP;
     }
 
     /**
@@ -213,9 +239,7 @@ public class Game {
      * @return player in game with same hash. Or null if no such player is found
      */
     public PlayerInGame getPlayer(String id) {
-        for (PositionType pos : players.keySet()) {
-            PlayerInGame p = players.get(pos);
-
+        for (PlayerInGame p : players) {
             if (p.getId().equals(id)) {
                 return new PlayerInGame(p);
             }
@@ -231,9 +255,7 @@ public class Game {
      * @return link to the PlayerInGame with same id. Or null if no such player is found
      */
     private PlayerInGame getPlayerLink(String id) {
-        for (PositionType pos : players.keySet()) {
-            PlayerInGame p = players.get(pos);
-
+        for (PlayerInGame p : players) {
             if (p.getId().equals(id)) {
                 return p;
             }
@@ -246,55 +268,44 @@ public class Game {
      *
      * @param pos  position of the player
      * @param hand Hand to set
+     * @return true if player with such id was found and the hand was added. False, otherwise
      */
-    public void setPlayerHand(PositionType pos, Hand hand) {
-        players.get(pos).setHand(hand);
+    public boolean setPlayerHand(PositionType pos, Hand hand) {
+        for (PlayerInGame p : players) {
+            if (pos == p.getPosition()) {
+                p.setHand(hand);
+                return true;
+            }
+        }
+        return false;
     }
 
 
     /**
-     * Sets the hand of the player with given id to the given hand
+     * Sets the hand of the player with given id to the given hand.
      *
      * @param id   id of the player
      * @param hand Hand to set
+     * @return true if player with such id was found and the hand was added. False, otherwise
      */
-    public void setPlayerHand(String id, Hand hand) {
-        for (PositionType pos : players.keySet()) {
-            if (players.get(pos).getId().equals(id)) {
-                players.get(pos).setHand(hand);
-                return;
+    public boolean setPlayerHand(String id, Hand hand) {
+        for (PlayerInGame p : players) {
+            if (p.getId().equals(id)) {
+                p.setHand(hand);
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * Sets Hero`s hand to the given hand
      *
      * @param hand hand to set
+     * @return true if player with such id was found and the hand was added. False, otherwise
      */
-    public void setHeroHand(Hand hand) {
-        for (PositionType pos : players.keySet()) {
-            if (players.get(pos).getId().equals("Hero")) {
-                setPlayerHand(pos, hand);
-                return;
-            }
-        }
-        // Not sure which exception should i invoke here.
-        throw new RuntimeException("Hero was not found in game with id" + gameId);
-    }
-
-    /**
-     * Sets players and updates the initial balances (inside the Game)
-     *
-     * @param players players to set
-     */
-    public void setPlayers(ArrayList<PlayerInGame> players) {
-        // Should think about working w nulls.
-        this.players = new HashMap<>();
-        for (PlayerInGame p : players) {
-            this.players.put(p.getPosition(), p);
-        }
-        setInitialBalances(players);
+    public boolean setHeroHand(Hand hand) {
+        return setPlayerHand("Hero", hand);
     }
 
     /**
@@ -303,12 +314,29 @@ public class Game {
      * @param players players to set
      */
     public void setPlayers(Set<PlayerInGame> players) {
-        this.players = new HashMap<>();
+        // Should think about working w nulls.
+        this.players = new HashSet<>();
+        this.players.addAll(players);
+
+        HashMap<String, Double> initB = new HashMap<>();
         for (PlayerInGame p : players) {
-            this.players.put(p.getPosition(), p);
+            initialBalances.put(p.getId(), p.getBalance());
         }
-        setInitialBalances(new ArrayList<>(players));
+        setInitialBalances(initB);
     }
+
+//    /**
+//     * Sets players and updates the initial balances (inside the Game)
+//     *
+//     * @param players players to set
+//     */
+//    public void setPlayers(Set<PlayerInGame> players) {
+//        this.players = new HashMap<>();
+//        for (PlayerInGame p : players) {
+//            this.players.put(p.getPosition(), p);
+//        }
+//        setInitialBalances(new ArrayList<>(players));
+//    }
 
     /**
      * Subtracts given amount from the balance of the player with given Id.
@@ -330,7 +358,7 @@ public class Game {
                 throw new IllegalArgumentException("Decrement amount must be less or equal to the balance of the player");
             }
 
-            players.get(p.getPosition()).setBalance(p.getBalance() - decrAmount);
+            p.setBalance(p.getBalance() - decrAmount);
         }
     }
 
@@ -351,6 +379,7 @@ public class Game {
      * @return ture if extra cash is more than zero,
      * false otherwise.
      */
+    @JsonIgnore
     public boolean isExtraCash() {
         return extraCashAmount != 0;
     }
@@ -380,8 +409,10 @@ public class Game {
      * Calculates the small blind size (as for the 29.03.2023, all the sizes on
      * PokerOk, if BB size is even, SB = 0.5 BB, if BB is an odd amount, then
      * SB = 0.4 BB).
+     *
      * @return Small blind amount in dollars
      */
+    @JsonIgnore
     public double getSB() {
         if (bigBlindSize$ * 100 % 2 == 0) {
             return bigBlindSize$ / 2;
@@ -401,6 +432,7 @@ public class Game {
 
     /**
      * Sets preflop (sets a copy of given StreetDescription, not a link)
+     *
      * @param preFlop given StreetDescription
      */
     public void setPreFlop(StreetDescription preFlop) {
@@ -424,6 +456,7 @@ public class Game {
 
     /**
      * Sets flop (sets a copy of given StreetDescription, not a link)
+     *
      * @param flop given StreetDescription
      */
     public void setFlop(StreetDescription flop) {
@@ -447,6 +480,7 @@ public class Game {
 
     /**
      * Sets turn (sets a copy of given StreetDescription, not a link)
+     *
      * @param turn given StreetDescription
      */
     public void setTurn(StreetDescription turn) {
@@ -470,6 +504,7 @@ public class Game {
 
     /**
      * Sets river (sets a copy of given StreetDescription, not a link)
+     *
      * @param river given StreetDescription
      */
     public void setRiver(StreetDescription river) {
@@ -503,7 +538,24 @@ public class Game {
      * @return final pot of the game
      */
     public double getFinalPot() {
-        return finalPot;
+        if (river != null) {
+            int len = river.getAllActions().size();
+            finalPot = river.getAllActions().get(len - 1).getPotBeforeAction() + river.getAllActions().get(len - 1).getAmount();
+            return finalPot;
+        } else if (turn != null) {
+            int len = turn.getAllActions().size();
+            finalPot = turn.getAllActions().get(len - 1).getPotBeforeAction() + turn.getAllActions().get(len - 1).getAmount();
+            return finalPot;
+        } else if (flop != null) {
+            int len = flop.getAllActions().size();
+            finalPot = flop.getAllActions().get(len - 1).getPotBeforeAction() + flop.getAllActions().get(len - 1).getAmount();
+            return finalPot;
+        } else if (preFlop != null) {
+            int len = preFlop.getAllActions().size();
+            finalPot = preFlop.getAllActions().get(len - 1).getPotBeforeAction() + preFlop.getAllActions().get(len - 1).getAmount();
+            return finalPot;
+        }
+        return 0;
     }
 
     /**
@@ -515,12 +567,11 @@ public class Game {
 
     /**
      * Sets initial balances of the players
-     * @param players list of players - balances are taken from there.
+     *
+     * @param players hashMap of balances
      */
-    private void setInitialBalances(List<PlayerInGame> players) {
-        for (PlayerInGame p : players) {
-            initialBalances.put(p.getId(), p.getBalance());
-        }
+    private void setInitialBalances(Map<String, Double> players) {
+        initialBalances.putAll(players);
     }
 
     /**
@@ -532,10 +583,27 @@ public class Game {
 
     /**
      * Sets the rake
+     *
      * @param rake rake to set
      */
     public void setRake(double rake) {
         this.rake = rake;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj.getClass() != Game.class) {
+            return false;
+        }
+        return this.gameId.equals(((Game) obj).gameId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(gameId);
     }
 
     /**
@@ -547,7 +615,13 @@ public class Game {
         ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
         ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, TB, UTG, UTG_1, UTG_2, LJ, HJ, CO, BTN));
         for (PositionType orderPo : orderPos) {
-            PlayerInGame p = players.get(orderPo);
+            PlayerInGame p = null;
+            for (PlayerInGame iterP : players) {
+                if (iterP.getPosition() == orderPo) {
+                    p = iterP;
+                }
+            }
+
             if (p != null)
                 orderedPlayers.add(new PlayerInGame(p));
         }

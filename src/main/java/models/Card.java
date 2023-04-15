@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import exceptions.IncorrectCardException;
 
 import java.util.Locale;
@@ -16,7 +18,8 @@ public class Card {
      * @param rank rank of the created card (could be 2 .. 9, or T, J, Q, K, A)
      * @param suit suit of the created card (could be one of the 4 possible suits)
      */
-    public Card(Rank rank, Suit suit) {
+    @JsonCreator
+    public Card(@JsonProperty("rank") Rank rank, @JsonProperty("suit") Suit suit) {
         this.rank = rank;
         this.suit = suit;
     }

@@ -483,17 +483,21 @@ public class rushNCashParsingTest {
     }
 
     @Test
-    public void testGameCreation() {
+    public void testBigDirectoryParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/bigDirectory1");
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
-    }
+        ArrayList<Game> allGaes = parser.parseDirectoryFiles(path);
 
-    @Test
-    public void testGameDateSetting() {
+        // Verified Amount on pokerCraft
+        assertEquals(16932, allGaes.size());
 
-    }
-
-    @Test
-    public void testPlayerSetting() {
-
+        Set<Game> gamesWShownCard = new HashSet<>();
+        for (int i = 0; i < allGaes.size(); ++i) {
+            if (allGaes.get(i).getShownOneCards().size() != 0) {
+                gamesWShownCard.add(allGaes.get(i));
+            }
+        }
+//        assertEquals(9, gamesWShownCard.size());
     }
 }

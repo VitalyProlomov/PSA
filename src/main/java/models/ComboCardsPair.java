@@ -2,6 +2,8 @@ package models;
 
 import analizer.Combination;
 import analizer.CombinationAnalyzer;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +24,8 @@ public class ComboCardsPair {
      * @param combo Combination on board
      * @param cards Cards that make up a combination
      */
-    public ComboCardsPair(Combination combo, ArrayList<Card> cards) {
+    @JsonCreator
+    public ComboCardsPair(@JsonProperty("combination") Combination combo, @JsonProperty("cards") ArrayList<Card> cards) {
         this.combination = combo;
         this.cards = new HashSet<>(cards);
     }
@@ -43,7 +46,7 @@ public class ComboCardsPair {
     /**
      * @return a new hashSet of cards with the same cards as in combination (not a link)
      */
-    public HashSet<Card> getBoard() {
+    public HashSet<Card> getCards() {
         return new HashSet<>(cards);
     }
 

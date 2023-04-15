@@ -7,6 +7,7 @@ import models.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static java.lang.Double.parseDouble;
@@ -43,6 +44,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         parseExtraCash(game, wordsInLines);
         parseHeroHand(game, wordsInLines);
         parseStreetDescriptions(game, wordsInLines, game.getExtraCashAmount());
+
 
         // I decided not to parse winning s for now.
         // parseWinnings(game, wordsInLines);
@@ -92,7 +94,7 @@ public class GGPokerokRushNCashParser implements GGParser {
             players.add(new PlayerInGame(hashes.get(i), positions.get(i), balances.get(i)));
         }
 
-        game.setPlayers(players);
+        game.setPlayers(new HashSet<>(players));
 
 //        for (PlayerInGame p : game.getPlayers()) {
 //            game.setPlayerStatus(p, PlayerStatus.ACTIVE);

@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
 
@@ -17,7 +19,8 @@ public class Hand {
      * Constructs new Hand with 2 given cards (they must be unique - not equal)
      * @throws IncorrectHandException if cards are equal
      */
-    public Hand(Card c1, Card c2) throws IncorrectHandException {
+    @JsonCreator
+    public Hand(@JsonProperty("card1") Card c1, @JsonProperty("card2") Card c2) throws IncorrectHandException {
         if (c1.equals(c2)) {
             throw new IncorrectHandException("Cards must be unique, but was: " + c1 + ", " + c1);
         }
@@ -51,8 +54,16 @@ public class Hand {
     /**
      * @return set of 2 cards in this hand.
      */
-    public HashSet<Card> getCardsAsSet() {
+    public HashSet<Card> getCards() {
         return new HashSet<>(List.of(card1, card2));
+    }
+
+    public Card getCard1() {
+        return card1;
+    }
+
+    public Card getCard2() {
+        return card2;
     }
 
 
