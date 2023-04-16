@@ -17,6 +17,7 @@ import static models.PositionType.*;
 public class Game {
     // Unique (At least for PokerOk)
     private final String gameId;
+    private String table;
 
     /**
      * Constructs a new game with given ID and BB (given in dollars)
@@ -82,7 +83,7 @@ public class Game {
      * counts amount of preflop raises (EXcludes blind raises).
      */
     private void countPreFlopRaises() {
-        StreetDescription pf = getFlop();
+        StreetDescription pf = getPreFlop();
         if (pf == null) {
             return;
         }
@@ -131,15 +132,15 @@ public class Game {
     }
 
     /**
-     * @return true, if the pot is 5 bet (4 raises took pace during preflop),
+     * @return true, if the pot is 5+ bet (4 or more raises took pace during preflop),
      * false otherwise
      */
     @JsonIgnore
-    public boolean isPot5Bet() {
+    public boolean isPot5PlusBet() {
         if (preFlopRaisesAmount == -1) {
             countPreFlopRaises();
         }
-        return preFlopRaisesAmount == 4;
+        return preFlopRaisesAmount >= 4;
     }
 
     /**
@@ -177,6 +178,15 @@ public class Game {
         return preFlop.getPlayersAfterBetting().contains(new PlayerInGame("Hero"));
     }
 
+    @JsonIgnore
+    public double getHeroWinloss() {
+        for (PlayerInGame p : players) {
+            if (p.getId().equals("Hero")) {
+                return p.getBalance() - initialBalances.get("Hero");
+            }
+        }
+       return 0;
+    }
     /**
      * @return ID of the game
      */
@@ -556,6 +566,14 @@ public class Game {
             return finalPot;
         }
         return 0;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public String getTable() {
+        return table;
     }
 
     /**

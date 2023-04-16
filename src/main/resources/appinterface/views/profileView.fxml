@@ -5,10 +5,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="borderPaneProfile" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="appinterface.controllers.ProfileController">
    <top>
-      <Label text="Profile" BorderPane.alignment="CENTER">
+      <Label fx:id="profileId" text="Profile" BorderPane.alignment="CENTER">
          <font>
             <Font size="28.0" />
          </font>
@@ -17,9 +16,9 @@
    <center>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="221.0" layoutY="133.0" text="Players Assigned to profiles: 0" textAlignment="CENTER" />
-            <Label layoutX="250.0" layoutY="98.0" text="Money Won: 11.4$" />
-            <Label layoutX="219.0" layoutY="62.0" text="Total Games Downloaded: 236" textAlignment="CENTER" />
+            <Label fx:id="playersAssignedAmountLabel" layoutX="221.0" layoutY="133.0" text="Players Assigned to profiles: " textAlignment="CENTER" />
+            <Label fx:id="moneyWinlossLabel" layoutX="250.0" layoutY="98.0" text="Money Won: " />
+            <Label fx:id="gamesAmountLabel" layoutX="219.0" layoutY="62.0" text="Total Games Downloaded: " textAlignment="CENTER" />
          </children>
       </Pane>
    </center>

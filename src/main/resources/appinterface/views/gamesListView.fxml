@@ -14,18 +14,18 @@
         <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="619.0" BorderPane.alignment="CENTER">
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
-                <Button maxHeight="1.7976931348623157E308" maxWidth="400" mnemonicParsing="false" prefHeight="30.0" prefWidth="158.0" text="Games List" GridPane.hgrow="ALWAYS" />
-                <Button fx:id="uploadButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="153.0" text="Upload Files" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="163.0" text="Examine Players" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="179.0" text="Profile" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />
+                <Button fx:id="uploadButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="153.0" text="Upload Files" GridPane.hgrow="ALWAYS" />
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="163.0" text="Examine Players" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                <Button fx:id="profileButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="179.0" text="Profile" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
+            <Button fx:id="searchFiltersButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="42.0" prefWidth="145.0" text="Search Filters" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />
             </children>
             <opaqueInsets>
                 <Insets />

@@ -37,7 +37,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         }
 
         Game game = initiateGame(wordsInLines);
-        parseDate(game, wordsInLines);
+        parseDateAndTable(game, wordsInLines);
 
         parsePlayers(game, wordsInLines);
 
@@ -61,7 +61,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         return new Game(handId, bbSize);
     }
 
-    private void parseDate(Game game, ArrayList<ArrayList<String>> wordsInLines) {
+    private void parseDateAndTable(Game game, ArrayList<ArrayList<String>> wordsInLines) {
         String dateRep = wordsInLines.get(curLine).get(9);
         dateRep += " " + wordsInLines.get(curLine).get(10);
         Date date = new Date(dateRep);
@@ -69,6 +69,8 @@ public class GGPokerokRushNCashParser implements GGParser {
         game.setDate(date);
 
         ++curLine;
+        String table = wordsInLines.get(curLine).get(1);
+        game.setTable(table.substring(1, table.length() - 1));
     }
 
 

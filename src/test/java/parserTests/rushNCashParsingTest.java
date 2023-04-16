@@ -123,8 +123,8 @@ public class rushNCashParsingTest {
 
         PlayerInGame winner = new PlayerInGame(correctPlayers.get(5));
 
-        // assertEquals(winner, topG.getWinner());
-//        assertEquals(finalPot, topG.getFinalPot());
+//        assertEquals(winner, topG.getWinner());
+        assertTrue(Math.abs(finalPot - topG.getFinalPot()) < 0.01);
 //        assertEquals(rake, topG.getRake());
     }
 
@@ -403,6 +403,7 @@ public class rushNCashParsingTest {
                  Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)],
                 River: (StreetDescription| Board: ([9♣, 3♠, 8♠, K♦, 6♥]), pot after betting: 9.74, Players after betting: [(PlayerInGame| UserName: _UNDEFINED_, Id: 195539ef, Pos: BB, Balance: 24.04), (PlayerInGame| UserName: _UNDEFINED_, Id: a7067c39, Pos: CO, Balance: 79.54)],
                  Actions: [(Action| Type: CHECK, Pot before action: 9.74, Player Id: 195539ef), (Action| Type: CHECK, Pot before action: 9.74, Player Id: a7067c39)])""";
+        assertEquals(topG.getPlayer("195539ef").getHand(), new Hand("8h" ,"Ah"));
         assertEquals(s, topG.toString());
         assertFalse(topG.getRiver().isAllIn());
     }
