@@ -55,6 +55,9 @@ public class GamesListController {
     @FXML
     private Button profileButton;
 
+    @FXML
+    private Button examinePlayersButton;
+
     private
     GamesSet gamesSet;
 
@@ -67,10 +70,9 @@ public class GamesListController {
         initializeSerializedSavedGames();
         searchFiltersButton.setOnMouseClicked(actionEvent -> onSearchFiltersButtonClick());
 
-        profileButton.setOnMouseClicked(action -> {
-            onProfileButtonClicked();
-        });
+        profileButton.setOnMouseClicked(action -> onProfileButtonClicked());
 
+        examinePlayersButton.setOnMouseClicked(action -> onExaminePlayersButtonClicked());
     }
 
     @FXML
@@ -80,6 +82,7 @@ public class GamesListController {
 
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.setResizable(false);
 
             double heroWinloss = 0;
             for (Game g : gamesSet.getGames()) {
@@ -95,7 +98,6 @@ public class GamesListController {
             alert.setContentText("Could not open Profile. Try reopening the app.");
             alert.show();
         }
-
     }
 
     @FXML
@@ -105,6 +107,7 @@ public class GamesListController {
 
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.setResizable(false);
 
             FilterSearchController controller = loader.getController();
             stage.setOnHiding(event -> {
@@ -118,11 +121,10 @@ public class GamesListController {
         } catch (IOException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Could not open filter search");
-
+            alert.show();
         }
 
     }
-
 
     @FXML
     void onUploadButtonClick() {
@@ -151,6 +153,21 @@ public class GamesListController {
         }
     }
 
+    @FXML
+    private void onExaminePlayersButtonClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(PSAApplication.class.getResource("views/examinePlayersView.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(loader.load()));
+            ExaminePlayersController controller = loader.getController();
+            controller.setGameSet(gamesSet);
+            stage.show();
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Could not properly load Examine Players page.");
+            alert.show();
+        }
+    }
 
     @FXML
     private void initializeTable() {
@@ -159,6 +176,7 @@ public class GamesListController {
         gamesTableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("BigBlindSize$"));
         gamesTableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("finalPot"));
 
+        // Setting clinking the row to open gameDisplayView.
         gamesTableView.setRowFactory(tv -> {
             TableRow<Game> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -171,6 +189,7 @@ public class GamesListController {
                         stage.setScene(new Scene(loader.load()));
                         GameDisplayController controller = loader.getController();
                         controller.setGame(rowData);
+                        stage.setResizable(false);
                         stage.show();
                     } catch (Exception ex) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);

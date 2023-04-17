@@ -14,5 +14,4 @@ public interface Parser {
     public ArrayList<Game> parseFile(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException;
 
     public ArrayList<Game> parseDirectoryFiles(String path) throws IOException, IncorrectHandException, IncorrectBoardException, IncorrectCardException;
-
 }

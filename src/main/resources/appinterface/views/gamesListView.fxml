@@ -23,7 +23,7 @@
             </rowConstraints>
             <children>
                 <Button fx:id="uploadButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="153.0" text="Upload Files" GridPane.hgrow="ALWAYS" />
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="163.0" text="Examine Players" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                <Button fx:id="examinePlayersButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="163.0" text="Examine Players" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
                 <Button fx:id="profileButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="179.0" text="Profile" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" />
             <Button fx:id="searchFiltersButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="42.0" prefWidth="145.0" text="Search Filters" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />
             </children>

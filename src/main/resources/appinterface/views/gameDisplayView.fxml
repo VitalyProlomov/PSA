@@ -85,12 +85,12 @@
             <Image url="@../assets/cardBackImage.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="player5RightCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="419.0" layoutY="279.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="player5RightCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="420.0" layoutY="279.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/cardBackImage.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="player3RightCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="275.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="player3RightCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="275.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/cardBackImage.png" />
          </image>
@@ -105,7 +105,7 @@
             <Image url="@../assets/cardBackImage.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="player3LeftCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="238.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="player3LeftCardShirt" fitHeight="52.0" fitWidth="37.0" layoutX="239.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/cardBackImage.png" />
          </image>
@@ -160,7 +160,7 @@
       </ImageView>
       <Rectangle fx:id="player1LeftCardRectangle" arcHeight="5.0" arcWidth="5.0" fill="#c41e1e" height="52.0" layoutX="88.0" layoutY="284.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="36.0" />
       <Rectangle fx:id="player1RightCardRectangle" arcHeight="5.0" arcWidth="5.0" fill="#09b700" height="52.0" layoutX="124.0" layoutY="284.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="36.0" />
-      <Label fx:id="playerLeftCardLabel" alignment="CENTER" layoutX="88.0" layoutY="297.0" prefHeight="18.0" prefWidth="36.0" text="K" textFill="WHITE" visible="false">
+      <Label fx:id="player1LeftCardLabel" alignment="CENTER" layoutX="88.0" layoutY="297.0" prefHeight="18.0" prefWidth="36.0" text="K" textFill="WHITE" visible="false">
          <font>
             <Font size="16.0" />
          </font>

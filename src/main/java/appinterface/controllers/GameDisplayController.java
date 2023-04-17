@@ -222,7 +222,7 @@ public class GameDisplayController {
     private ImageView player5RightCardShirt;
 
     @FXML
-    private Label playerLeftCardLabel;
+    private Label player1LeftCardLabel;
 
     @FXML
     private Label potLabel;
@@ -511,7 +511,6 @@ public class GameDisplayController {
 
     @FXML
     void initialize() {
-
         nextActionTriangle.setOnMouseClicked(action -> showNextAction());
         suitColorMap.put(Card.Suit.SPADES, Color.rgb(53, 56, 59));
         suitColorMap.put(Card.Suit.HEARTS, Color.rgb(196, 30, 30));
@@ -527,7 +526,7 @@ public class GameDisplayController {
                 Card.Rank.ACE
         ));
         for (int i = 0; i < allStrings.length(); ++i) {
-            rankCharMap.put(ranks.get(i), new Character(allStrings.charAt(i)));
+            rankCharMap.put(ranks.get(i), allStrings.charAt(i));
         }
 
         actionStringMap.put(CHECK, "Check");
