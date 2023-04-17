@@ -95,6 +95,14 @@ public class Game {
         }
     }
 
+    @JsonIgnore
+    public boolean isUnRaised() {
+        if (preFlopRaisesAmount == -1) {
+            countPreFlopRaises();
+        }
+        return preFlopRaisesAmount == 0;
+    }
+
     /**
      * @return true, if the pot is single raised (only one raise took pace during preflop),
      * false otherwise
@@ -536,12 +544,27 @@ public class Game {
         return new HashMap<String, Double>(allWinners);
     }
 
+    public void setWinners(HashMap<String, Double> map) {
+        if (map == null) {
+            this.allWinners = null;
+            return;
+        }
+        for (String key : map.keySet()) {
+            addWinner(key, map.get(key));
+        }
+    }
+
     /**
      * Adds a winner and assigns amount on to the winner hash set.
      */
-    public void addWinner(PlayerInGame winner, double amount) {
+    public void addWinner(String winnerId, double amount) {
         this.allWinners = new HashMap<>();
-        allWinners.put(winner.getId(), amount);
+        allWinners.put(winnerId, amount);
+       for (PlayerInGame p : players) {
+           if (p.getId().equals(winnerId)) {
+                   p.setBalance(p.getBalance() + amount);
+           }
+       }
     }
 
     /**

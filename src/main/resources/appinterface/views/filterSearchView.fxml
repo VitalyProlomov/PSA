@@ -8,7 +8,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-
 <AnchorPane prefHeight="396.0" prefWidth="455.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="appinterface.controllers.FilterSearchController">
    <children>
       <DatePicker fx:id="fromDatePicker" layoutX="110.0" layoutY="63.0" prefHeight="26.0" prefWidth="114.0" />
@@ -26,14 +25,15 @@
       <Label layoutX="14.0" layoutY="236.0" text="Players PostFlop" />
       <Button fx:id="searchButton" layoutX="201.0" layoutY="346.0" mnemonicParsing="false" text="Search" />
       <Button fx:id="clearButton" layoutX="10.0" layoutY="346.0" mnemonicParsing="false" text="Set To Defaults" />
-      <CheckBox fx:id="sprCheckBox" layoutX="367.0" layoutY="110.0" mnemonicParsing="false" prefWidth="43.0" selected="true" text="SPR" />
-      <CheckBox fx:id="threeBetCheckBox" layoutX="367.0" layoutY="146.0" mnemonicParsing="false" selected="true" text="3Bet" />
-      <CheckBox fx:id="fourBetCheckBox" layoutX="367.0" layoutY="184.0" mnemonicParsing="false" selected="true" text="4Bet" />
+      <CheckBox fx:id="sprCheckBox" layoutX="359.0" layoutY="135.0" mnemonicParsing="false" prefWidth="43.0" selected="true" text="SPR" />
+      <CheckBox fx:id="threeBetCheckBox" layoutX="359.0" layoutY="171.0" mnemonicParsing="false" selected="true" text="3Bet" />
+      <CheckBox fx:id="fourBetCheckBox" layoutX="359.0" layoutY="209.0" mnemonicParsing="false" selected="true" text="4Bet" />
       <Label layoutX="364.0" layoutY="72.0" text="Pot Types" />
-      <CheckBox fx:id="fiveBetCheckBox" layoutX="367.0" layoutY="223.0" mnemonicParsing="false" selected="true" text="(5+)Bet" />
+      <CheckBox fx:id="fiveBetCheckBox" layoutX="360.0" layoutY="248.0" mnemonicParsing="false" selected="true" text="(5+)Bet" />
       <CheckComboBox fx:id="gameTypeCheckComboBox" layoutX="110.0" layoutY="133.0" prefHeight="26.0" prefWidth="114.0" />
       <CheckComboBox fx:id="bbSizeCheckComboBox" layoutX="110.0" layoutY="168.0" prefHeight="26.0" prefWidth="114.0" />
       <CheckComboBox fx:id="roomCheckComboBox" layoutX="110.0" layoutY="200.0" prefHeight="26.0" prefWidth="114.0" />
       <CheckComboBox fx:id="playersPostFlopCheckComboBox" layoutX="110.0" layoutY="232.0" prefHeight="26.0" prefWidth="114.0" />
+      <CheckBox fx:id="unraisedCheckBox" layoutX="358.0" layoutY="100.0" mnemonicParsing="false" selected="true" text="Unraised" />
    </children>
 </AnchorPane>

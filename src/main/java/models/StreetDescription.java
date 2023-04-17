@@ -145,6 +145,8 @@ public class StreetDescription {
                 p.setBalance(p.getBalance() + returnedAmount);
             }
         }
+
+        potAfterBetting -= returnedAmount;
     }
 
     /**

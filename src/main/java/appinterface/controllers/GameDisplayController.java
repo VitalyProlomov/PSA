@@ -359,6 +359,12 @@ public class GameDisplayController {
         if (curStreetStr.equals("flop")) {
             curStreet = displayedGame.getFlop();
             if (curStreet == null) {
+                String balanceStr = new DecimalFormat("#0.00").format(displayedGame.getPreFlop().getPotAfterBetting()).replace(',', '.');
+                potLabel.setText("POT: " + balanceStr + "$");
+
+                if (displayedGame.getPreFlop().getPlayersAfterBetting().size() > 1) {
+                    displayShownCards(displayedGame.getPreFlop());
+                }
                 return;
             } else if (curStreet.getAllActions().size() <= curActionIndex) {
                 curStreetStr = "turn";
@@ -387,6 +393,12 @@ public class GameDisplayController {
         if (curStreetStr.equals("turn")) {
             curStreet = displayedGame.getTurn();
             if (curStreet == null) {
+                String balanceStr = new DecimalFormat("#0.00").format(displayedGame.getFlop().getPotAfterBetting()).replace(',', '.');
+                potLabel.setText("POT: " + balanceStr + "$");
+
+                if (displayedGame.getFlop().getPlayersAfterBetting().size() > 1) {
+                    displayShownCards(displayedGame.getFlop());
+                }
                 return;
             } else if (curStreet.getAllActions().size() <= curActionIndex) {
                 curStreetStr = "river";
@@ -414,33 +426,19 @@ public class GameDisplayController {
         if (curStreetStr.equals("river")) {
             curStreet = displayedGame.getRiver();
             if (curStreet == null) {
+                String balanceStr = new DecimalFormat("#0.00").format(displayedGame.getTurn().getPotAfterBetting()).replace(',', '.');
+                potLabel.setText("POT: " + balanceStr + "$");
+
+                if (displayedGame.getTurn().getPlayersAfterBetting().size() > 1) {
+                    displayShownCards(displayedGame.getTurn());
+                }
                 return;
             }
             if (curStreet.getAllActions().size() <= curActionIndex) {
                 if (curStreet.getPlayersAfterBetting().size() > 1) {
-                    for (PlayerInGame p : curStreet.getPlayersAfterBetting()) {
-                        int curIndex = hashPlayerIndexMap.get(p.getId());
-                        PlayerInGame curPlayer = displayedGame.getPlayer(p.getId());
-                        Label leftLabel = (Label) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "LeftCardLabel");
-                        leftLabel.setText(String.valueOf(rankCharMap.get(curPlayer.getHand().getCard1().getRank())));
-
-                        Label rightLabel = (Label) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "RightCardLabel");
-                        rightLabel.setText(String.valueOf(rankCharMap.get(curPlayer.getHand().getCard2().getRank())));
-
-                        Rectangle leftRectangle = (Rectangle) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "LeftCardRectangle");
-                        leftRectangle.setFill(suitColorMap.get(curPlayer.getHand().getCard1().getSuit()));
-
-                        Rectangle rightRectangle =  (Rectangle) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "RightCardRectangle");
-                        rightRectangle.setFill(suitColorMap.get(curPlayer.getHand().getCard2().getSuit()));
-
-                        leftLabel.setVisible(true);
-                        rightLabel.setVisible(true);
-
-                        leftRectangle.setVisible(true);
-                        rightRectangle.setVisible(true);
-                    }
-                    return;
+                    displayShownCards(curStreet);
                 }
+                return;
             }
 
         }
@@ -466,8 +464,49 @@ public class GameDisplayController {
             String balanceStr = new DecimalFormat("#0.00").format(nextAction.getAmount()).replace(',', '.');
             curActionLabel.setText(curActionLabel.getText() + " " + balanceStr + "$");
         }
+        if (nextAction.getActionType().equals(FOLD)) {
+            if (nextAction.getPlayerId().equals("Hero")) {
+                heroLeftCardRectangle.opacityProperty().set(0.3);
+                heroRightCardRectangle.opacityProperty().set(0.3);
+            } else {
+                int index = hashPlayerIndexMap.get(nextAction.getPlayerId());
+//                gameDisplayAnchorPane.getScene().lookup("#player" + index + "LeftCardShirt").setVisible(false);
+//                gameDisplayAnchorPane.getScene().lookup("#player" + index + "RightCardShirt").setVisible(false);
+
+                ((ImageView)gameDisplayAnchorPane.getScene().lookup("#player" + index + "LeftCardShirt")).setOpacity(0.1);
+                ((ImageView)gameDisplayAnchorPane.getScene().lookup("#player" + index + "RightCardShirt")).setOpacity(0.1);
+
+            }
+        }
 
         prevLabel = curActionLabel;
+    }
+
+    private void displayShownCards(StreetDescription curStreet) {
+        for (PlayerInGame p : curStreet.getPlayersAfterBetting()) {
+            if (p.getId().equals("Hero")) {
+                continue;
+            }
+            int curIndex = hashPlayerIndexMap.get(p.getId());
+            PlayerInGame curPlayer = displayedGame.getPlayer(p.getId());
+            Label leftLabel = (Label) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "LeftCardLabel");
+            leftLabel.setText(String.valueOf(rankCharMap.get(curPlayer.getHand().getCard1().getRank())));
+
+            Label rightLabel = (Label) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "RightCardLabel");
+            rightLabel.setText(String.valueOf(rankCharMap.get(curPlayer.getHand().getCard2().getRank())));
+
+            Rectangle leftRectangle = (Rectangle) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "LeftCardRectangle");
+            leftRectangle.setFill(suitColorMap.get(curPlayer.getHand().getCard1().getSuit()));
+
+            Rectangle rightRectangle = (Rectangle) gameDisplayAnchorPane.getScene().lookup("#player" + curIndex + "RightCardRectangle");
+            rightRectangle.setFill(suitColorMap.get(curPlayer.getHand().getCard2().getSuit()));
+
+            leftLabel.setVisible(true);
+            rightLabel.setVisible(true);
+
+            leftRectangle.setVisible(true);
+            rightRectangle.setVisible(true);
+        }
     }
 
     @FXML

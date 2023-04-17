@@ -23,6 +23,8 @@ public class FilterSearchController {
     private Button clearButton;
 
     @FXML
+    private CheckBox unraisedCheckBox;
+    @FXML
     private CheckBox fiveBetCheckBox;
 
     @FXML
@@ -81,7 +83,7 @@ public class FilterSearchController {
     @FXML
     public void initialize() {
         bbSizeCheckComboBox.getItems().addAll(FXCollections.observableArrayList(0.02, 0.05, 0.10, 0.25));
-        playersPostFlopCheckComboBox.getItems().addAll(FXCollections.observableArrayList("Heads-up", "Multi-way"));
+        playersPostFlopCheckComboBox.getItems().addAll(FXCollections.observableArrayList("Heads-up", "Multi-way", "Folded"));
         roomCheckComboBox.getItems().addAll(FXCollections.observableArrayList("GGPokerok"));
         gameTypeCheckComboBox.getItems().addAll(FXCollections.observableArrayList("Rush`n`Cash", "8 max 3 Blinds Holdem"));
 
@@ -96,7 +98,7 @@ public class FilterSearchController {
 
     public Set<Game> searchFilteredGames(Set<Game> unfilteredGames) {
         if (unfilteredGames == null) {
-           return new HashSet<>();
+            return new HashSet<>();
         }
         if (unfilteredGames.size() == 0) {
             return unfilteredGames;
@@ -125,11 +127,13 @@ public class FilterSearchController {
             filteredToDate = Date.from(instant);
         }
 
-        boolean headsUpFilter = playersPostFlopCheckComboBox.getCheckModel().isChecked(1);
-        boolean multiWayFilter = playersPostFlopCheckComboBox.getCheckModel().isChecked(0);
-        if (!headsUpFilter && !multiWayFilter) {
+        boolean headsUpFilter = playersPostFlopCheckComboBox.getCheckModel().isChecked(0);
+        boolean multiWayFilter = playersPostFlopCheckComboBox.getCheckModel().isChecked(1);
+        boolean foldedFilter = playersPostFlopCheckComboBox.getCheckModel().isChecked(2);
+        if (!headsUpFilter && !multiWayFilter && !foldedFilter) {
             headsUpFilter = true;
             multiWayFilter = true;
+            foldedFilter = true;
         }
 
         HashSet<String> chosenGamesTypes =
@@ -141,7 +145,8 @@ public class FilterSearchController {
             nl8MaxChosen3Blinds = true;
         }
 
-        boolean isSPRChosen =  sprCheckBox.isSelected();
+        boolean isUnraisedChosen = unraisedCheckBox.isSelected();
+        boolean isSPRChosen = sprCheckBox.isSelected();
         boolean is3BetChosen = threeBetCheckBox.isSelected();
         boolean is4BetChosen = fourBetCheckBox.isSelected();
         boolean is5BetChosen = fiveBetCheckBox.isSelected();
@@ -162,11 +167,9 @@ public class FilterSearchController {
                 continue;
             }
 
-            if (g.getPreFlop().getPlayersAfterBetting().size() > 2 && !multiWayFilter) {
-                filteredGames.remove(g);
-                continue;
-            }
-            if (g.getPreFlop().getPlayersAfterBetting().size() == 2 && !headsUpFilter) {
+            if (g.getPreFlop().getPlayersAfterBetting().size() > 2 && !multiWayFilter ||
+                    g.getPreFlop().getPlayersAfterBetting().size() == 2 && !headsUpFilter ||
+                    g.getPreFlop().getPlayersAfterBetting().size() == 1 && !foldedFilter) {
                 filteredGames.remove(g);
                 continue;
             }
@@ -181,9 +184,10 @@ public class FilterSearchController {
                 continue;
             }
 
-            if (g.isSingleRaised() && !isSPRChosen ||
+            if (g.isUnRaised() && !isUnraisedChosen ||
+                    g.isSingleRaised() && !isSPRChosen ||
                     g.isPot3Bet() && !is3BetChosen ||
-                    g.isPot4Bet() && !is4BetChosen||
+                    g.isPot4Bet() && !is4BetChosen ||
                     g.isPot5PlusBet() && !is5BetChosen) {
                 filteredGames.remove(g);
             }

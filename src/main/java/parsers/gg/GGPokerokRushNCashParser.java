@@ -16,6 +16,7 @@ import static models.PositionType.SB;
 
 public class GGPokerokRushNCashParser implements GGParser {
     private int curLine = 0;
+
     /**
      * Parses text representation of the game.
      *
@@ -46,8 +47,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         parseStreetDescriptions(game, wordsInLines, game.getExtraCashAmount());
 
 
-        // I decided not to parse winning s for now.
-        // parseWinnings(game, wordsInLines);
+        parseWinnings(game, wordsInLines);
         return game;
     }
 
@@ -328,7 +328,7 @@ public class GGPokerokRushNCashParser implements GGParser {
         // playing on later streets.
         int allInAm = 0;
         for (PlayerInGame p : st.getPlayersAfterBetting()) {
-            if (p.getBalance()  < 0.01) {
+            if (p.getBalance() < 0.01) {
                 ++allInAm;
             }
         }
@@ -408,5 +408,27 @@ public class GGPokerokRushNCashParser implements GGParser {
             // Should see what other lines could be here (excluding showing of hands).
             ++curLine;
         }
+    }
+
+    private void parseWinnings(Game game, ArrayList<ArrayList<String>> wordsInLines) {
+        int ax = 0;
+        while (!wordsInLines.get(curLine).get(1).equals("SHOWDOWN") && !wordsInLines.get(curLine).get(1).equals("FIRST")) {
+             ++curLine;
+             ++ax;
+             if (ax > 3) {
+                 ax = 0;
+             }
+        }
+        ++curLine;
+
+        while (!wordsInLines.get(curLine).get(1).equals("SUMMARY")) {
+            if (wordsInLines.get(curLine).get(1).equals("collected")) {
+                String id = wordsInLines.get(curLine).get(0);
+                double amount = Double.parseDouble(wordsInLines.get(curLine).get(2).substring(1));
+                game.addWinner(id, amount);
+            }
+            ++curLine;
+        }
+
     }
 }
