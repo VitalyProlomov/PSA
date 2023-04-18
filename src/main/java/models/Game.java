@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 
-import static models.Action.ActionType.RAISE;
+import static models.Action.ActionType.*;
 import static models.PositionType.*;
 
 /**
@@ -176,6 +176,261 @@ public class Game {
     public boolean isHeroInGame() {
         return getPlayer("Hero") != null;
     }
+
+    @JsonIgnore
+    public boolean isPlayerPFR(String hash) {
+        if (!players.contains(new PlayerInGame(hash))) {
+            return false;
+        }
+        for (int i = preFlop.getAllActions().size() - 1; i >= 0; --i) {
+            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
+                return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean is3BetRaiser(String hash) {
+        if (!players.contains(new PlayerInGame(hash))) {
+            return false;
+        }
+        boolean was1RaiseFound = false;
+        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
+            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
+                if (was1RaiseFound) {
+                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
+                }
+                was1RaiseFound = true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean is4BetRaiser(String hash) {
+        if (!players.contains(new PlayerInGame(hash))) {
+            return false;
+        }
+        int raisesAmount = 0;
+        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
+            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
+                if (raisesAmount == 2) {
+                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
+                }
+                ++raisesAmount;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean is5BetRaiser(String hash) {
+        if (!players.contains(new PlayerInGame(hash))) {
+            return false;
+        }
+        int raisesAmount = 0;
+        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
+            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
+                if (raisesAmount == 3) {
+                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
+                }
+                ++raisesAmount;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCBetFLop(String hash) {
+        if (flop == null) {
+            return false;
+        }
+        if (!isPlayerPFR(hash)) {
+            return false;
+        }
+        int i = 0;
+        while (i < flop.getAllActions().size() && flop.getAllActions().get(i).getActionType().equals(BET)) {
+            ++i;
+        }
+        if (i >= flop.getAllActions().size()) {
+            return false;
+        }
+        return flop.getAllActions().get(i).getPlayerId().equals(hash);
+    }
+
+    @JsonIgnore
+    public boolean didCheckRaiseFlop(String hash) {
+        if (flop == null) {
+            return false;
+        }
+        boolean wasChecked = false;
+        for (int i = 0; i < flop.getAllActions().size(); ++i) {
+            if (flop.getAllActions().get(i).getPlayerId().equals(hash)) {
+                if (wasChecked) {
+                    return flop.getAllActions().get(i).getActionType().equals(RAISE);
+                }
+                wasChecked = true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCallCBetFlop(String hash) {
+        if (flop == null) {
+            return false;
+        }
+        if (isPlayerPFR(hash)) {
+            return false;
+        }
+        for (int i = 0; i < flop.getAllActions().size(); ++i) {
+            if (flop.getAllActions().get(i).getPlayerId().equals(hash) &&
+                    flop.getAllActions().get(i).getActionType().equals(CALL)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didRaiseFlop(String hash) {
+        if (flop == null) {
+            return false;
+        }
+        for (int i = 0; i < flop.getAllActions().size(); ++i) {
+            if (flop.getAllActions().get(i).getPlayerId().equals(hash) &&
+                    flop.getAllActions().get(i).getActionType().equals(RAISE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCBetTurn(String hash) {
+        if (turn == null) {
+            return false;
+        }
+        if (!didCBetFLop(hash)) {
+            return false;
+        }
+        for (int i = 0; i < turn.getAllActions().size(); ++i) {
+            if (turn.getAllActions().get(i).getActionType().equals(BET) &&
+            turn.getAllActions().get(i).getPlayerId().equals(hash)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCheckRaiseTurn(String hash) {
+        if (turn == null) {
+            return false;
+        }
+
+        boolean wasChecked = false;
+        for (int i = 0; i < turn.getAllActions().size(); ++i) {
+            if (turn.getAllActions().get(i).getPlayerId().equals(hash)) {
+                if (wasChecked) {
+                    return turn.getAllActions().get(i).getActionType().equals(RAISE);
+                }
+                wasChecked = true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCallCBetTurn(String hash) {
+        if (turn == null) {
+            return false;
+        }
+        if (isPlayerPFR(hash)) {
+            return false;
+        }
+        for (int i = 0; i < turn.getAllActions().size(); ++i) {
+            if (turn.getAllActions().get(i).getPlayerId().equals(hash) &&
+                    turn.getAllActions().get(i).getActionType().equals(CALL)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didRaiseTurn(String hash) {
+        if (turn == null) {
+            return false;
+        }
+        for (int i = 0; i < turn.getAllActions().size(); ++i) {
+            if (turn.getAllActions().get(i).getPlayerId().equals(hash) &&
+                    turn.getAllActions().get(i).getActionType().equals(RAISE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCBetRiver(String hash) {
+        if (river == null) {
+            return false;
+        }
+        if (!didCBetTurn(hash)) {
+            return false;
+        }
+        for (int i = 0; i < river.getAllActions().size(); ++i) {
+            if (river.getAllActions().get(i).getActionType().equals(BET) &&
+                    river.getAllActions().get(i).getPlayerId().equals(hash)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didLeadRiver(String hash) {
+        if (river == null) {
+            return false;
+        }
+        if (didCBetTurn(hash)) {
+            return false;
+        }
+        for (int i = 0; i < river.getAllActions().size(); ++i) {
+            if (river.getAllActions().get(i).getActionType().equals(BET) &&
+                    river.getAllActions().get(i).getPlayerId().equals(hash)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didWinAtShowdownRiver(String hash) {
+        if (river == null) {
+            return false;
+        }
+        if (river.getPlayersAfterBetting().contains(new PlayerInGame(hash))) {
+            return (allWinners.containsKey(hash));
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean didCallRiver(String hash) {
+        if (river == null) {
+            return false;
+        }
+        for (int i = 0; i < river.getAllActions().size(); ++i) {
+            if (river.getAllActions().get(i).getPlayerId().equals(hash)) {
+                return river.getAllActions().get(i).getActionType().equals(CALL);
+            }
+        }
+        return false;
+    }
+
 
     /**
      * @return if Hero did NOT fold on preflop,

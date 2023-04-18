@@ -56,8 +56,8 @@
       <Label fx:id="player3ActionLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="217.0" layoutY="117.0" prefHeight="18.0" prefWidth="102.0" textFill="WHITE" />
       <Label fx:id="player4ActionLabel" alignment="CENTER_RIGHT" layoutX="288.0" layoutY="136.0" prefHeight="18.0" prefWidth="102.0" textFill="WHITE" />
       <Label fx:id="player5ActionLabel" alignment="CENTER_RIGHT" layoutX="333.0" layoutY="251.0" prefHeight="18.0" prefWidth="102.0" textFill="WHITE" />
-      <Polygon fx:id="previousActionTriangle" fill="#5f00ff" layoutX="225.0" layoutY="460.0" points="-53.4000244140625, -24.60003662109375, 0.0, 10.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
-      <Polygon fx:id="nextActionTriangle" fill="#5f00ff" layoutX="306.0" layoutY="460.0" points="53.20001220703125, -23.60003662109375, 0.0, 10.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
+      <Polygon fx:id="previousActionTriangle" fill="#5f00ff" layoutX="225.0" layoutY="460.0" points="-53.4000244140625, -24.60003662109375, 0.0, 10.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
+      <Polygon fx:id="nextActionTriangle" fill="#5f00ff" layoutX="464.0" layoutY="460.0" points="53.20001220703125, -23.60003662109375, 0.0, 10.0, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
       <Rectangle fx:id="heroLeftCardRectangle" arcHeight="5.0" arcWidth="5.0" fill="#c41e1e" height="52.0" layoutX="232.0" layoutY="310.0" stroke="BLACK" strokeType="INSIDE" width="36.0" />
       <Rectangle fx:id="heroRightCardRectangle" arcHeight="5.0" arcWidth="5.0" fill="#09b700" height="52.0" layoutX="268.0" layoutY="310.0" stroke="BLACK" strokeType="INSIDE" width="36.0" />
       <ImageView fx:id="player4RightCardShirt" fitHeight="52.0" fitWidth="42.0" layoutX="444.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
@@ -222,5 +222,10 @@
       <Label fx:id="playersPostFlopLabel" layoutX="570.0" layoutY="77.0" prefHeight="18.0" prefWidth="222.0" text="Players Post Flop:    " />
       <Label fx:id="potTypeLabel" layoutX="570.0" layoutY="51.0" prefHeight="18.0" prefWidth="222.0" text="Pot Type:                 " />
       <Label fx:id="totalPotLabel" layoutX="570.0" layoutY="126.0" prefHeight="18.0" prefWidth="222.0" text="Total Pot:                 " />
+      <ImageView fx:id="restartImageView" fitHeight="70.0" fitWidth="69.0" layoutX="14.0" layoutY="401.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/restartIcon.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

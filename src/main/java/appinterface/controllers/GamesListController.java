@@ -84,14 +84,14 @@ public class GamesListController {
             stage.setScene(new Scene(loader.load()));
             stage.setResizable(false);
 
-            double heroWinloss = 0;
-            for (Game g : gamesSet.getGames()) {
-                heroWinloss += g.getHeroWinloss();
-            }
+//            double heroWinloss = 0;
+//            for (Game g : gamesSet.getGames()) {
+//                heroWinloss += g.getHeroWinloss();
+//            }
             int gamesAmount = gamesSet.getGames().size();
 
             ProfileController controller = loader.getController();
-            controller.setInfo(heroWinloss, gamesAmount);
+            controller.setInfo(gamesSet.getGames());
             stage.show();
         } catch (Exception exception) {
             Alert alert = new Alert(Alert.AlertType.ERROR);

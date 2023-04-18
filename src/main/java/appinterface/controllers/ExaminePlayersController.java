@@ -124,17 +124,20 @@ public class ExaminePlayersController {
                     try {
                         UserProfile rowData = row.getItem();
 
-//                        FXMLLoader loader = new FXMLLoader(PSAApplication.class.getResource("views/gameDisplayView.fxml"));
-//                        Stage stage = new Stage();
-//                        stage.setScene(new Scene(loader.load()));
-//                        GameDisplayController controller = loader.getController();
-//                        controller.setGame(rowData);
-//                        stage.setResizable(false);
-//                        stage.show();
+                        FXMLLoader loader = new FXMLLoader(PSAApplication.class.getResource("views/userProfileDisplayView.fxml"));
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(loader.load()));
+
+                        UserProfileDisplayController controller = loader.getController();
+                        controller.setGamesAndProfile(gamesSet.getGames(), rowData);
+
+                        stage.setResizable(false);
+                        stage.show();
                     } catch (Exception ex) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setContentText("Could not properly load User profile window.");
                         alert.show();
+                        ex.printStackTrace();
                     }
                 }
             });

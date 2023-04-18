@@ -26,7 +26,10 @@ public class UserProfileSet {
     public void addUser(UserProfile userProfile) {
         if (idUserMap.containsKey(userProfile.getUserName())) {
             UserProfile updatedUser = idUserMap.get(userProfile.getUserName());
-            updatedUser.addGamesIDs(userProfile.getAllGamesIds());
+
+            for (String id : userProfile.getAllGamesIds()) {
+                updatedUser.addGame(id, userProfile.getHashInGame(id));
+            }
             idUserMap.put(userProfile.getUserName(), updatedUser);
         }
         else {

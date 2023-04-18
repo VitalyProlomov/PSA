@@ -263,6 +263,8 @@ public class GameDisplayController {
     @FXML
     private Label potTypeLabel;
 
+    @FXML
+    private ImageView restartImageView;
 
     private Game displayedGame;
 
@@ -580,9 +582,75 @@ public class GameDisplayController {
         actionStringMap.put(MISSED_BLIND, "Missed Blind");
     }
 
+    private void resetAllStates() {
+        curStreetStr = "preflop";
+        curActionIndex = -1;
+        prevLabel = null;
+
+        potLabel.setText("POT: ");
+
+        player1ActionLabel.setText("");
+        player1LeftCardLabel.setVisible(false);
+        player1LeftCardRectangle.setVisible(false);
+        player1RightCardLabel.setVisible(false);
+        player1RightCardRectangle.setVisible(false);
+        player1LeftCardShirt.setOpacity(1);
+        player1RightCardShirt.setOpacity(1);
+
+        player2ActionLabel.setText("");
+        player2LeftCardLabel.setVisible(false);
+        player2LeftCardRectangle.setVisible(false);
+        player2RightCardLabel.setVisible(false);
+        player2RightCardRectangle.setVisible(false);
+        player2LeftCardShirt.setOpacity(1);
+        player2RightCardShirt.setOpacity(1);
+
+        player3ActionLabel.setText("");
+        player3LeftCardLabel.setVisible(false);
+        player3LeftCardRectangle.setVisible(false);
+        player3RightCardLabel.setVisible(false);
+        player3RightCardRectangle.setVisible(false);
+        player3LeftCardShirt.setOpacity(1);
+        player3RightCardShirt.setOpacity(1);
+
+        player4ActionLabel.setText("");
+        player4LeftCardLabel.setVisible(false);
+        player4LeftCardRectangle.setVisible(false);
+        player4RightCardLabel.setVisible(false);
+        player4RightCardRectangle.setVisible(false);
+        player4LeftCardShirt.setOpacity(1);
+        player4RightCardShirt.setOpacity(1);
+
+        player5ActionLabel.setText("");
+        player5LeftCardLabel.setVisible(false);
+        player5LeftCardRectangle.setVisible(false);
+        player5RightCardLabel.setVisible(false);
+        player5RightCardRectangle.setVisible(false);
+        player5LeftCardShirt.setOpacity(1);
+        player5RightCardShirt.setOpacity(1);
+
+        heroLeftCardRectangle.setOpacity(1);
+        heroRightCardRectangle.setOpacity(1);
+        heroActionLabel.setText("");
+
+        flopCard1Label.setVisible(false);
+        flopCard1Rectangle.setVisible(false);
+        flopCard2Label.setVisible(false);
+        flopCard2Rectangle.setVisible(false);
+        flopCard3Label.setVisible(false);
+        flopCard3Rectangle.setVisible(false);
+
+        turnCardRectangle.setVisible(false);
+        turnCardLabel.setVisible(false);
+
+        riverCardRectangle.setVisible(false);
+        riverCardLabel.setVisible(false);
+    }
+
     @FXML
     void initialize() {
         nextActionTriangle.setOnMouseClicked(action -> showNextAction());
+        restartImageView.setOnMouseClicked(action -> resetAllStates());
 
         fillMaps();
     }

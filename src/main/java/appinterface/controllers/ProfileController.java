@@ -1,37 +1,51 @@
 package appinterface.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import models.Game;
+import models.UserProfileSet;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProfileController {
     private static final int SIZE = 13;
 
     @FXML
-    private Label profileLabel;
+    private BorderPane borderPaneProfile;
 
     @FXML
-    private BorderPane borderPaneProfile;
+    private Label fiveBetPotLabel;
+
+    @FXML
+    private Label fourBetPotLabel;
 
     @FXML
     private Label gamesAmountLabel;
 
     @FXML
-    private Label moneyWinlossLabel;
+    private Label playersAssignedAmountLabel;
 
     @FXML
-    private Label playersAssignedAmountLabel;
+    private Label potsPostFlopLabel;
+
+    @FXML
+    private Label profileId;
+
+    @FXML
+    private Label threebetPotLabel;
 
     private double heroWinLoss;
 
     private int gamesAmount;
+
+    private HashSet<Game> games;
 
     @FXML
     void initialize() {
@@ -56,15 +70,50 @@ public class ProfileController {
 //        }
     }
 
-    public void setInfo(double heroWinLoss, int gamesAmount) {
-        this.heroWinLoss = heroWinLoss;
-        this.gamesAmount = gamesAmount;
+    public void setInfo(Set<Game> games) {
+        this.gamesAmount = games.size();
+
+        int threeBetGamesAmount = 0;
+        int potsPostFLopAmount = 0;
+        int fourBetPotsAmount = 0;
+        int fiveBetPotsAmount = 0;
+        for (Game g : games) {
+            if (g.isPot3Bet()) {
+                ++threeBetGamesAmount;
+            }
+            if (g.isPot4Bet()) {
+                ++fourBetPotsAmount;
+            }
+            if (g.isPot5PlusBet()) {
+                ++fiveBetPotsAmount;
+            }
+            if (g.isHeroPostFlop()) {
+                ++potsPostFLopAmount;
+            }
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            UserProfileSet userProfileSet = objectMapper.readValue(
+                    new File("src/main/resources/serializedFiles/serializedUserProfiles.txt"),
+                    UserProfileSet.class);
+            playersAssignedAmountLabel.setText(playersAssignedAmountLabel.getText() + userProfileSet.getIdUserMap().size());
+        } catch (IOException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Could not open Profile. Try reopening the app.");
+            alert.show();
+        }
+
+        gamesAmountLabel.setText(gamesAmountLabel.getText() + gamesAmount);
+        threebetPotLabel.setText(threebetPotLabel.getText() + threeBetGamesAmount);
+        fourBetPotLabel.setText(fourBetPotLabel.getText() + fourBetPotsAmount);
+        fiveBetPotLabel.setText(fiveBetPotLabel.getText() + fiveBetPotsAmount);
+        potsPostFlopLabel.setText(potsPostFlopLabel.getText() + potsPostFLopAmount);
+
 
         String balanceStr = new DecimalFormat("#0.00").format(heroWinLoss);
         balanceStr = balanceStr.replace(',', '.');
 
-        moneyWinlossLabel.setText(moneyWinlossLabel.getText() + balanceStr + "$");
-        gamesAmountLabel.setText(gamesAmountLabel.getText() + gamesAmount);
     }
 
 

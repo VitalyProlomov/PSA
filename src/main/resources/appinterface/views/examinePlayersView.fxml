@@ -13,14 +13,14 @@
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="501.20001220703125" minWidth="10.0" prefWidth="311.60003662109375" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="294.39996337890625" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="assignNewPlayerButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="304.0" style="-fx-background-color: grey;" text="Asign New Player" />
+            <Button fx:id="assignNewPlayerButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="313.0" style="-fx-background-color: white wheat; -fx-text-fill: black;" text="Asign New Player" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
             <CustomTextField fx:id="searchIdCustomTextField" prefHeight="79.0" prefWidth="303.0" promptText="Search id" GridPane.columnIndex="1" />
          </children>
       </GridPane>
@@ -28,8 +28,8 @@
    <center>
       <TableView fx:id="userProfilesTableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn prefWidth="280.0000064969063" text="Username" />
-          <TableColumn minWidth="0.0" prefWidth="232.79995727539062" text="Games Amount" />
+          <TableColumn minWidth="50.0" prefWidth="280.0000064969063" text="Username" />
+          <TableColumn minWidth="50.0" prefWidth="232.79995727539062" text="Games Amount" />
         </columns>
       </TableView>
    </center>
