@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.*;
 
 public class GamesListController {
-    private final static String UPLOADED_GAMES_LIST_NAME = "/serializedGames.txt";
+    private final static String SERIALIZED_GAMES_PATH = "src/main/resources/serializedFiles/serializedGames.txt";
 
     @FXML
     private ResourceBundle resources;
@@ -207,12 +207,8 @@ public class GamesListController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            URL url = PSAApplication.class.getResource("/serializedGames.txt");
-
-            String path = url.getFile().replace("%20", " ");
-
-            if (new File(path).length() != 0) {
-                gamesSet = objectMapper.readValue(new File(path), GamesSet.class);
+           if (new File(SERIALIZED_GAMES_PATH).length() != 0) {
+                gamesSet = objectMapper.readValue(new File(SERIALIZED_GAMES_PATH), GamesSet.class);
             }
             if (this.gamesSet == null) {
                 this.gamesSet = new GamesSet();
@@ -243,15 +239,13 @@ public class GamesListController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            URL url = PSAApplication.class.getResource(UPLOADED_GAMES_LIST_NAME);
-            String path = url.getFile().replace("%20", " ");
-            File file = new File(path);
+            File file = new File(SERIALIZED_GAMES_PATH);
 
             objectMapper.writeValue(file, gamesSet);
-
         } catch (Exception exception) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("File with saved games was not able to upload, please close it if it is opened");
+            alert.show();
         }
     }
 }

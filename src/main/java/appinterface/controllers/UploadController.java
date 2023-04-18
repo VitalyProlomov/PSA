@@ -4,6 +4,7 @@ import appinterface.PSAApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.Alert;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Region;
 import models.Game;
 import models.GamesSet;
 import parsers.gg.GGPokerokRushNCashParser;
@@ -33,6 +34,7 @@ public class UploadController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("You have uploaded " + (files.size() - allExceptions.size()) + " files, containing " +
                 allGames.size() + " games.");
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (allExceptions.size() != 0) {
             alert.setContentText(alert.getContentText() + "\n" + allExceptions.size() + " files were in incorrect format or could not be read.");
         }

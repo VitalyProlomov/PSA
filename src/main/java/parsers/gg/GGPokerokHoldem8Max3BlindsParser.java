@@ -102,10 +102,6 @@ public class GGPokerokHoldem8Max3BlindsParser implements GGParser {
             );
         }
 
-//        for (PlayerInGame p : game.getPlayers()) {
-//            statuses.put(p.getId(), PlayerStatus.ACTIVE);
-//        }
-
         game.setPlayers(new HashSet<>(players));
     }
 

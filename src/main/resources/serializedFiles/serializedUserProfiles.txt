@@ -1,0 +1,1 @@
+{"idUserMap":{"Perfect Enemy":{"userName":"Perfect Enemy","allGamesIds":["RC1433458047","RC1433463006","RC1433456997","RC1433460675","RC1433457408","RC1433455905"]}}}

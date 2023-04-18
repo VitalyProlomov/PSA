@@ -110,7 +110,7 @@
             <Image url="@../assets/cardBackImage.png" />
          </image>
       </ImageView>
-      <Label layoutX="569.0" layoutY="23.0" text=" Hero WinLoss" />
+      <Label fx:id="heroWinLossLabel" alignment="BOTTOM_LEFT" layoutX="570.0" layoutY="102.0" prefHeight="18.0" prefWidth="222.0" text="Hero WinLoss:         " />
       <Line fx:id="separatorLine" endX="-22.20001220703125" endY="445.0" layoutX="559.0" layoutY="38.0" startX="-22.20001220703125" startY="-38.000003814697266" />
       <Label fx:id="heroLeftCardLabel" alignment="CENTER" layoutX="232.0" layoutY="323.0" prefHeight="18.0" prefWidth="36.0" text="K" textFill="WHITE">
          <font>
@@ -218,5 +218,9 @@
             <Font size="16.0" />
          </font>
       </Label>
+      <Label fx:id="gameIdLabel" layoutX="570.0" layoutY="23.0" prefHeight="18.0" prefWidth="222.0" text="Game ID:                 " />
+      <Label fx:id="playersPostFlopLabel" layoutX="570.0" layoutY="77.0" prefHeight="18.0" prefWidth="222.0" text="Players Post Flop:    " />
+      <Label fx:id="potTypeLabel" layoutX="570.0" layoutY="51.0" prefHeight="18.0" prefWidth="222.0" text="Pot Type:                 " />
+      <Label fx:id="totalPotLabel" layoutX="570.0" layoutY="126.0" prefHeight="18.0" prefWidth="222.0" text="Total Pot:                 " />
    </children>
 </AnchorPane>

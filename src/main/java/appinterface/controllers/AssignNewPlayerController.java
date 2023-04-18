@@ -2,6 +2,7 @@ package appinterface.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import models.*;
 
 import java.util.HashSet;
@@ -54,6 +55,7 @@ public class AssignNewPlayerController {
             String table = "";
             if (!gamesSet.getGames().contains(new Game(gameId, 0))) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.setContentText("Game with such Game Id was not found");
                 alert.show();
             } else {
@@ -62,14 +64,17 @@ public class AssignNewPlayerController {
                         PlayerInGame curPlayer = g.getPlayer(hash);
                         if (curPlayer == null) {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                             alert.setContentText("There is no player with such hashcode in given Game");
                             alert.show();
                             return;
                         }
                         if (!curPlayer.getPosition().equals(position)) {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                             alert.setContentText("Position of chosen player is incorrect, double check please.");
                             alert.show();
+
                             return;
                         } else {
                             // Check for existing of UserName first

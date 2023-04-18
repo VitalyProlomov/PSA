@@ -12,7 +12,7 @@ public class UserProfile {
     private final String userName;
 
     private final HashSet<String> allGamesIds;
-    int vpip;
+    private int vpip;
     int threeBetPercentage;
     double fourBetPercentage;
     double fiveBetPercentage;
@@ -26,6 +26,7 @@ public class UserProfile {
         allGamesIds = new HashSet<>();
     }
 
+
     public String getUserName() {
         return userName;
     }
@@ -34,6 +35,7 @@ public class UserProfile {
         this.allGamesIds.addAll(ids);
     }
 
+    @JsonIgnore
     public int getGamesAmount() {
         return this.allGamesIds.size();
     }

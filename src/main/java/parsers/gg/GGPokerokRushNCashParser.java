@@ -347,7 +347,6 @@ public class GGPokerokRushNCashParser implements GGParser {
             case "folds" -> {
                 action = new Action(Action.ActionType.FOLD, curPlayer.getId(), 0, st.getPotAfterBetting());
                 st.removePlayerAfterBetting(curPlayer);
-//                game.setPlayerStatus(curPlayer.getId(), PlayerStatus.FOLDED);
             }
             case "raises" -> {
                 double lastAmount = 0;
@@ -365,7 +364,7 @@ public class GGPokerokRushNCashParser implements GGParser {
                 amount = amount - lastAmount;
                 st.setPotAfterBetting(st.getPotAfterBetting() + amount);
 
-                game.decrementPlayersBalance(curPlayer.getId(), amount - lastAmount);
+                game.decrementPlayersBalance(curPlayer.getId(), amount);
             }
             case "calls" -> {
                 amount = parseDouble(line.get(2).substring(1));

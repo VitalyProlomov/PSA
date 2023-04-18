@@ -248,12 +248,29 @@ public class GameDisplayController {
     @FXML
     private Rectangle turnCardRectangle;
 
+    @FXML
+    private Label heroWinLossLabel;
+
+    @FXML
+    private Label totalPotLabel;
+
+    @FXML
+    private Label playersPostFlopLabel;
+
+    @FXML
+    private Label gameIdLabel;
+
+    @FXML
+    private Label potTypeLabel;
+
+
     private Game displayedGame;
 
 
     public void setGame(Game game) {
         this.displayedGame = game;
         updateTableInfo();
+        initializeLabels();
     }
 
     private void updateTableInfo() {
@@ -482,6 +499,31 @@ public class GameDisplayController {
         prevLabel = curActionLabel;
     }
 
+    private void initializeLabels() {
+        this.gameIdLabel.setText(gameIdLabel.getText() + displayedGame.getGameId());
+        String strRep = new DecimalFormat("#0.00").format( displayedGame.getHeroWinloss()).replace(',', '.');
+        this.heroWinLossLabel.setText(heroWinLossLabel.getText() + strRep + "$");
+
+        String type = "undefined...";
+        if (displayedGame.isUnRaised()) {
+            type = "unraised";
+        } else if (displayedGame.isSingleRaised()) {
+            type = "single raised";
+        } else if (displayedGame.isPot3Bet()) {
+            type = "3bet";
+        } else if (displayedGame.isPot4Bet()) {
+            type = "4bet";
+        } else if (displayedGame.isPot5PlusBet()) {
+            type = "5+ bet";
+        }
+        this.potTypeLabel.setText(potTypeLabel.getText() + type);
+
+        this.playersPostFlopLabel.setText(playersPostFlopLabel.getText() + displayedGame.getPreFlop().getPlayersAfterBetting().size());
+
+        strRep = new DecimalFormat("#0.00").format(displayedGame.getFinalPot()).replace(',', '.');
+        this.totalPotLabel.setText(totalPotLabel.getText() + strRep);
+    }
+
     private void displayShownCards(StreetDescription curStreet) {
         for (PlayerInGame p : curStreet.getPlayersAfterBetting()) {
             if (p.getId().equals("Hero")) {
@@ -509,9 +551,7 @@ public class GameDisplayController {
         }
     }
 
-    @FXML
-    void initialize() {
-        nextActionTriangle.setOnMouseClicked(action -> showNextAction());
+    private void fillMaps() {
         suitColorMap.put(Card.Suit.SPADES, Color.rgb(53, 56, 59));
         suitColorMap.put(Card.Suit.HEARTS, Color.rgb(196, 30, 30));
         suitColorMap.put(Card.Suit.DIAMONDS, Color.rgb(30, 144, 255));
@@ -538,6 +578,13 @@ public class GameDisplayController {
         actionStringMap.put(ANTE, "Ante");
         actionStringMap.put(STRADDLE, "Straddle");
         actionStringMap.put(MISSED_BLIND, "Missed Blind");
+    }
+
+    @FXML
+    void initialize() {
+        nextActionTriangle.setOnMouseClicked(action -> showNextAction());
+
+        fillMaps();
     }
 
 }

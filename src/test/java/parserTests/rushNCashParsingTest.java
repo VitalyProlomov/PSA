@@ -7,6 +7,7 @@ import models.*;
 import org.junit.jupiter.api.Test;
 import parsers.gg.GGPokerokRushNCashParser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -501,4 +502,15 @@ public class rushNCashParsingTest {
         }
 //        assertEquals(9, gamesWShownCard.size());
     }
+
+    @Test
+    public void testBalanceChanging() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/balanceGameTest";
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        ArrayList<Game> games = parser.parseFile(new File(path).getAbsolutePath());
+
+        double rake = 0.08;
+        assertTrue(Math.abs(0.9 - rake -  games.get(0).getHeroWinloss()) < 0.01);
+    }
+
 }
