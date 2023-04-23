@@ -11,9 +11,9 @@
 
 <BorderPane prefHeight="400.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="appinterface.controllers.ExaminePlayersController">
    <top>
-      <GridPane BorderPane.alignment="CENTER">
+      <GridPane prefHeight="30.0" prefWidth="578.0" BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="501.20001220703125" minWidth="10.0" prefWidth="311.60003662109375" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="311.60003662109375" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="294.39996337890625" />
         </columnConstraints>
         <rowConstraints>
@@ -21,7 +21,7 @@
         </rowConstraints>
          <children>
             <Button fx:id="assignNewPlayerButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="313.0" style="-fx-background-color: white wheat; -fx-text-fill: black;" text="Asign New Player" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
-            <CustomTextField fx:id="searchIdCustomTextField" prefHeight="79.0" prefWidth="303.0" promptText="Search id" GridPane.columnIndex="1" />
+            <CustomTextField fx:id="searchIdCustomTextField" prefHeight="79.0" prefWidth="303.0" promptText="Search UserName" GridPane.columnIndex="1" />
          </children>
       </GridPane>
    </top>

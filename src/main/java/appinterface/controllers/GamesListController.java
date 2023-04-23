@@ -9,14 +9,14 @@ import exceptions.IncorrectHandException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import models.Game;
 import models.GamesSet;
 
@@ -58,8 +58,10 @@ public class GamesListController {
     @FXML
     private Button examinePlayersButton;
 
-    private
-    GamesSet gamesSet;
+    @FXML
+    private ImageView helpImageView;
+
+    private GamesSet gamesSet;
 
 
     @FXML
@@ -73,6 +75,8 @@ public class GamesListController {
         profileButton.setOnMouseClicked(action -> onProfileButtonClicked());
 
         examinePlayersButton.setOnMouseClicked(action -> onExaminePlayersButtonClicked());
+
+        helpImageView.setOnMouseClicked(action -> onHelpImageViewClicked());
     }
 
     @FXML
@@ -125,6 +129,25 @@ public class GamesListController {
         }
 
     }
+
+    private void onHelpImageViewClicked() {
+        Alert helpMessage = new Alert(Alert.AlertType.NONE);
+        helpMessage.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        helpMessage.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        helpMessage.initStyle(StageStyle.UTILITY);
+        helpMessage.setContentText("Hello, User\n" +
+                "You are using PSA - Poker Statistics Analyzer.\n" +
+                "Here are the main functions in this app (first 4 are accessed by Buttons with the corresponding names):\n" +
+                "1) Upload Files - uploads new files w text representations of games (For Pokerok you can get them on PokerCraft.com\n" +
+                "2) Examine Players - see what players you have already assigned (identified player with just in-game hash by its " +
+                "actual username) and see their stats\n" +
+                "3) Profile - see general information about games you uploaded\n" +
+                "4) Search Filters - Search the games you need using special filters (ex. 3-bet multi-way pots)\n" +
+                "5) Every Game in this table is accessible - double-click the row to open the Game Replay\n" +
+                "Have Fun!");
+        helpMessage.show();
+    }
+
 
     @FXML
     void onUploadButtonClick() {

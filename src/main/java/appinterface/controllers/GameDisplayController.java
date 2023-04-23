@@ -1,14 +1,19 @@
 package appinterface.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.StageStyle;
 import models.*;
 
 import java.text.DecimalFormat;
@@ -266,8 +271,10 @@ public class GameDisplayController {
     @FXML
     private ImageView restartImageView;
 
-    private Game displayedGame;
+    @FXML
+    private ImageView helpImageView;
 
+    private Game displayedGame;
 
     public void setGame(Game game) {
         this.displayedGame = game;
@@ -332,6 +339,16 @@ public class GameDisplayController {
                 ((ImageView) this.gameDisplayAnchorPane.getScene().lookup("#player" + index + "ButtonIcon")).setVisible(true);
             }
         }
+    }
+
+    private void onHelpImageViewClicked() {
+        Alert helpMessage = new Alert(Alert.AlertType.NONE);
+        helpMessage.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        helpMessage.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        helpMessage.initStyle(StageStyle.UTILITY);
+        helpMessage.setContentText("This is Game Replay\n You can click the arrow below to get to next action that took place in game" +
+                "or click reset button (left bottom corner) to start replaying from beginning");
+        helpMessage.show();
     }
 
     private String curStreetStr = "preflop";
@@ -653,6 +670,7 @@ public class GameDisplayController {
         restartImageView.setOnMouseClicked(action -> resetAllStates());
 
         fillMaps();
+        helpImageView.setOnMouseClicked(action -> onHelpImageViewClicked());
     }
 
 }

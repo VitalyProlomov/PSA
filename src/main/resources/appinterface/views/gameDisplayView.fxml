@@ -227,5 +227,10 @@
             <Image url="@../assets/restartIcon.png" />
          </image>
       </ImageView>
+      <ImageView fx:id="helpImageView" fitHeight="36.0" fitWidth="36.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/questionMark.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
