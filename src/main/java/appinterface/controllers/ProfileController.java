@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ProfileController {
@@ -69,15 +70,14 @@ public class ProfileController {
 //            }
 //        }
     }
-
-    public void setInfo(Set<Game> games) {
+    public void setInfo(Map<String, Game> games) {
         this.gamesAmount = games.size();
 
         int threeBetGamesAmount = 0;
         int potsPostFLopAmount = 0;
         int fourBetPotsAmount = 0;
         int fiveBetPotsAmount = 0;
-        for (Game g : games) {
+        for (Game g : games.values()) {
             if (g.isPot3Bet()) {
                 ++threeBetGamesAmount;
             }
@@ -99,9 +99,8 @@ public class ProfileController {
                     UserProfileSet.class);
             playersAssignedAmountLabel.setText(playersAssignedAmountLabel.getText() + userProfileSet.getIdUserMap().size());
         } catch (IOException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Could not open Profile. Try reopening the app.");
-            alert.show();
+            playersAssignedAmountLabel.setText(playersAssignedAmountLabel.getText() + "0");
+
         }
 
         gamesAmountLabel.setText(gamesAmountLabel.getText() + gamesAmount);
@@ -115,6 +114,4 @@ public class ProfileController {
         balanceStr = balanceStr.replace(',', '.');
 
     }
-
-
 }

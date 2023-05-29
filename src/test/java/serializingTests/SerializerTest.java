@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -43,24 +44,34 @@ public class SerializerTest {
         assertEquals(3205, allGames.size());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File(getFullPath("/serializedFiles/serializedGames1.txt"));
+        File file = new File("src/test/resources/serializedFiles/serializedGames1.txt");
+        System.out.println(file.getAbsolutePath());
 
-        GamesSet gamesSet = new GamesSet();
-        gamesSet.setGames(new HashSet<>(allGames));
+        HashMap<String, Game> gamesMap = new HashMap<String, Game>();
+        for (Game g : allGames) {
+            gamesMap.put(g.getGameId(), g);
+        }
+        GamesSet gamesSet = new GamesSet(gamesMap);
 
         objectMapper.writeValue(file, gamesSet);
+        System.out.println("pause");
 
-        StringBuilder text = new StringBuilder();
-        FileReader fr = new FileReader(file);
-        BufferedReader bfr = new BufferedReader(fr);
-        String line = bfr.readLine();
-        while (line != null) {
-            text.append(line).append("\n");
-            line = bfr.readLine();
-        }
+//        StringBuilder text = new StringBuilder();
+//        FileReader fr = new FileReader(file);
+//        BufferedReader bfr = new BufferedReader(fr);
+//        String line = bfr.readLine();
+//        while (line != null) {
+//            text.append(line).append("\n");
+//            line = bfr.readLine();
+//        }
 
-        GamesSet deserializedGame = objectMapper.readValue(text.toString(), GamesSet.class);
+        GamesSet deserializedGame = objectMapper.readValue(file, GamesSet.class);
         assertEquals(gamesSet.getGames(), deserializedGame.getGames());
+        String id;
+        for (Game g : gamesSet.getGames().values()) {
+            id = g.getGameId();
+            assertEquals(g.getPlayers(), deserializedGame.getGames().get(id).getPlayers());
+        }
     }
 
     @Test
@@ -96,7 +107,7 @@ public class SerializerTest {
     }
 
     @Test
-    public void serializeAndDeserializeEveryClass() throws IncorrectCardException, JsonProcessingException, IncorrectBoardException, IncorrectHandException {
+    public void serializeAndDeserializeEveryClass() throws IncorrectCardException, IOException, IncorrectBoardException, IncorrectHandException {
         Object obj = new Action(Action.ActionType.CHECK, "", 20, 10);
         Object deserObject = serializeAndDeserializeGivenObject(obj, obj.getClass());
         assertEquals(obj, deserObject);
@@ -118,7 +129,27 @@ public class SerializerTest {
         deserObject = serializeAndDeserializeGivenObject(obj, obj.getClass());
         assertEquals(obj, deserObject);
 
-        // Game
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        Game game = parser.parseFile ("src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt").get(0);
+        Game deserGame = (Game)serializeAndDeserializeGivenObject(game, Game.class);
+
+
+        assertEquals(game.getTable() , deserGame.getTable());
+        assertEquals(game.getGameId() , deserGame.getGameId());
+        assertEquals(game.getInitialBalances() , deserGame.getInitialBalances());
+        assertEquals(game.getExtraCashAmount() , deserGame.getExtraCashAmount());
+        assertEquals(game.getBigBlindSize$() , deserGame.getBigBlindSize$());
+        assertEquals(game.getPlayers(), deserGame.getPlayers());
+        assertEquals(game.getWinners(), deserGame.getWinners());
+        assertEquals(game.getPreFlop(), deserGame.getPreFlop());
+        assertEquals(game.getDate(), deserGame.getDate());
+        assertEquals(game.getFlop(), deserGame.getFlop());
+        assertEquals(game.getSB(), deserGame.getSB());
+        assertEquals(game.getTurn() , deserGame.getTurn());
+        assertEquals(game.getRiver() , deserGame.getRiver());
+        assertEquals(game.getRake() , deserGame.getRake());
+        assertEquals(game.getFinalPot() , deserGame.getFinalPot());
+
 
         obj = new Hand("7s", "8d");
         deserObject = serializeAndDeserializeGivenObject(obj, obj.getClass());

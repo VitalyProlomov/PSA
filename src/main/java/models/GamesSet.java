@@ -1,23 +1,43 @@
 package models;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.*;
 
 public class GamesSet {
-    public GamesSet() {
-        this.games = new HashSet<>();
-    }
-    private HashSet<Game> games;
+    private final HashMap<String, Game> games;
 
-    public Set<Game> getGames() {
+    public GamesSet() {
+        this.games = new HashMap<>();
+    }
+
+    public GamesSet(@JsonProperty("games") Map<String, Game> games) {
+        if (games == null) {
+            this.games = new HashMap<>();
+            return;
+        }
+        this.games = new HashMap<>(games);
+    }
+
+    public HashMap<String, Game> getGames() {
         return games;
     }
+//
+//    public void setGames(Map<String, Game> games) {
+//        this.games = new HashMap<>(games);
+//    }
+//
+//    @JsonIgnore
+//    public void setGames(Set<Game> games) {
+//        for (Game g : games) {
+//            this.games.put(g.getGameId(), g);
+//        }
+//    }
 
-    public void setGames(Set<Game> games) {
-        this.games = new HashSet<>(games);
-    }
-
-    public void addGames(Set<Game> addendumGames) {
-        games.addAll(addendumGames);
+    public void addGames(Collection<Game> addendumGames) {
+        for (Game g : addendumGames) {
+            games.put(g.getGameId(), g);
+        }
     }
 }

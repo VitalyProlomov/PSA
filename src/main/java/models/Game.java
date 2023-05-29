@@ -20,18 +20,10 @@ public class Game {
     private String table;
 
     /**
-     * Constructs a new game with given ID and BB (given in dollars)
-     *
-     * @param gameId        Id of the game from PokerCraft parsed text view of the game
-     * @param bigBlindSize$ value of 1 big blind in dollars
+     * Map containing pairs hash - player, that are present in given Game
      */
-    @JsonCreator
-    public Game(@JsonProperty("gameId") String gameId, @JsonProperty("bigBlindSize$") double bigBlindSize$) {
-        this.gameId = gameId;
-        this.bigBlindSize$ = bigBlindSize$;
-    }
-
-    private HashSet<PlayerInGame> players = new HashSet<>();
+    @JsonProperty(value = "players", required = true)
+    private HashMap<String, PlayerInGame> players = new HashMap<>();
     private final HashMap<String, Double> initialBalances = new HashMap<>();
 
     // Amount of dollars as a cash drop (or 0 if there is no cash drop)
@@ -44,14 +36,30 @@ public class Game {
     private StreetDescription turn;
     private StreetDescription river;
 
-    private HashMap<String, Double> allWinners;
+    @JsonProperty(value = "allWinners", required = true)
+    private HashMap<String, Double> allWinners = new HashMap<>();
     private double finalPot;
     private double rake;
+
+    private int preFlopRaisesAmount = -1;
 
     /**
      * Contains all the single shown cards assigned to the players that showed them.
      */
     private final HashMap<String, Card> shownOneCards = new HashMap<>();
+
+
+    /**
+     * Constructs a new game with given ID and BB (given in dollars)
+     *
+     * @param gameId        Id of the game from PokerCraft parsed text view of the game
+     * @param bigBlindSize$ value of 1 big blind in dollars
+     */
+    @JsonCreator
+    public Game(@JsonProperty("gameId") String gameId, @JsonProperty("bigBlindSize$") double bigBlindSize$) {
+        this.gameId = gameId;
+        this.bigBlindSize$ = bigBlindSize$;
+    }
 
     /**
      * Adds information about one shown card (needed when player shows just one of his cards, not both).
@@ -62,12 +70,11 @@ public class Game {
      * false, otherwise.
      */
     public boolean addShownOneCard(String playerId, Card card) {
-        if (this.players.contains(new PlayerInGame(playerId))) {
+        if (this.players.get(playerId) != null) {
             shownOneCards.put(playerId, card);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -77,7 +84,6 @@ public class Game {
         return new HashMap<>(shownOneCards);
     }
 
-    private int preFlopRaisesAmount = -1;
 
     /**
      * counts amount of preflop raises (EXcludes blind raises).
@@ -179,7 +185,7 @@ public class Game {
 
     @JsonIgnore
     public boolean isPlayerPFR(String hash) {
-        if (!players.contains(new PlayerInGame(hash))) {
+        if (players.get(hash) == null) {
             return false;
         }
         for (int i = preFlop.getAllActions().size() - 1; i >= 0; --i) {
@@ -192,7 +198,7 @@ public class Game {
 
     @JsonIgnore
     public boolean is3BetRaiser(String hash) {
-        if (!players.contains(new PlayerInGame(hash))) {
+        if (players.get(hash) == null) {
             return false;
         }
         boolean was1RaiseFound = false;
@@ -209,7 +215,7 @@ public class Game {
 
     @JsonIgnore
     public boolean is4BetRaiser(String hash) {
-        if (!players.contains(new PlayerInGame(hash))) {
+        if (players.get(hash) == null) {
             return false;
         }
         int raisesAmount = 0;
@@ -226,7 +232,7 @@ public class Game {
 
     @JsonIgnore
     public boolean is5BetRaiser(String hash) {
-        if (!players.contains(new PlayerInGame(hash))) {
+        if (players.get(hash) == null) {
             return false;
         }
         int raisesAmount = 0;
@@ -317,7 +323,7 @@ public class Game {
         }
         for (int i = 0; i < turn.getAllActions().size(); ++i) {
             if (turn.getAllActions().get(i).getActionType().equals(BET) &&
-            turn.getAllActions().get(i).getPlayerId().equals(hash)) {
+                    turn.getAllActions().get(i).getPlayerId().equals(hash)) {
                 return true;
             }
         }
@@ -443,13 +449,12 @@ public class Game {
 
     @JsonIgnore
     public double getHeroWinloss() {
-        for (PlayerInGame p : players) {
-            if (p.getId().equals("Hero")) {
-                return p.getBalance() - initialBalances.get("Hero");
-            }
+        if (players.get("Hero") != null) {
+            return players.get("Hero").getBalance() - initialBalances.get("Hero");
         }
-       return 0;
+        return 0;
     }
+
     /**
      * @return ID of the game
      */
@@ -481,24 +486,25 @@ public class Game {
     }
 
     /**
-     * @return a HashSet of the players in game (copy, not a link)
+     * @return a Map of the hash - player pairs in game (copy, not a link)
      */
-    public HashSet<PlayerInGame> getPlayers() {
+    public Map<String, PlayerInGame> getPlayers() {
         if (players == null) {
             return null;
         }
-        return new HashSet<>(players);
+        return new HashMap<>(players);
     }
 
     /**
-     * @return a HashMap of the players in game (copy, not a link)
+     * @return a Map of the position - player pairs in game (copy, not a link)
      */
+    @JsonIgnore
     public HashMap<PositionType, PlayerInGame> getPosPlayersMap() {
         if (players == null) {
             return null;
         }
         HashMap<PositionType, PlayerInGame> posP = new HashMap<>();
-        for (PlayerInGame p : players) {
+        for (PlayerInGame p : players.values()) {
             posP.put(p.getPosition(), p);
         }
         return posP;
@@ -512,28 +518,7 @@ public class Game {
      * @return player in game with same hash. Or null if no such player is found
      */
     public PlayerInGame getPlayer(String id) {
-        for (PlayerInGame p : players) {
-            if (p.getId().equals(id)) {
-                return new PlayerInGame(p);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the link to the player in the game with the corresponding hash. If there is
-     * no player in game with such id, null is returned
-     *
-     * @param id id of PlayerInGame to get
-     * @return link to the PlayerInGame with same id. Or null if no such player is found
-     */
-    private PlayerInGame getPlayerLink(String id) {
-        for (PlayerInGame p : players) {
-            if (p.getId().equals(id)) {
-                return p;
-            }
-        }
-        return null;
+        return new PlayerInGame(players.get(id));
     }
 
     /**
@@ -544,7 +529,7 @@ public class Game {
      * @return true if player with such id was found and the hand was added. False, otherwise
      */
     public boolean setPlayerHand(PositionType pos, Hand hand) {
-        for (PlayerInGame p : players) {
+        for (PlayerInGame p : players.values()) {
             if (pos == p.getPosition()) {
                 p.setHand(hand);
                 return true;
@@ -562,11 +547,9 @@ public class Game {
      * @return true if player with such id was found and the hand was added. False, otherwise
      */
     public boolean setPlayerHand(String id, Hand hand) {
-        for (PlayerInGame p : players) {
-            if (p.getId().equals(id)) {
-                p.setHand(hand);
-                return true;
-            }
+        if (players.get(id) != null) {
+            players.get(id).setHand(hand);
+            return true;
         }
         return false;
     }
@@ -582,14 +565,35 @@ public class Game {
     }
 
     /**
+     * Sets players with given map of (Id -> PlayerInGame) pairs and updates the initial balances (inside the Game).
+     *
+     * @param playersMap players Map (id -> PlayerInGame) to set
+     */
+    public void setPlayers(HashMap<String, PlayerInGame> playersMap) {
+        for (String id : playersMap.keySet()) {
+            players.put(id, playersMap.get(id));
+        }
+//        this.players = new HashMap<>(playersMap);
+
+        HashMap<String, Double> initB = new HashMap<>();
+        for (PlayerInGame p : playersMap.values()) {
+            initialBalances.put(p.getId(), p.getBalance());
+        }
+        setInitialBalances(initB);
+    }
+
+    /**
      * Sets players and updates the initial balances (inside the Game)
      *
      * @param players players to set
      */
+    @JsonIgnore
     public void setPlayers(Set<PlayerInGame> players) {
         // Should think about working w nulls.
-        this.players = new HashSet<>();
-        this.players.addAll(players);
+        this.players = new HashMap<>();
+        for (PlayerInGame p : players) {
+            this.players.put(p.getId(), p);
+        }
 
         HashMap<String, Double> initB = new HashMap<>();
         for (PlayerInGame p : players) {
@@ -597,19 +601,6 @@ public class Game {
         }
         setInitialBalances(initB);
     }
-
-//    /**
-//     * Sets players and updates the initial balances (inside the Game)
-//     *
-//     * @param players players to set
-//     */
-//    public void setPlayers(Set<PlayerInGame> players) {
-//        this.players = new HashMap<>();
-//        for (PlayerInGame p : players) {
-//            this.players.put(p.getPosition(), p);
-//        }
-//        setInitialBalances(new ArrayList<>(players));
-//    }
 
     /**
      * Subtracts given amount from the balance of the player with given Id.
@@ -623,7 +614,7 @@ public class Game {
             throw new IllegalArgumentException("Decrement amount must be positive (ypu can not add chips to player`s balance during hand");
         }
 
-        PlayerInGame p = this.getPlayerLink(id);
+        PlayerInGame p = players.get(id);
         if (p != null) {
             double balance = p.getBalance();
 
@@ -642,7 +633,7 @@ public class Game {
      * @param returnAmount amount to return to player`s balance
      */
     public void returnUncalledChips(String playerId, double returnAmount) {
-        PlayerInGame p = getPlayerLink(playerId);
+        PlayerInGame p = players.get(playerId);
         if (p != null) {
             p.setBalance(p.getBalance() + returnAmount);
         }
@@ -811,15 +802,17 @@ public class Game {
 
     /**
      * Adds a winner and assigns amount on to the winner hash set.
+     *
+     * @return true if the winner is in the game, and the adding is successful, false otherwise (if
+     * there is no player with such hash in game, so winner is not added)
      */
-    public void addWinner(String winnerId, double amount) {
-        this.allWinners = new HashMap<>();
+    public boolean addWinner(String winnerId, double amount) {
+        if (players.get(winnerId) == null) {
+            return false;
+        }
         allWinners.put(winnerId, amount);
-       for (PlayerInGame p : players) {
-           if (p.getId().equals(winnerId)) {
-                   p.setBalance(p.getBalance() + amount);
-           }
-       }
+        players.get(winnerId).setBalance( players.get(winnerId).getBalance() + amount);
+        return true;
     }
 
     /**
@@ -912,7 +905,7 @@ public class Game {
         ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, TB, UTG, UTG_1, UTG_2, LJ, HJ, CO, BTN));
         for (PositionType orderPo : orderPos) {
             PlayerInGame p = null;
-            for (PlayerInGame iterP : players) {
+            for (PlayerInGame iterP : players.values()) {
                 if (iterP.getPosition() == orderPo) {
                     p = iterP;
                 }

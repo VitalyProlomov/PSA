@@ -65,7 +65,7 @@ public class GamesListController {
 
 
     @FXML
-    void initialize() throws IncorrectHandException, IncorrectCardException, IncorrectBoardException, IOException {
+    void initialize() throws IOException {
         uploadButton.setOnAction(actionEvent -> onUploadButtonClick());
 
         initializeTable();
@@ -119,7 +119,7 @@ public class GamesListController {
                     updateTable(controller.getGamesAfterFilter());
                 }
             });
-            controller.setUnfilteredGames(gamesSet.getGames());
+            controller.setUnfilteredGames(new HashSet<>(gamesSet.getGames().values()));
             stage.show();
 //        filterSearchController.searchFilteredGames()
         } catch (IOException ex) {
@@ -161,9 +161,10 @@ public class GamesListController {
             try {
                 UploadController uploadController = new UploadController();
                 ArrayList<Game> addedGames = uploadController.uploadFiles(selectedFiles);
-                gamesSet.addGames(new HashSet<>(addedGames));
 
-                updateTable(gamesSet.getGames());
+                gamesSet.addGames(addedGames);
+
+                updateTable(new HashSet<>(gamesSet.getGames().values()));
 
                 serializeGames();
             } catch (IOException ex) {
@@ -238,11 +239,12 @@ public class GamesListController {
             }
 
             if (gamesSet.getGames().size() != 0) {
-                gamesTableView.getItems().addAll(gamesSet.getGames());
+                gamesTableView.getItems().addAll(gamesSet.getGames().values());
             }
         } catch (Exception ex) {
             System.out.println(ex.getStackTrace());
             Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setResizable(true);
             alert.setContentText("Something went wring while parsing the file with saved games." +
                     "Make sure not to change anything in them or to close the file if it is opened");
             alert.show();

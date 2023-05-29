@@ -60,7 +60,7 @@ public class rushNCashParsingTest {
                 new PlayerInGame("805c6855", CO, 21.99)
         ));
 
-        assertEquals(new HashSet<>(correctPlayers), new HashSet<>(topG.getPlayers()));
+        assertEquals(new HashSet<>(correctPlayers), new HashSet<>(topG.getPlayers().values()));
 
         Hand heroHand = new Hand(new Card("Ad"), new Card("Ts"));
         correctPlayers.get(2).setHand(heroHand);
@@ -153,7 +153,7 @@ public class rushNCashParsingTest {
         );
 
         for (int i = 0; i < 6; ++i) {
-            assertTrue(topG.getPlayers().contains(correctPlayers.get(i)));
+            assertNotNull(topG.getPlayers().get(correctPlayers.get(i).getId()));
             assertEquals(correctPlayers.get(i).getPosition(),
                     topG.getPlayer(correctPlayers.get(i).getId()).getPosition());
         }
@@ -212,13 +212,17 @@ public class rushNCashParsingTest {
 
         Set<PlayerInGame> players = new HashSet<>(List.of(
                 new PlayerInGame("a119ad3f", BTN, 5),
-                new PlayerInGame("81a0604b", SB, 3.58, null),
-                new PlayerInGame("486d3078", BB, 7.06, null),
-                new PlayerInGame("Hero", LJ, 5.65, null),
+                new PlayerInGame("81a0604b", SB, 3.56, null),
+                new PlayerInGame("486d3078", BB, 1.41, null),
+                new PlayerInGame("Hero", LJ, 13.61 - topG.getRake(), null),
                 new PlayerInGame("d67af16c", HJ, 9.3, null),
-                new PlayerInGame("c4d36ec9", CO, 1.79, null)
+                new PlayerInGame("c4d36ec9", CO, 0, null)
         ));
-        assertEquals(players, topG.getPlayers());
+        assertEquals(players, new HashSet<>(topG.getPlayers().values()));
+        for (PlayerInGame p : players) {
+            assertTrue(p.getBalance() - topG.getPlayer(p.getId()).getBalance() < 0.01);
+            assertEquals(p.getPosition(), topG.getPlayer(p.getId()).getPosition());
+        }
 
         assertEquals(0.5, topG.getExtraCashAmount());
         assertEquals(new Hand("Ac", "Ah"), topG.getPlayer("Hero").getHand());
@@ -265,16 +269,28 @@ public class rushNCashParsingTest {
 
         Set<PlayerInGame> players = new HashSet<>(List.of(
                 new PlayerInGame("1e9152a8", BTN, 9.41),
-                new PlayerInGame("Hero", SB, 8.02, null),
-                new PlayerInGame("480564b2", BB, 5.23, null),
+                new PlayerInGame("Hero", SB, 7.28, null),
+                new PlayerInGame("480564b2", BB, 5.90, null),
                 new PlayerInGame("59435a5e", LJ, 2.02, null),
                 new PlayerInGame("dd1dce69", HJ, 5.49, null),
                 new PlayerInGame("363e9d13", CO, 5.36, null)
         ));
-        assertEquals(players, topG.getPlayers());
+        assertEquals(players, new HashSet<>(topG.getPlayers().values()));
+
+        PlayerInGame curP;
+        for (PlayerInGame p : players) {
+            curP = topG.getPlayer(p.getId());
+            assertEquals(p.getPosition(), curP.getPosition());
+            assertTrue(Math.abs(p.getBalance() -  curP.getBalance()) < 0.01);
+        }
+
+        assertNotNull(topG.getWinners().get("480564b2"));
+        assertTrue(Math.abs(topG.getWinners().get("480564b2") - 1.41) < 0.005);
+        assertEquals(1, topG.getWinners().size());
 
         assertEquals(0, topG.getExtraCashAmount());
         assertEquals(new Hand("Kd", "Ks"), topG.getPlayer("480564b2").getHand());
+        assertEquals(new Hand("Td", "Ts"), topG.getPlayer("Hero").getHand());
 
         ArrayList<Action> actions = new ArrayList<>(List.of(
                 new Action(BLIND, "Hero", 0.02, 0),

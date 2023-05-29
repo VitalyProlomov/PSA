@@ -1,6 +1,7 @@
 package appinterface.controllers;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -306,16 +307,14 @@ public class GameDisplayController {
 
         int heroPositionIndex = 0;
 
+        HashMap<PositionType, PlayerInGame> posPlayers = displayedGame.getPosPlayersMap();
         for (int i = 0; i < orderedPositions.size(); ++i) {
-            for (PlayerInGame p : displayedGame.getPlayers()) {
-                if (p.getPosition().equals(orderedPositions.get(i))) {
-                    orderedPlayers.add(p);
-                    if (p.getId().equals("Hero")) {
-                        heroPositionIndex = i;
-                    }
-                }
+            orderedPlayers.add(posPlayers.get(orderedPositions.get(i)));
+            if (posPlayers.get(orderedPositions.get(i)).getId().equals("Hero")) {
+                heroPositionIndex = i;
             }
         }
+        
 
         for (int index = 1; index < displayedGame.getPlayers().size(); ++index) {
             PlayerInGame curPlayer = orderedPlayers.get((heroPositionIndex + index) % orderedPlayers.size());

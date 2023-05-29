@@ -8,7 +8,9 @@ import models.PlayerInGame;
 import models.UserProfile;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class UserProfileDisplayController {
@@ -73,13 +75,13 @@ public class UserProfileDisplayController {
     @FXML
     private VBox turnVBox;
 
-    private HashSet<Game> games;
+    private HashMap<String, Game> games;
 
     private UserProfile userProfile;
 
-    public void setGamesAndProfile(Set<Game> games, UserProfile userProfile) {
+    public void setGamesAndProfile(Map<String, Game> games, UserProfile userProfile) {
         this.userProfile = userProfile;
-        this.games = new HashSet<>(games);
+        this.games = new HashMap<>(games);
         initializeLabels();
     }
 
@@ -110,10 +112,11 @@ public class UserProfileDisplayController {
         double riverWShowdownGames = 0;
         double riverCallGames = 0;
 
-        for (Game g : games) {
-            if (userProfile.getAllGamesIds().contains(g.getGameId())) {
+        for (String id : games.keySet()) {
+            if (userProfile.getAllGamesIds().contains(id)) {
                 ++totalGames;
-                String hash = userProfile.getHashInGame(g.getGameId());
+                String hash = userProfile.getHashInGame(id);
+                Game g = games.get(id);
                 if (g.getPlayer(hash) == null) {
                     continue;
                 }
@@ -213,8 +216,12 @@ public class UserProfileDisplayController {
         riverCallLabel.setText(riverCallLabel.getText() + dcf.format(riverCallGames / riverGames * 100) + "%");
         riverLeadLabel.setText(riverLeadLabel.getText() + dcf.format(riverLeadGames / riverGames * 100) + "%");
         riverWShowdownLabel.setText(riverWShowdownLabel.getText() + dcf.format(riverWShowdownGames / riverGames * 100) + "%");
-
     }
+
+//    private void setPercentText(Label label) {
+//        turnCBetLabel.setText(turnCBetLabel.getText() + dcf.format(turnCBetGames / turnGames * 100) + "%");
+//    }
+
 
     @FXML
     void initialize() {

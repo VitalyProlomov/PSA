@@ -261,7 +261,7 @@ public class GGPokerokRushNCashParser implements GGParser {
             st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND, game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$(), game.getSB() + game.getExtraCashAmount()), game.getBigBlindSize$());
             game.decrementPlayersBalance(game.getPosPlayersMap().get(BB).getId(), game.getBigBlindSize$());
 
-            st.setPlayersAfterBetting(game.getPlayers());
+            st.setPlayersAfterBetting(game.getPlayers().values());
         }
         // Setting players is essential for the condition in the next while loop.
         else {
@@ -428,6 +428,13 @@ public class GGPokerokRushNCashParser implements GGParser {
             }
             ++curLine;
         }
+        ++curLine;
+        String rakeStr = wordsInLines.get(curLine).get(5).substring(1);
+        String jackpotRake = wordsInLines.get(curLine).get(8).substring(1);
+
+        double amount = Double.parseDouble(rakeStr) + Double.parseDouble(jackpotRake);
+
+        game.setRake(amount);
 
     }
 }
