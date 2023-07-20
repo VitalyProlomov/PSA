@@ -529,4 +529,12 @@ public class rushNCashParsingTest {
         assertTrue(Math.abs(0.9 - rake -  games.get(0).getHeroWinloss()) < 0.01);
     }
 
+    @Test
+    public void testFinalPotReturningUncalledBets() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt";
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        Game game = parser.parseFile(path).get(0);
+        assertEquals(13.61, game.getFinalPot());
+    }
+
 }

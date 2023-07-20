@@ -519,8 +519,10 @@ public class GameDisplayController {
 
     private void initializeLabels() {
         this.gameIdLabel.setText(gameIdLabel.getText() + displayedGame.getGameId());
-        String strRep = new DecimalFormat("#0.00").format( displayedGame.getHeroWinloss()).replace(',', '.');
+        String strRep = new DecimalFormat("#0.00").format(displayedGame.getHeroWinloss()).replace(',', '.');
+        System.out.println(displayedGame.getGameId() + ": " + displayedGame.getHeroWinloss());
         this.heroWinLossLabel.setText(heroWinLossLabel.getText() + strRep + "$");
+
 
         String type = "undefined...";
         if (displayedGame.isUnRaised()) {

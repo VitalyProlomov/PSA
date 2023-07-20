@@ -1,11 +1,15 @@
 package modelsTests;
 
-import javafx.geometry.Pos;
+import exceptions.IncorrectBoardException;
+import exceptions.IncorrectCardException;
+import exceptions.IncorrectHandException;
 import models.Game;
 import models.PlayerInGame;
 import org.junit.jupiter.api.Test;
 import parsers.gg.GGPokerokRushNCashParser;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -17,33 +21,50 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GameTest {
     @Test
     public void testGameGetSB() {
-        Game game = new Game("RC3", 0.02);
+        Game game = new Game("RC3", 0.02, null, null);
         assertEquals(game.getSB(), 0.01);
 
-        game = new Game("RC3", 0.05);
+        game = new Game("RC3", 0.05, null, null);
         assertTrue(Math.abs(game.getSB() - 0.02) < 0.001);
 
-        game = new Game("RC1234567", 0.25);
+        game = new Game("RC1234567", 0.25, null, null);
         assertEquals(game.getSB(), 0.1);
 
-        game = new Game("RC3", 0.5);
+        game = new Game("RC3", 0.5, null, null);
         assertEquals(game.getSB(), 0.25);
 
-        game = new Game("RC4", 1);
+        game = new Game("RC4", 1, null, null);
         assertEquals(game.getSB(), 0.5);
     }
 
     @Test
     public void testDecrementBalance() {
-        Game game = new Game("Test", 10);
         HashSet<PlayerInGame> players = new HashSet<>(List.of(
-                new PlayerInGame("player1", CO,  1000),
+                new PlayerInGame("player1", CO, 1000),
                 new PlayerInGame("player2", BTN, 960)
         ));
-        game.setPlayers(players);
+        HashMap<String, Double> initBalances = new HashMap<>();
+        HashMap<String, PlayerInGame> playersMap = new HashMap<>();
+        playersMap.put("player1", new PlayerInGame("player1", CO, 1000));
+        playersMap.put("player2",  new PlayerInGame("player2", BTN, 960));
+
+        initBalances.put("player1", 1000.0);
+        initBalances.put("player2", 960.0);
+
+        Game game = new Game("Test", 10, playersMap, initBalances);
+
         game.decrementPlayersBalance("player1", 50);
         assertEquals(game.getPlayer("player1").getBalance(), 950);
 
+        assertEquals(game.getInitialBalances(), initBalances);
     }
 
+    @Test
+    public void testGetHeroWinLoss() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt";
+        GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
+        Game game = parser.parseFile(path).get(0);
+
+        assertTrue(Math.abs(7.75 - game.getHeroWinloss()) < 0.005);
+    }
 }

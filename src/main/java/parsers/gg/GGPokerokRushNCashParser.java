@@ -5,10 +5,7 @@ import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
 import models.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Double.parseDouble;
 import static models.PositionType.BB;
@@ -37,10 +34,14 @@ public class GGPokerokRushNCashParser implements GGParser {
             wordsInLines.add(new ArrayList<>(List.of(line.split(" "))));
         }
 
-        Game game = initiateGame(wordsInLines);
-        parseDateAndTable(game, wordsInLines);
+        String handId = parseHandId(wordsInLines);
+        double bbSize = parseBBSize(wordsInLines);
 
-        parsePlayers(game, wordsInLines);
+        Date date = parseDate(wordsInLines);
+        String table = parseTable(wordsInLines);
+        ArrayList<PlayerInGame> players = parsePlayers(wordsInLines);
+
+        Game game = initiateGame(handId, bbSize, players, date, table);
 
         parseExtraCash(game, wordsInLines);
         parseHeroHand(game, wordsInLines);
@@ -51,30 +52,31 @@ public class GGPokerokRushNCashParser implements GGParser {
         return game;
     }
 
-    private Game initiateGame(ArrayList<ArrayList<String>> wordsInLines) {
+    private double parseBBSize(ArrayList<ArrayList<String>> wordsInLines) {
+        return parseDouble(wordsInLines.get(0).get(7).split("/[$]")[1].split("[)]")[0]);
+    }
+
+    private String parseHandId(ArrayList<ArrayList<String>> wordsInLines) {
         String handId = wordsInLines.get(curLine).get(2);
         handId = handId.substring(1, handId.length() - 1);
 
-        double bbSize = parseDouble(wordsInLines.get(0).get(7).split("/[$]")[1].split("[)]")[0]);
-
-        // Creating a game with BB size (in dollars) and hand id.
-        return new Game(handId, bbSize);
+        return handId;
     }
 
-    private void parseDateAndTable(Game game, ArrayList<ArrayList<String>> wordsInLines) {
+    private Date parseDate(ArrayList<ArrayList<String>> wordsInLines) {
         String dateRep = wordsInLines.get(curLine).get(9);
         dateRep += " " + wordsInLines.get(curLine).get(10);
-        Date date = new Date(dateRep);
-
-        game.setDate(date);
 
         ++curLine;
-        String table = wordsInLines.get(curLine).get(1);
-        game.setTable(table.substring(1, table.length() - 1));
+        return new Date(dateRep);
+    }
+
+    private String parseTable(ArrayList<ArrayList<String>> wordsInLines) {
+        return wordsInLines.get(curLine).get(1);
     }
 
 
-    private void parsePlayers(Game game, ArrayList<ArrayList<String>> wordsInLines) {
+    private ArrayList<PlayerInGame> parsePlayers(ArrayList<ArrayList<String>> wordsInLines) {
         // Getting info about players abd setting to the game
         ArrayList<String> hashes = new ArrayList<>();
         ArrayList<Double> balances = new ArrayList<>();
@@ -96,11 +98,27 @@ public class GGPokerokRushNCashParser implements GGParser {
             players.add(new PlayerInGame(hashes.get(i), positions.get(i), balances.get(i)));
         }
 
-        game.setPlayers(new HashSet<>(players));
+        return players;
+    }
 
-//        for (PlayerInGame p : game.getPlayers()) {
-//            game.setPlayerStatus(p, PlayerStatus.ACTIVE);
-//        }
+    private Game initiateGame(String handId, double bbSize,
+                              ArrayList<PlayerInGame> players,
+                              Date date, String table) {
+        HashMap<String, Double> initBalances  = new HashMap<String, Double>();
+        for (PlayerInGame p : players) {
+            initBalances.put(p.getId(), p.getBalance());
+        }
+
+        HashMap<String, PlayerInGame> playersMap = new HashMap<>();
+        for (PlayerInGame p : players) {
+            playersMap.put(p.getId(), p);
+        }
+
+        Game game = new Game(handId, bbSize, playersMap, initBalances);
+        game.setDate(date);
+        game.setTable(table);
+
+        return game;
     }
 
     private void parseExtraCash(Game game, ArrayList<ArrayList<String>> wordsInLines) {
@@ -412,11 +430,11 @@ public class GGPokerokRushNCashParser implements GGParser {
     private void parseWinnings(Game game, ArrayList<ArrayList<String>> wordsInLines) {
         int ax = 0;
         while (!wordsInLines.get(curLine).get(1).equals("SHOWDOWN") && !wordsInLines.get(curLine).get(1).equals("FIRST")) {
-             ++curLine;
-             ++ax;
-             if (ax > 3) {
-                 ax = 0;
-             }
+            ++curLine;
+            ++ax;
+            if (ax > 3) {
+                ax = 0;
+            }
         }
         ++curLine;
 
@@ -428,6 +446,7 @@ public class GGPokerokRushNCashParser implements GGParser {
             }
             ++curLine;
         }
+
         ++curLine;
         String rakeStr = wordsInLines.get(curLine).get(5).substring(1);
         String jackpotRake = wordsInLines.get(curLine).get(8).substring(1);
@@ -435,6 +454,5 @@ public class GGPokerokRushNCashParser implements GGParser {
         double amount = Double.parseDouble(rakeStr) + Double.parseDouble(jackpotRake);
 
         game.setRake(amount);
-
     }
 }

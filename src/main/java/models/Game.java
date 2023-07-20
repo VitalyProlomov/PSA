@@ -38,7 +38,7 @@ public class Game {
 
     @JsonProperty(value = "allWinners", required = true)
     private HashMap<String, Double> allWinners = new HashMap<>();
-    private double finalPot;
+//    private double finalPot;
     private double rake;
 
     private int preFlopRaisesAmount = -1;
@@ -50,15 +50,48 @@ public class Game {
 
 
     /**
+     * Constructs a new game with given ID and BB (given in dollars) and players.
+     *
+     * @param gameId        Id of the game from PokerCraft parsed text view of the game
+     * @param bigBlindSize$ value of 1 big blind in dollars
+     */
+    @JsonIgnore
+    public Game(String gameId, double bigBlindSize$, Collection<PlayerInGame> players) {
+        this.gameId = gameId;
+        this.bigBlindSize$ = bigBlindSize$;
+        if (players != null) {
+            for (PlayerInGame p : players) {
+                this.players.put(p.getId(), p);
+            }
+
+            for (PlayerInGame p : players) {
+                this.initialBalances.put(p.getId(), p.getBalance());
+            }
+        }
+
+    }
+
+    /**
      * Constructs a new game with given ID and BB (given in dollars)
      *
      * @param gameId        Id of the game from PokerCraft parsed text view of the game
      * @param bigBlindSize$ value of 1 big blind in dollars
      */
     @JsonCreator
-    public Game(@JsonProperty("gameId") String gameId, @JsonProperty("bigBlindSize$") double bigBlindSize$) {
+    public Game(@JsonProperty("gameId") String gameId,
+                @JsonProperty("bigBlindSize$") double bigBlindSize$,
+                @JsonProperty("players") HashMap<String, PlayerInGame> players,
+                @JsonProperty("initialBalances") HashMap<String, Double> initialBalances) {
         this.gameId = gameId;
         this.bigBlindSize$ = bigBlindSize$;
+        if (players != null) {
+            this.players.putAll(players);
+        }
+        if (initialBalances != null) {
+            for (String id : initialBalances.keySet()) {
+                this.initialBalances.put(id, initialBalances.get(id));
+            }
+        }
     }
 
     /**
@@ -229,6 +262,7 @@ public class Game {
         }
         return false;
     }
+
 
     @JsonIgnore
     public boolean is5BetRaiser(String hash) {
@@ -588,7 +622,7 @@ public class Game {
      * @param players players to set
      */
     @JsonIgnore
-    public void setPlayers(Set<PlayerInGame> players) {
+    public void setPlayers(Collection<PlayerInGame> players) {
         // Should think about working w nulls.
         this.players = new HashMap<>();
         for (PlayerInGame p : players) {
@@ -820,23 +854,15 @@ public class Game {
      */
     public double getFinalPot() {
         if (river != null) {
-            int len = river.getAllActions().size();
-            finalPot = river.getAllActions().get(len - 1).getPotBeforeAction() + river.getAllActions().get(len - 1).getAmount();
-            return finalPot;
+            return river.getPotAfterBetting();
         } else if (turn != null) {
-            int len = turn.getAllActions().size();
-            finalPot = turn.getAllActions().get(len - 1).getPotBeforeAction() + turn.getAllActions().get(len - 1).getAmount();
-            return finalPot;
+           return turn.getPotAfterBetting();
         } else if (flop != null) {
-            int len = flop.getAllActions().size();
-            finalPot = flop.getAllActions().get(len - 1).getPotBeforeAction() + flop.getAllActions().get(len - 1).getAmount();
-            return finalPot;
+            return flop.getPotAfterBetting();
         } else if (preFlop != null) {
-            int len = preFlop.getAllActions().size();
-            finalPot = preFlop.getAllActions().get(len - 1).getPotBeforeAction() + preFlop.getAllActions().get(len - 1).getAmount();
-            return finalPot;
+            return preFlop.getPotAfterBetting();
         }
-        return 0;
+        throw new RuntimeException("Final pot was not counted.");
     }
 
     public void setTable(String table) {
