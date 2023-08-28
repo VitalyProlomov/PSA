@@ -315,7 +315,7 @@ public class StreetDescription {
     @Override
     public String toString() {
         ArrayList<PlayerInGame> orderedPlayers = new ArrayList<>();
-        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(SB, BB, LJ, HJ, CO, BTN));
+        ArrayList<PositionType> orderPos = new ArrayList<>(List.of(UTG, UTG_1, UTG_2, SB, BB, LJ, HJ, CO, BTN));
         for (int i = 0; i < orderPos.size(); ++i) {
             PlayerInGame p = playersAfterBetting.get(orderPos.get(i));
             if (p != null) {
