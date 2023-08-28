@@ -1,11 +1,13 @@
 package modelsTests;
 
+import analizer.GameAnalyzer;
 import exceptions.IncorrectBoardException;
 import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
 import models.Game;
 import models.PlayerInGame;
 import org.junit.jupiter.api.Test;
+import parsers.Parser;
 import parsers.gg.GGPokerokRushNCashParser;
 
 import java.io.IOException;
@@ -66,5 +68,27 @@ public class GameTest {
         Game game = parser.parseFile(path).get(0);
 
         assertTrue(Math.abs(7.75 - game.getHeroWinloss()) < 0.005);
+    }
+
+    @Test
+    public void testGetPFRHash() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
+        Parser parser = new GGPokerokRushNCashParser();
+
+        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt";
+        Game game = parser.parseFile(path).get(0);
+        assertEquals("a7067c39", GameAnalyzer.getPFRHash(game));
+
+        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/handShownGame.txt";
+        game = parser.parseFile(path).get(0);
+        assertEquals("480564b2", GameAnalyzer.getPFRHash(game));
+
+        // RC1224871300
+        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt";
+        game = parser.parseFile(path).get(2); // 2.
+        assertEquals("3e24ccf", GameAnalyzer.getPFRHash(game));
+
+        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt";
+        game = parser.parseFile(path).get(0);
+        assertEquals("820e8a4", GameAnalyzer.getPFRHash(game));
     }
 }

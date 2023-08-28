@@ -1,5 +1,6 @@
 package appinterface.controllers;
 
+import analizer.GameAnalyzer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -184,11 +185,11 @@ public class FilterSearchController {
                 continue;
             }
 
-            if (g.isUnRaised() && !isUnraisedChosen ||
-                    g.isSingleRaised() && !isSPRChosen ||
-                    g.isPot3Bet() && !is3BetChosen ||
-                    g.isPot4Bet() && !is4BetChosen ||
-                    g.isPot5PlusBet() && !is5BetChosen) {
+            if (GameAnalyzer.isUnRaised(g) && !isUnraisedChosen ||
+                    GameAnalyzer.isSingleRaised(g) && !isSPRChosen ||
+                    GameAnalyzer.isPot3Bet(g) && !is3BetChosen ||
+                    GameAnalyzer.isPot4Bet(g) && !is4BetChosen ||
+                    GameAnalyzer.isPot5PlusBet(g) && !is5BetChosen) {
                 filteredGames.remove(g);
             }
         }

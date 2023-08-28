@@ -1,5 +1,6 @@
 package appinterface.controllers;
 
+import analizer.GameAnalyzer;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -525,15 +526,15 @@ public class GameDisplayController {
 
 
         String type = "undefined...";
-        if (displayedGame.isUnRaised()) {
+        if (GameAnalyzer.isUnRaised(displayedGame)) {
             type = "unraised";
-        } else if (displayedGame.isSingleRaised()) {
+        } else if (GameAnalyzer.isSingleRaised(displayedGame)) {
             type = "single raised";
-        } else if (displayedGame.isPot3Bet()) {
+        } else if (GameAnalyzer.isPot3Bet(displayedGame)) {
             type = "3bet";
-        } else if (displayedGame.isPot4Bet()) {
+        } else if (GameAnalyzer.isPot4Bet(displayedGame)) {
             type = "4bet";
-        } else if (displayedGame.isPot5PlusBet()) {
+        } else if (GameAnalyzer.isPot5PlusBet(displayedGame)) {
             type = "5+ bet";
         }
         this.potTypeLabel.setText(potTypeLabel.getText() + type);

@@ -1,5 +1,6 @@
 package appinterface.controllers;
 
+import analizer.GameAnalyzer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -120,16 +121,16 @@ public class UserProfileDisplayController {
                 if (g.getPlayer(hash) == null) {
                     continue;
                 }
-                if (g.isPlayerPFR(hash)) {
+                if (GameAnalyzer.isPlayerPFR(g, hash)) {
                     ++preflopPFRGames;
                 }
-                if (g.is3BetRaiser(hash)) {
+                if (GameAnalyzer.is3BetRaiser(g, hash)) {
                     ++preflop3BetGames;
                 }
-                if (g.is4BetRaiser(hash)) {
+                if (GameAnalyzer.is4BetRaiser(g, hash)) {
                     ++preflop4BetGames;
                 }
-                if (g.is5BetRaiser(hash)) {
+                if (GameAnalyzer.is5BetRaiser(g, hash)) {
                     ++preflop5BetGames;
                 }
 
@@ -139,16 +140,16 @@ public class UserProfileDisplayController {
                 if (g.getPreFlop().getPlayersAfterBetting().contains(new PlayerInGame(hash))) {
                     ++flopGames;
                 }
-                if (g.didCBetFLop(hash)) {
+                if (GameAnalyzer.didCBetFLop(g, hash)) {
                     ++flopCBetGames;
                 }
-                if (g.didCheckRaiseFlop(hash)) {
+                if (GameAnalyzer.didCheckRaiseFlop(g, hash)) {
                     ++flopCheckRaiseGames;
                 }
-                if (g.didCallCBetFlop(hash)) {
+                if (GameAnalyzer.didCallCBetFlop(g, hash)) {
                     ++flopCBetCallGames;
                 }
-                if (g.didRaiseFlop(hash)) {
+                if (GameAnalyzer.didRaiseFlop(g, hash)) {
                     ++flopRaiseGames;
                 }
 
@@ -158,16 +159,16 @@ public class UserProfileDisplayController {
                 if (g.getFlop().getPlayersAfterBetting().contains(new PlayerInGame(hash))) {
                     ++turnGames;
                 }
-                if (g.didCBetTurn(hash)) {
+                if (GameAnalyzer.didCBetTurn(g, hash)) {
                     ++turnCBetGames;
                 }
-                if (g.didCheckRaiseTurn(hash)) {
+                if (GameAnalyzer.didCheckRaiseTurn(g, hash)) {
                     ++turnCheckRaiseGames;
                 }
-                if (g.didCallCBetTurn(hash)) {
+                if (GameAnalyzer.didCallCBetTurn(g, hash)) {
                     ++turnCBetCallGames;
                 }
-                if (g.didRaiseTurn(hash)) {
+                if (GameAnalyzer.didRaiseTurn(g, hash)) {
                     ++turnRaiseGames;
                 }
 
@@ -178,21 +179,20 @@ public class UserProfileDisplayController {
                 if (g.getTurn().getPlayersAfterBetting().contains(new PlayerInGame(hash))) {
                     ++riverGames;
                 }
-                if (g.didCBetRiver(hash)) {
+                if (GameAnalyzer.didCBetRiver(g, hash)) {
                     ++riverCBetGames;
                 }
-                if (g.didLeadRiver(hash)) {
+                if (GameAnalyzer.didLeadRiver(g, hash)) {
                     ++riverLeadGames;
                 }
-                if (g.didWinAtShowdownRiver(hash)) {
+                if (GameAnalyzer.didWinAtShowdownRiver(g, hash)) {
                     ++riverWShowdownGames;
                 }
-                if (g.didCallRiver(hash)) {
+                if (GameAnalyzer.didCallRiver(g, hash)) {
                     ++riverCallGames;
                 }
             }
         }
-
 
         DecimalFormat dcf = new DecimalFormat("#0.00");
         // .format(String)           balanceStr = balanceStr.replace(',', '.');

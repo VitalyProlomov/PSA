@@ -17,7 +17,22 @@ import static models.PositionType.*;
 public class Game {
     // Unique (At least for PokerOk)
     private final String gameId;
+    /**
+     * Contains the table index information.
+     */
     private String table;
+
+    /**
+     *
+     */
+    private String gameType;
+
+    public String getGameType() {
+        return gameType;
+    }
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
+    }
 
     /**
      * Map containing pairs hash - player, that are present in given Game
@@ -47,7 +62,6 @@ public class Game {
      * Contains all the single shown cards assigned to the players that showed them.
      */
     private final HashMap<String, Card> shownOneCards = new HashMap<>();
-
 
     /**
      * Constructs a new game with given ID and BB (given in dollars) and players.
@@ -117,369 +131,6 @@ public class Game {
         return new HashMap<>(shownOneCards);
     }
 
-
-    /**
-     * counts amount of preflop raises (EXcludes blind raises).
-     */
-    private void countPreFlopRaises() {
-        StreetDescription pf = getPreFlop();
-        if (pf == null) {
-            return;
-        }
-        preFlopRaisesAmount = 0;
-        for (int i = 0; i < pf.getAllActions().size(); ++i) {
-            if (pf.getAllActions().get(i).getActionType().equals(RAISE)) {
-                ++preFlopRaisesAmount;
-            }
-        }
-    }
-
-    @JsonIgnore
-    public boolean isUnRaised() {
-        if (preFlopRaisesAmount == -1) {
-            countPreFlopRaises();
-        }
-        return preFlopRaisesAmount == 0;
-    }
-
-    /**
-     * @return true, if the pot is single raised (only one raise took pace during preflop),
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isSingleRaised() {
-        if (preFlopRaisesAmount == -1) {
-            countPreFlopRaises();
-        }
-        return preFlopRaisesAmount == 1;
-    }
-
-    /**
-     * @return true, if the pot is 3 bet (2 raises took pace during preflop),
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isPot3Bet() {
-        if (preFlopRaisesAmount == -1) {
-            countPreFlopRaises();
-        }
-        return preFlopRaisesAmount == 2;
-    }
-
-    /**
-     * @return true, if the pot is 4 bet (3 raises took pace during preflop),
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isPot4Bet() {
-        if (preFlopRaisesAmount == -1) {
-            countPreFlopRaises();
-        }
-        return preFlopRaisesAmount == 3;
-    }
-
-    /**
-     * @return true, if the pot is 5+ bet (4 or more raises took pace during preflop),
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isPot5PlusBet() {
-        if (preFlopRaisesAmount == -1) {
-            countPreFlopRaises();
-        }
-        return preFlopRaisesAmount >= 4;
-    }
-
-    /**
-     * @return true if more than 2 players were active (didnt fold) after preflop,
-     * false otherwise.
-     */
-    @JsonIgnore
-    public boolean isPotMultiWay() {
-        return preFlop.getPlayersAfterBetting().size() > 2;
-    }
-
-    /**
-     * @return true if everybody but winner of the game folded on preflop,
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isGameFoldedPreFlop() {
-        return preFlop.getPlayersAfterBetting().size() == 1;
-    }
-
-    /**
-     * @return true if Hero is in the game
-     */
-    @JsonIgnore
-    public boolean isHeroInGame() {
-        return getPlayer("Hero") != null;
-    }
-
-    @JsonIgnore
-    public boolean isPlayerPFR(String hash) {
-        if (players.get(hash) == null) {
-            return false;
-        }
-        for (int i = preFlop.getAllActions().size() - 1; i >= 0; --i) {
-            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
-                return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean is3BetRaiser(String hash) {
-        if (players.get(hash) == null) {
-            return false;
-        }
-        boolean was1RaiseFound = false;
-        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
-            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
-                if (was1RaiseFound) {
-                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
-                }
-                was1RaiseFound = true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean is4BetRaiser(String hash) {
-        if (players.get(hash) == null) {
-            return false;
-        }
-        int raisesAmount = 0;
-        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
-            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
-                if (raisesAmount == 2) {
-                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
-                }
-                ++raisesAmount;
-            }
-        }
-        return false;
-    }
-
-
-    @JsonIgnore
-    public boolean is5BetRaiser(String hash) {
-        if (players.get(hash) == null) {
-            return false;
-        }
-        int raisesAmount = 0;
-        for (int i = 0; i < preFlop.getAllActions().size(); ++i) {
-            if (preFlop.getAllActions().get(i).getActionType().equals(RAISE)) {
-                if (raisesAmount == 3) {
-                    return preFlop.getAllActions().get(i).getPlayerId().equals(hash);
-                }
-                ++raisesAmount;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCBetFLop(String hash) {
-        if (flop == null) {
-            return false;
-        }
-        if (!isPlayerPFR(hash)) {
-            return false;
-        }
-        int i = 0;
-        while (i < flop.getAllActions().size() && flop.getAllActions().get(i).getActionType().equals(BET)) {
-            ++i;
-        }
-        if (i >= flop.getAllActions().size()) {
-            return false;
-        }
-        return flop.getAllActions().get(i).getPlayerId().equals(hash);
-    }
-
-    @JsonIgnore
-    public boolean didCheckRaiseFlop(String hash) {
-        if (flop == null) {
-            return false;
-        }
-        boolean wasChecked = false;
-        for (int i = 0; i < flop.getAllActions().size(); ++i) {
-            if (flop.getAllActions().get(i).getPlayerId().equals(hash)) {
-                if (wasChecked) {
-                    return flop.getAllActions().get(i).getActionType().equals(RAISE);
-                }
-                wasChecked = true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCallCBetFlop(String hash) {
-        if (flop == null) {
-            return false;
-        }
-        if (isPlayerPFR(hash)) {
-            return false;
-        }
-        for (int i = 0; i < flop.getAllActions().size(); ++i) {
-            if (flop.getAllActions().get(i).getPlayerId().equals(hash) &&
-                    flop.getAllActions().get(i).getActionType().equals(CALL)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didRaiseFlop(String hash) {
-        if (flop == null) {
-            return false;
-        }
-        for (int i = 0; i < flop.getAllActions().size(); ++i) {
-            if (flop.getAllActions().get(i).getPlayerId().equals(hash) &&
-                    flop.getAllActions().get(i).getActionType().equals(RAISE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCBetTurn(String hash) {
-        if (turn == null) {
-            return false;
-        }
-        if (!didCBetFLop(hash)) {
-            return false;
-        }
-        for (int i = 0; i < turn.getAllActions().size(); ++i) {
-            if (turn.getAllActions().get(i).getActionType().equals(BET) &&
-                    turn.getAllActions().get(i).getPlayerId().equals(hash)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCheckRaiseTurn(String hash) {
-        if (turn == null) {
-            return false;
-        }
-
-        boolean wasChecked = false;
-        for (int i = 0; i < turn.getAllActions().size(); ++i) {
-            if (turn.getAllActions().get(i).getPlayerId().equals(hash)) {
-                if (wasChecked) {
-                    return turn.getAllActions().get(i).getActionType().equals(RAISE);
-                }
-                wasChecked = true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCallCBetTurn(String hash) {
-        if (turn == null) {
-            return false;
-        }
-        if (isPlayerPFR(hash)) {
-            return false;
-        }
-        for (int i = 0; i < turn.getAllActions().size(); ++i) {
-            if (turn.getAllActions().get(i).getPlayerId().equals(hash) &&
-                    turn.getAllActions().get(i).getActionType().equals(CALL)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didRaiseTurn(String hash) {
-        if (turn == null) {
-            return false;
-        }
-        for (int i = 0; i < turn.getAllActions().size(); ++i) {
-            if (turn.getAllActions().get(i).getPlayerId().equals(hash) &&
-                    turn.getAllActions().get(i).getActionType().equals(RAISE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCBetRiver(String hash) {
-        if (river == null) {
-            return false;
-        }
-        if (!didCBetTurn(hash)) {
-            return false;
-        }
-        for (int i = 0; i < river.getAllActions().size(); ++i) {
-            if (river.getAllActions().get(i).getActionType().equals(BET) &&
-                    river.getAllActions().get(i).getPlayerId().equals(hash)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didLeadRiver(String hash) {
-        if (river == null) {
-            return false;
-        }
-        if (didCBetTurn(hash)) {
-            return false;
-        }
-        for (int i = 0; i < river.getAllActions().size(); ++i) {
-            if (river.getAllActions().get(i).getActionType().equals(BET) &&
-                    river.getAllActions().get(i).getPlayerId().equals(hash)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didWinAtShowdownRiver(String hash) {
-        if (river == null) {
-            return false;
-        }
-        if (river.getPlayersAfterBetting().contains(new PlayerInGame(hash))) {
-            return (allWinners.containsKey(hash));
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean didCallRiver(String hash) {
-        if (river == null) {
-            return false;
-        }
-        for (int i = 0; i < river.getAllActions().size(); ++i) {
-            if (river.getAllActions().get(i).getPlayerId().equals(hash)) {
-                return river.getAllActions().get(i).getActionType().equals(CALL);
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * @return if Hero did NOT fold on preflop,
-     * false otherwise
-     */
-    @JsonIgnore
-    public boolean isHeroPostFlop() {
-        return preFlop.getPlayersAfterBetting().contains(new PlayerInGame("Hero"));
-    }
 
     @JsonIgnore
     public double getHeroWinloss() {
@@ -852,6 +503,7 @@ public class Game {
     /**
      * @return final pot of the game
      */
+    @JsonIgnore
     public double getFinalPot() {
         if (river != null) {
             return river.getPotAfterBetting();

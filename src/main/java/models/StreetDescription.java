@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -156,6 +158,21 @@ public class StreetDescription {
         return new ArrayList<>(playersAfterBetting.values());
     }
 
+    /**
+     * @return Hash of the last aggressor of this betting round (the last player to raise).
+     * If no one bet (everybody called ar checked), null is returned.
+     */
+    @JsonIgnore
+    public String getLastAggressorHash() {
+        for (int i = allActions.size() - 1; i >= 0; --i) {
+            if (allActions.get(i).getActionType().equals(Action.ActionType.RAISE) ||
+                    allActions.get(i).getActionType().equals(Action.ActionType.BET)) {
+                return allActions.get(i).getPlayerId();
+            }
+        }
+        return null;
+    }
+
 //    /**
 //     * Sets players after betting
 //     * @param playersAfterBetting players to set
@@ -243,6 +260,8 @@ public class StreetDescription {
     public boolean isAllIn() {
         return isAllIn;
     }
+
+//    public boolean isCheckRaised()
 
     /**
      * Sets isAllIn field

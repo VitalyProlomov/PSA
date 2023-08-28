@@ -1,5 +1,6 @@
 package appinterface.controllers;
 
+import analizer.GameAnalyzer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -78,16 +79,16 @@ public class ProfileController {
         int fourBetPotsAmount = 0;
         int fiveBetPotsAmount = 0;
         for (Game g : games.values()) {
-            if (g.isPot3Bet()) {
+            if (GameAnalyzer.isPot3Bet(g)) {
                 ++threeBetGamesAmount;
             }
-            if (g.isPot4Bet()) {
+            if (GameAnalyzer.isPot4Bet(g)) {
                 ++fourBetPotsAmount;
             }
-            if (g.isPot5PlusBet()) {
+            if (GameAnalyzer.isPot5PlusBet(g)) {
                 ++fiveBetPotsAmount;
             }
-            if (g.isHeroPostFlop()) {
+            if (GameAnalyzer.isHeroPostFlop(g)) {
                 ++potsPostFLopAmount;
             }
         }
