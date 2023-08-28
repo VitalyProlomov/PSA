@@ -6,20 +6,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import exceptions.IncorrectBoardException;
 import exceptions.IncorrectCardException;
 import exceptions.IncorrectHandException;
-import javafx.geometry.Pos;
 import models.*;
 import org.junit.jupiter.api.Test;
 import parserTests.rushNCashParsingTest;
 import parsers.gg.GGPokerokRushNCashParser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -35,7 +31,7 @@ public class SerializerTest {
 
     @Test
     public void serializeGamesTest() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/severalSessions");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/severalSessions");
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
         ArrayList<Game> allGames = parser.parseDirectoryFiles(path);
@@ -130,7 +126,7 @@ public class SerializerTest {
         assertEquals(obj, deserObject);
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        Game game = parser.parseFile ("src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt").get(0);
+        Game game = parser.parseFile ("src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/fullGame.txt").get(0);
         Game deserGame = (Game)serializeAndDeserializeGivenObject(game, Game.class);
 
 

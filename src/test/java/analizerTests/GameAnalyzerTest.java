@@ -19,23 +19,23 @@ public class GameAnalyzerTest {
     public void testIsFlopCheckRaisedByCaller() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
         Parser parser = new GGPokerokRushNCashParser();
 
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/fullGame.txt";
         Game game = parser.parseFile(path).get(0);
         assertFalse(GameAnalyzer.isFlopCheckRaisedByCaller(game));
 
-        path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/checkRaisingTestsGames/flopCheckRaisedTwoPlayersGames.txt";
+        path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/checkRaisingTestsGames/flopCheckRaisedTwoPlayersGames.txt";
         ArrayList<Game> twoPlayersCheckRaiseGames = parser.parseFile(path);
         for (Game g : twoPlayersCheckRaiseGames) {
             assertTrue(GameAnalyzer.isFlopCheckRaisedByCaller(g));
         }
 
-        path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/checkRaisingTestsGames/falseCheckRaisingGames.txt";
+        path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/checkRaisingTestsGames/falseCheckRaisingGames.txt";
         ArrayList<Game> falseCheckRaiseGames = parser.parseFile(path);
         for (Game g : falseCheckRaiseGames) {
             assertFalse(GameAnalyzer.isFlopCheckRaisedByCaller(g));
         }
 
-        path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt";
+        path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/gameSession2.txt";
         ArrayList<Game> games = parser.parseFile(path);
         for (int i = 0; i < games.size(); ++i) {
             if (GameAnalyzer.isFlopCheckRaisedByCaller(games.get(i))) {

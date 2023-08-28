@@ -40,7 +40,7 @@ public class rushNCashParsingTest {
     public void testFullGameInfoSplitting() throws IOException, IncorrectCardException, IncorrectHandException, IncorrectBoardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
-        Game topG = parser.parseGame(getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/gameExample.txt"));
+        Game topG = parser.parseGame(getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/gameExample.txt"));
 
         String correctID = "RC1221829603";
         assertEquals(correctID, topG.getGameId());
@@ -135,7 +135,7 @@ public class rushNCashParsingTest {
             throws FileNotFoundException, IncorrectHandException,
             IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/earlyAllInCashoutGame.txt");
 
         Game topG = parser.parseGame(text);
 
@@ -203,7 +203,7 @@ public class rushNCashParsingTest {
     @Test
     public void testPreFlopAllInExtraCashGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/preFlopAllInExtraCashGame.txt");
 
         Game topG = parser.parseGame(text);
         assertEquals("RC1281882663", topG.getGameId());
@@ -260,7 +260,7 @@ public class rushNCashParsingTest {
     @Test
     public void testHandsShownGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/handShownGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/handShownGame.txt");
 
         Game topG = parser.parseGame(text);
         assertEquals("RC1292105656", topG.getGameId());
@@ -344,7 +344,7 @@ public class rushNCashParsingTest {
     public void testEarlyAllInCashoutGameSplitting()
             throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/earlyAllInCashoutGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/earlyAllInCashoutGame.txt");
 
         Game topG = parser.parseGame(text);
         String strRep = """
@@ -373,7 +373,7 @@ public class rushNCashParsingTest {
     @Test
     public void testPreFlopFoldedGameParsing() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/preflopFoldedGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/preflopFoldedGame.txt");
 
         Game topG = parser.parseGame(text);
 
@@ -394,7 +394,7 @@ public class rushNCashParsingTest {
     @Test
     public void testTwoRunoutsGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String txt = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt");
+        String txt = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/allInTwoRunoutsGame.txt");
         Game topG = parser.parseGame(txt);
 
     }
@@ -405,7 +405,7 @@ public class rushNCashParsingTest {
     @Test
     public void testFullGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/fullGame.txt");
 
         Game topG = parser.parseGame(text);
 
@@ -428,7 +428,7 @@ public class rushNCashParsingTest {
     @Test
     public void testProblemGame() throws FileNotFoundException, IncorrectHandException, IncorrectBoardException, IncorrectCardException {
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
-        String text = getTextFromFile("/ggPokerokFiles/rushNCashGamesFiles/problemGame.txt");
+        String text = getTextFromFile("/ggPokerokFiles/gamesFiles/rushNCash/problemGame.txt");
 
         Game topG = parser.parseGame(text);
     }
@@ -443,7 +443,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFileParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession.txt");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/gameSession.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));
@@ -457,7 +457,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFileParsing2() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/gameSession2.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));
@@ -472,7 +472,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFilePArsing3() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/gameSession3.txt");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/gameSession3.txt");
 
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         assertDoesNotThrow(() -> parser.parseFile(path));
@@ -483,7 +483,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testDirectoryParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/severalSessions");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/severalSessions");
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
         ArrayList<Game> allGaes = parser.parseDirectoryFiles(path);
@@ -502,7 +502,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testBigDirectoryParsing() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = getFullPath("/ggPokerokFiles/rushNCashGamesFiles/bigDirectory1");
+        String path = getFullPath("/ggPokerokFiles/gamesFiles/rushNCash/bigDirectory1");
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
 
         ArrayList<Game> allGaes = parser.parseDirectoryFiles(path);
@@ -521,7 +521,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testBalanceChanging() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/balanceGameTest";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/balanceGameTest";
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         ArrayList<Game> games = parser.parseFile(new File(path).getAbsolutePath());
 
@@ -531,7 +531,7 @@ public class rushNCashParsingTest {
 
     @Test
     public void testFinalPotReturningUncalledBets() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/preFlopAllInExtraCashGame.txt";
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         Game game = parser.parseFile(path).get(0);
         assertEquals(13.61, game.getFinalPot());

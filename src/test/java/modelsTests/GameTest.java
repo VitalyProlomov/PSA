@@ -63,7 +63,7 @@ public class GameTest {
 
     @Test
     public void testGetHeroWinLoss() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/preFlopAllInExtraCashGame.txt";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/preFlopAllInExtraCashGame.txt";
         GGPokerokRushNCashParser parser = new GGPokerokRushNCashParser();
         Game game = parser.parseFile(path).get(0);
 
@@ -74,20 +74,20 @@ public class GameTest {
     public void testGetPFRHash() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
         Parser parser = new GGPokerokRushNCashParser();
 
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/fullGame.txt";
         Game game = parser.parseFile(path).get(0);
         assertEquals("a7067c39", GameAnalyzer.getPFRHash(game));
 
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/handShownGame.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/handShownGame.txt";
         game = parser.parseFile(path).get(0);
         assertEquals("480564b2", GameAnalyzer.getPFRHash(game));
 
         // RC1224871300
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/gameSession2.txt";
         game = parser.parseFile(path).get(2); // 2.
         assertEquals("3e24ccf", GameAnalyzer.getPFRHash(game));
 
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/allInTwoRunoutsGame.txt";
         game = parser.parseFile(path).get(0);
         assertEquals("820e8a4", GameAnalyzer.getPFRHash(game));
     }

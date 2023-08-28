@@ -17,24 +17,24 @@ public class StreetDescriptionTest {
     public void testGetLastAggressor() throws IncorrectHandException, IncorrectBoardException, IOException, IncorrectCardException {
         Parser parser = new GGPokerokRushNCashParser();
 
-        String path = "src/test/resources/ggPokerokFiles/rushNCashGamesFiles/fullGame.txt";
+        String path = "src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/fullGame.txt";
         Game game = parser.parseFile(path).get(0);
         assertEquals("a7067c39", game.getPreFlop().getLastAggressorHash());
 
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/handShownGame.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/handShownGame.txt";
         game = parser.parseFile(path).get(0);
         assertEquals("480564b2", game.getFlop().getLastAggressorHash());
 
         // RC1224871300
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/gameSession2.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/gameSession2.txt";
         game = parser.parseFile(path).get(2); // 2.
         assertEquals("4230c35e", game.getFlop().getLastAggressorHash());
 
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/allInTwoRunoutsGame.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/allInTwoRunoutsGame.txt";
         game = parser.parseFile(path).get(0);
         assertEquals("820e8a4", game.getPreFlop().getLastAggressorHash());
 
-        path ="src/test/resources/ggPokerokFiles/rushNCashGamesFiles/problemGame.txt";
+        path ="src/test/resources/ggPokerokFiles/gamesFiles/rushNCash/problemGame.txt";
         game = parser.parseFile(path).get(0);
         assertEquals("d579d6ed", game.getTurn().getLastAggressorHash());
     }
