@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Double.parseDouble;
+import static models.Action.ActionType.ANTE;
 import static models.PositionType.*;
 
 public class GGPokerokHoldem9MaxParser implements GGParser {
@@ -133,7 +134,7 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
     private Game initiateGame(String handId, double bbSize,
                               ArrayList<PlayerInGame> players,
                               Date date, String table) {
-        HashMap<String, Double> initBalances = new HashMap<String, Double>();
+        HashMap<String, Double> initBalances = new HashMap<>();
         for (PlayerInGame p : players) {
             initBalances.put(p.getId(), p.getBalance());
         }
@@ -192,7 +193,7 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
             // cutting ':' at the end.
             String hash = wordsInLines.get(curLine).get(0).substring(0, wordsInLines.get(curLine).get(0).length() - 1);
             double anteAmount = Double.parseDouble(wordsInLines.get(curLine).get(4).substring(1));
-            Action action = new Action(Action.ActionType.ANTE, hash, anteAmount, curPot);
+            Action action = new Action(ANTE, hash, anteAmount, curPot);
 
             st.addActionAndUpdateBalances(action, anteAmount);
             game.decrementPlayersBalance(hash, anteAmount);
@@ -204,17 +205,17 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
         // Should also do Straddles.
 
         String hash = wordsInLines.get(curLine).get(0).substring(0, wordsInLines.get(curLine).get(0).length() - 1);
-        double sbAmount = Double.parseDouble(wordsInLines.get(curLine).get(4).substring(1));
-        curPot += sbAmount;
-        st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND, hash, sbAmount, curPot), sbAmount);
-        game.decrementPlayersBalance(hash, sbAmount);
+        double amount = Double.parseDouble(wordsInLines.get(curLine).get(4).substring(1));
+        st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND, hash, amount, curPot), amount);
+        curPot += amount;
+        game.decrementPlayersBalance(hash, amount);
         ++curLine;
 
         hash = wordsInLines.get(curLine).get(0).substring(0, wordsInLines.get(curLine).get(0).length() - 1);
-        double bbAmount = Double.parseDouble(wordsInLines.get(curLine).get(4).substring(1));
-        curPot += sbAmount;
-        st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND,hash, bbAmount, curPot), bbAmount);
-        game.decrementPlayersBalance(hash, bbAmount);
+        amount = Double.parseDouble(wordsInLines.get(curLine).get(4).substring(1));
+        st.addActionAndUpdateBalances(new Action(Action.ActionType.BLIND,hash, amount, curPot), amount);
+        curPot += amount;
+        game.decrementPlayersBalance(hash, amount);
         curLine += 2;
 
         st.setPotAfterBetting(curPot);
@@ -260,7 +261,7 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
                     game.getPreFlop().getPotAfterBetting(),
                     flopBoard,
                     game.getPreFlop().getPlayersAfterBetting(),
-                    new ArrayList<Action>());
+                    new ArrayList<>());
             flop.setAllIn(true);
         }
 
@@ -294,7 +295,7 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
                     game.getFlop().getPotAfterBetting(),
                     null,
                     game.getFlop().getPlayersAfterBetting(),
-                    new ArrayList<Action>());
+                    new ArrayList<>());
             turn.setAllIn(true);
         }
 
@@ -439,7 +440,9 @@ public class GGPokerokHoldem9MaxParser implements GGParser {
                     if (st.getAllActions().get(i).getPlayerId().equals(curPlayer.getId())) {
                         // If he folded, he wouldnt be raising now, so old case is impossible.
                         // If he checked, it meant no one bet before him (or it is BB on pre-flop)
-                        lastAmount = st.getAllActions().get(i).getAmount();
+                        if (!st.getAllActions().get(i).getActionType().equals(ANTE)) {
+                            lastAmount = st.getAllActions().get(i).getAmount();
+                        }
                         break;
                     }
                 }
